@@ -28,7 +28,7 @@ python3 build.py
 
 ### Install on Android
 
-1. In the repo settings, go to **Pages** and deploy from the `main` branch, `/docs` folder.
+1. In the repo settings, go to **Pages** and deploy from the `master` branch, `/docs` folder.
 2. Open the Pages URL in Chrome on your phone.
 3. Open the menu (⋮) and tap **Add to Home screen** (or **Install app**).
 
