@@ -1,0 +1,1604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Diegetic SCP Foundation orientation: learn the lore, terms and reading habits of the SCP Wiki.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<title>SCP Agent Orientation</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#15191B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: app shell. Sticky terminal header with hazard stripe, one scrolling column of
+   document "sheets", bottom tab bar in the thumb zone, full-screen briefing sheet on top. */
+:root {
+  --paper: #E9EBE6;
+  --sheet: #F8F8F5;
+  --ink: #15191B;
+  --muted: #576160;
+  --rule: #C5CAC3;
+  --accent: #8F5400;
+  --accent-ink: #FFF8EC;
+  --hi: #E2A84A;
+  --stamp: #A3241F;
+  --redact: #15191B;
+  --bar: #15191B;
+  --bar-ink: #E9EBE6;
+  --bar-dim: #3A4245;
+  --safe: #2E6B3B;
+  --euclid: #8F5D00;
+  --keter: #A3241F;
+  --thaumiel: #5B3F8F;
+  --neutral: #5F6766;
+  --explained: #2C5D8A;
+  --f-display: "Barlow Condensed", "Roboto Condensed", "Arial Narrow", sans-serif;
+  --f-body: "IBM Plex Sans", Roboto, "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", "Roboto Mono", ui-monospace, monospace;
+  --nav-h: 64px;
+  --gut-l: max(16px, env(safe-area-inset-left, 0px));
+  --gut-r: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0D1214; --sheet: #151C1F; --ink: #DCE3DF; --muted: #8C9893; --rule: #283337;
+    --accent: #E2A84A; --accent-ink: #1A1206; --hi: #E2A84A; --stamp: #E66B61; --redact: #9FAAA5;
+    --bar: #080B0C; --bar-ink: #DCE3DF; --bar-dim: #283236;
+    --safe: #6DBB7C; --euclid: #E2A84A; --keter: #E66B61; --thaumiel: #AE90E6; --neutral: #8C9893; --explained: #82B4E2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0D1214; --sheet: #151C1F; --ink: #DCE3DF; --muted: #8C9893; --rule: #283337;
+  --accent: #E2A84A; --accent-ink: #1A1206; --hi: #E2A84A; --stamp: #E66B61; --redact: #9FAAA5;
+  --bar: #080B0C; --bar-ink: #DCE3DF; --bar-dim: #283236;
+  --safe: #6DBB7C; --euclid: #E2A84A; --keter: #E66B61; --thaumiel: #AE90E6; --neutral: #8C9893; --explained: #82B4E2;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background: var(--paper); color: var(--ink);
+  font: 400 15px/1.55 var(--f-body);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 30; background: var(--bar);
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: var(--accent); }
+button:focus-visible, a:focus-visible, input:focus-visible, .seg:focus-visible {
+  outline: 2px solid var(--hi); outline-offset: 2px;
+}
+p { margin: 0; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+
+/* ---------- type ---------- */
+.eyebrow {
+  font: 500 11px/1.3 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+}
+.display {
+  font: 700 32px/1.02 var(--f-display); letter-spacing: .01em; text-transform: uppercase;
+}
+.h2 { font: 700 21px/1.1 var(--f-display); letter-spacing: .04em; text-transform: uppercase; }
+.h3 { font: 600 17px/1.25 var(--f-body); }
+.mono { font-family: var(--f-mono); }
+.small { font-size: 13px; color: var(--muted); }
+.prose { max-width: 65ch; display: flex; flex-direction: column; gap: .8em; }
+.prose b { font-weight: 600; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- header ---------- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bar); color: var(--bar-ink); }
+.top-in {
+  display: flex; align-items: center; gap: 10px; max-width: 760px; margin: 0 auto;
+  padding-block: 10px; padding-left: var(--gut-l); padding-right: var(--gut-r);
+}
+.logo { width: 30px; height: 30px; flex: none; }
+.top .t1 { font: 700 16px/1 var(--f-display); letter-spacing: .14em; text-transform: uppercase; }
+.top .t2 { font: 500 10.5px/1.3 var(--f-mono); letter-spacing: .06em; color: var(--bar-ink); opacity: .7; margin-top: 3px; }
+.clr {
+  margin-left: auto; flex: none; font: 600 11px/1 var(--f-mono); letter-spacing: .1em;
+  border: 1px solid var(--hi); color: var(--hi); padding: 6px 8px; text-transform: uppercase;
+}
+.stripe {
+  height: 5px;
+  background: repeating-linear-gradient(-45deg, var(--hi) 0 9px, var(--bar) 9px 18px);
+}
+
+/* ---------- main column ---------- */
+.wrap {
+  max-width: 760px; margin: 0 auto;
+  padding-left: var(--gut-l); padding-right: var(--gut-r);
+  padding-block: 22px calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 32px);
+  display: flex; flex-direction: column; gap: 18px;
+}
+.stack { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+.doc { background: var(--sheet); border: 1px solid var(--rule); padding: 16px; min-width: 0; }
+.doc-h {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+  border-bottom: 1px solid var(--rule); padding-bottom: 9px; margin-bottom: 14px;
+}
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 18px; border-radius: 2px;
+  font: 600 14px/1.1 var(--f-body); letter-spacing: .02em; text-decoration: none; text-align: center;
+  background: transparent; color: var(--ink); border: 1px solid var(--ink);
+}
+.btn.pri { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.ghost { border-color: var(--rule); }
+.btn.sm { min-height: 40px; padding: 0 12px; font-size: 13px; }
+.btn.block { width: 100%; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.btn.danger { border-color: var(--stamp); color: var(--stamp); }
+
+.chip {
+  display: inline-block; white-space: nowrap; font: 600 10.5px/1 var(--f-mono); letter-spacing: .1em;
+  text-transform: uppercase; padding: 5px 7px; border: 1px solid currentColor; color: var(--muted);
+}
+.c-safe { color: var(--safe); } .c-euclid { color: var(--euclid); } .c-keter { color: var(--keter); }
+.c-thaumiel { color: var(--thaumiel); } .c-neutralized { color: var(--neutral); } .c-explained { color: var(--explained); }
+.c-accent { color: var(--accent); } .c-stamp { color: var(--stamp); }
+
+.rx { background: var(--redact); color: transparent; border-radius: 1px; user-select: none; -webkit-user-select: none; }
+
+/* ---------- dashboard ---------- */
+.greet .display { margin-top: 6px; }
+.segs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 12px; }
+.segs div { height: 10px; background: var(--rule); }
+.segs .on { background: var(--accent); }
+.segs .lock { background: repeating-linear-gradient(-45deg, var(--rule) 0 4px, transparent 4px 8px); border: 1px solid var(--rule); }
+.seg-lbl { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 6px; font: 500 10.5px var(--f-mono); color: var(--muted); }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--rule); background: var(--sheet); }
+.stats > div { padding: 12px; border-left: 1px solid var(--rule); min-width: 0; }
+.stats > div:first-child { border-left: 0; }
+.stats b { display: block; font: 700 26px/1 var(--f-display); font-variant-numeric: tabular-nums; }
+.stats span { display: block; margin-top: 6px; font: 500 10.5px/1.35 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+/* ---------- module list ---------- */
+.mod { display: grid; grid-template-columns: 56px 1fr; gap: 0; background: var(--sheet); border: 1px solid var(--rule); text-align: left; padding: 0; width: 100%; }
+.mod .mn { background: var(--bar); color: var(--bar-ink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 10px 4px; }
+.mod .mn small { font: 500 9.5px var(--f-mono); letter-spacing: .1em; opacity: .7; }
+.mod .mn b { font: 700 26px/1 var(--f-display); }
+.mod .mb { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.mod .mb .row { justify-content: space-between; flex-wrap: nowrap; }
+.mod.locked { opacity: .6; }
+
+/* ---------- lexicon ---------- */
+.search {
+  width: 100%; min-height: 48px; padding: 0 14px; border: 1px solid var(--rule); background: var(--sheet);
+  color: var(--ink); font: 400 15px var(--f-body); border-radius: 2px;
+}
+.filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.filters::-webkit-scrollbar { display: none; }
+.fbtn { flex: none; min-height: 36px; padding: 0 12px; border: 1px solid var(--rule); background: transparent; font: 600 11px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-radius: 2px; }
+.fbtn[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.lx { background: var(--sheet); border: 1px solid var(--rule); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.lx-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.lx-ooc { font-size: 13.5px; color: var(--muted); border-top: 1px dashed var(--rule); padding-top: 8px; }
+.lx-ooc::before { content: "OOC  "; font: 600 10.5px var(--f-mono); letter-spacing: .1em; color: var(--accent); }
+.lx.locked p { line-height: 1.9; }
+
+/* ---------- archive ---------- */
+.path-h { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+.file { background: var(--sheet); border: 1px solid var(--rule); display: grid; grid-template-columns: 1fr; }
+.file .fh { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--rule); }
+.file .fnum { font: 600 13px var(--f-mono); letter-spacing: .04em; }
+.file .fb { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.file.read .fnum::after { content: "  READ"; color: var(--safe); font-size: 10.5px; letter-spacing: .12em; }
+.file .row { margin-top: 4px; }
+
+/* ---------- ID ---------- */
+.badge { background: var(--sheet); border: 1px solid var(--rule); overflow: hidden; }
+.badge .bt { background: var(--bar); color: var(--bar-ink); display: flex; align-items: center; gap: 10px; padding: 12px 16px; }
+.badge .bt b { font: 700 18px/1 var(--f-display); letter-spacing: .14em; }
+.badge .bt small { display: block; font: 500 10px var(--f-mono); letter-spacing: .12em; opacity: .7; margin-top: 3px; }
+.badge .bb { display: grid; grid-template-columns: 92px 1fr; gap: 16px; padding: 16px; }
+.photo { aspect-ratio: 4 / 5; max-width: 100%; border: 1px solid var(--rule); display: grid; place-items: center; font: 700 34px var(--f-display); color: var(--muted); background: repeating-linear-gradient(0deg, transparent 0 7px, var(--rule) 7px 8px); }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; min-width: 0; }
+.fields div { min-width: 0; }
+.fields .full { grid-column: 1 / -1; }
+.fields small { display: block; font: 500 9.5px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.fields b { font: 600 14px/1.25 var(--f-body); overflow-wrap: anywhere; }
+.barcode { display: block; width: 100%; height: 40px; color: var(--ink); }
+.badge .bf { padding: 0 16px 14px; display: flex; flex-direction: column; gap: 4px; }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 0; border-top: 1px solid var(--rule); }
+.doc-h + .toggle { border-top: 0; padding-top: 0; }
+.toggle .tl { min-width: 0; }
+.sw { position: relative; width: 52px; height: 30px; flex: none; border-radius: 15px; border: 1px solid var(--rule); background: var(--paper); padding: 0; }
+.sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--muted); transition: transform .15s; }
+.sw[aria-checked="true"] { background: var(--accent); border-color: var(--accent); }
+.sw[aria-checked="true"]::after { transform: translateX(22px); background: var(--accent-ink); }
+.field-in { display: flex; gap: 8px; }
+.field-in input { flex: 1; min-width: 0; }
+
+/* ---------- tab bar ---------- */
+.tabs {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  background: var(--sheet); border-top: 1px solid var(--rule);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
+}
+.tabs-in { display: grid; grid-template-columns: repeat(5, 1fr); max-width: 760px; margin: 0 auto; height: var(--nav-h); }
+.tab {
+  position: relative; background: none; border: 0; color: var(--muted);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  font: 600 10px/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase;
+}
+.tab svg { width: 22px; height: 22px; }
+.tab[aria-current="page"] { color: var(--ink); }
+.tab[aria-current="page"]::before { content: ""; position: absolute; top: -1px; left: 26%; right: 26%; height: 3px; background: var(--accent); }
+
+/* ---------- briefing sheet ---------- */
+#sheet { position: fixed; inset: 0; z-index: 40; background: var(--paper); display: flex; flex-direction: column; }
+.sh-top { background: var(--bar); color: var(--bar-ink); padding-top: env(safe-area-inset-top, 0px); }
+.sh-top-in { max-width: 760px; margin: 0 auto; padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); padding-block: 6px; display: flex; align-items: center; gap: 6px; }
+.icon-btn { width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 0; color: inherit; flex: none; }
+.icon-btn svg { width: 22px; height: 22px; }
+.sh-title { flex: 1; min-width: 0; }
+.sh-title small { display: block; font: 500 10.5px var(--f-mono); letter-spacing: .12em; opacity: .7; }
+.sh-title b { display: block; font: 700 17px/1.1 var(--f-display); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ooc-tg { font: 600 10.5px var(--f-mono); letter-spacing: .1em; border: 1px solid var(--bar-dim); background: none; color: var(--bar-ink); min-height: 36px; padding: 0 10px; border-radius: 2px; flex: none; }
+.ooc-tg[aria-pressed="true"] { border-color: var(--hi); color: var(--hi); }
+.dots { display: flex; gap: 4px; max-width: 760px; margin: 0 auto; padding: 0 var(--gut-r) 10px var(--gut-l); }
+.dots i { flex: 1; height: 3px; background: var(--bar-dim); }
+.dots i.on { background: var(--hi); }
+.sh-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; }
+.sh-body-in { max-width: 760px; margin: 0 auto; padding-left: var(--gut-l); padding-right: var(--gut-r); padding-block: 22px 32px; display: flex; flex-direction: column; gap: 16px; }
+.sh-foot { background: var(--sheet); border-top: 1px solid var(--rule); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.sh-foot-in { max-width: 760px; margin: 0 auto; padding-left: var(--gut-l); padding-right: var(--gut-r); padding-block: 10px; display: flex; gap: 10px; }
+.sh-foot-in .btn { flex: 1; }
+.card-anim { animation: cardIn .22s ease-out; }
+@keyframes cardIn { from { transform: translateY(6px); } to { transform: none; } }
+
+.ooc { border: 1px dashed var(--muted); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.ooc-lbl { font: 600 10.5px/1 var(--f-mono); letter-spacing: .14em; color: var(--accent); text-transform: uppercase; }
+.ooc .prose { font-size: 14.5px; }
+
+dl.defs { margin: 0; display: grid; gap: 12px; }
+dl.defs > div { display: grid; gap: 3px; padding-top: 10px; border-top: 1px solid var(--rule); }
+dl.defs > div:first-child { border-top: 0; padding-top: 0; }
+dl.defs dt { font: 600 12px/1.3 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; }
+dl.defs dd { margin: 0; }
+dl.defs dd .small { display: block; margin-top: 3px; }
+
+blockquote.mission { margin: 0; padding: 4px 0 4px 16px; border-left: 3px solid var(--ink); font: italic 400 16px/1.6 var(--f-body); }
+
+/* specimen */
+.spec { display: flex; flex-direction: column; gap: 0; }
+.spec-head { display: flex; justify-content: space-between; align-items: center; background: var(--bar); color: var(--bar-ink); padding: 8px 12px; font: 600 11px var(--f-mono); letter-spacing: .12em; }
+.seg { display: block; width: 100%; text-align: left; background: var(--sheet); border: 1px solid var(--rule); border-top: 0; padding: 12px 14px 12px 14px; position: relative; font: 400 14.5px/1.55 var(--f-body); color: var(--ink); }
+.seg b { font-weight: 600; }
+.seg .tag { float: right; margin: 0 0 4px 10px; font: 600 9.5px var(--f-mono); letter-spacing: .12em; color: var(--accent); border: 1px solid var(--accent); padding: 3px 5px; }
+.seg[aria-expanded="true"] { background: var(--paper); }
+.seg-note { border: 1px solid var(--rule); border-top: 0; background: var(--paper); padding: 0 14px 14px 30px; font-size: 14px; position: relative; }
+.seg-note::before { content: "\21B3"; position: absolute; left: 12px; top: 0; color: var(--accent); font-weight: 600; }
+
+/* class grid + sorter + acs */
+.classes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.cls { background: var(--sheet); border: 1px solid var(--rule); border-top: 4px solid currentColor; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.cls h3 { font: 700 20px/1 var(--f-display); letter-spacing: .06em; text-transform: uppercase; }
+.cls p { color: var(--ink); font-size: 14px; }
+.cls .small { color: var(--muted); }
+.sorter .case { font: 400 15.5px/1.55 var(--f-body); }
+.sorter .opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.sorter .opts button { min-height: 48px; border: 1px solid currentColor; background: var(--sheet); font: 600 12px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; border-radius: 2px; padding: 0 4px; }
+.sorter .opts button.picked { background: currentColor; }
+.sorter .opts button.picked span { color: var(--sheet); }
+.verdict { padding: 12px 14px; border: 1px solid var(--rule); background: var(--paper); font-size: 14px; }
+.verdict b { font: 600 11px var(--f-mono); letter-spacing: .12em; display: block; margin-bottom: 4px; }
+.acs-bar { display: grid; grid-template-columns: repeat(2, 1fr); border: 1px solid var(--ink); }
+.acs-bar > div { padding: 10px 12px; border-left: 1px solid var(--ink); border-top: 1px solid var(--ink); min-width: 0; }
+.acs-bar > div:nth-child(odd) { border-left: 0; }
+.acs-bar > div:nth-child(-n+2) { border-top: 0; }
+.acs-bar small { display: block; font: 500 9.5px var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.acs-bar b { font: 700 18px/1.1 var(--f-display); letter-spacing: .06em; text-transform: uppercase; }
+.scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; }
+.scale div { padding: 8px 4px; text-align: center; font: 600 10.5px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; border: 1px solid var(--rule); background: var(--sheet); overflow-wrap: anywhere; }
+.scale .cur { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.lvls { display: flex; flex-direction: column; border: 1px solid var(--rule); background: var(--sheet); }
+.lvl { display: grid; grid-template-columns: 52px 1fr; border-top: 1px solid var(--rule); }
+.lvl:first-child { border-top: 0; }
+.lvl .ln { display: grid; place-items: center; font: 700 26px/1 var(--f-display); border-right: 1px solid var(--rule); }
+.lvl .lb { padding: 10px 12px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.lvl.you { background: var(--paper); }
+.lvl.you .ln { background: var(--accent); color: var(--accent-ink); }
+
+/* quiz */
+.q { font: 600 19px/1.35 var(--f-body); }
+.opts-q { display: flex; flex-direction: column; gap: 8px; }
+.opt { width: 100%; min-height: 54px; text-align: left; display: flex; gap: 12px; align-items: flex-start; padding: 13px 14px; border: 1px solid var(--rule); background: var(--sheet); border-radius: 2px; font: 500 15px/1.4 var(--f-body); }
+.opt .k { font: 600 12px/1.6 var(--f-mono); color: var(--muted); flex: none; }
+.opt.ok { border-color: var(--safe); box-shadow: inset 4px 0 0 var(--safe); }
+.opt.bad { border-color: var(--keter); box-shadow: inset 4px 0 0 var(--keter); }
+.opt[disabled] { cursor: default; }
+.stamp {
+  align-self: flex-start; display: inline-block; border: 3px double var(--stamp); color: var(--stamp);
+  font: 700 26px/1 var(--f-display); letter-spacing: .14em; padding: 8px 16px; text-transform: uppercase; transform: rotate(-3deg);
+}
+.stamp.pass { border-color: var(--safe); color: var(--safe); }
+
+/* boot */
+#boot { position: fixed; inset: 0; z-index: 60; background: var(--bar); color: var(--bar-ink); overflow-y: auto; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.boot-in { max-width: 560px; margin: 0 auto; padding-left: var(--gut-l); padding-right: var(--gut-r); padding-block: 28px 40px; display: flex; flex-direction: column; gap: 18px; font: 400 13.5px/1.65 var(--f-mono); }
+.boot-logo { display: flex; align-items: center; gap: 12px; }
+.boot-logo svg { width: 52px; height: 52px; }
+.boot-logo b { font: 700 24px/1 var(--f-display); letter-spacing: .16em; display: block; }
+.boot-logo small { font: 500 10.5px var(--f-mono); letter-spacing: .2em; opacity: .7; }
+.lines { display: flex; flex-direction: column; gap: 2px; min-height: 9em; }
+.lines .w { color: var(--hi); }
+.glyph { width: min(220px, 70vw); aspect-ratio: 1; max-width: 100%; align-self: center; color: var(--hi); }
+.glyph g { transform-origin: 50% 50%; animation: spin 9s linear infinite; }
+.glyph g + g { animation-direction: reverse; animation-duration: 6s; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.meter { height: 6px; background: var(--bar-dim); }
+.meter i { display: block; height: 100%; width: 0; background: var(--hi); transition: width .1s linear; }
+#boot input, .search.in-dark { background: transparent; border: 1px solid var(--bar-dim); color: var(--bar-ink); min-height: 48px; padding: 0 12px; font: 500 16px var(--f-mono); width: 100%; border-radius: 2px; }
+#boot .btn { color: var(--bar-ink); border-color: var(--bar-ink); }
+#boot .btn.pri { background: var(--hi); border-color: var(--hi); color: #1A1206; }
+.skip { align-self: flex-end; background: none; border: 0; color: var(--bar-ink); opacity: .7; font: 500 12px var(--f-mono); letter-spacing: .1em; min-height: 44px; padding: 0 4px; }
+
+#toast {
+  position: fixed; left: 50%; transform: translateX(-50%); z-index: 70;
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 14px);
+  background: var(--ink); color: var(--paper); font: 500 13px var(--f-mono); letter-spacing: .04em;
+  padding: 10px 14px; border-radius: 2px; max-width: calc(100% - 32px);
+}
+
+@media (min-width: 560px) {
+  .display { font-size: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-anim, .glyph g { animation: none; }
+  .sw::after, .meter i { transition: none; }
+}
+</style>
+</head>
+<body>
+
+
+<header class="top" id="top">
+  <div class="top-in">
+    <svg class="logo" viewBox="0 0 100 100" aria-hidden="true" id="logo"></svg>
+    <div>
+      <div class="t1">SCP Foundation</div>
+      <div class="t2" id="topSub">Personnel Terminal</div>
+    </div>
+    <span class="clr" id="clrChip">LVL 0</span>
+  </div>
+  <div class="stripe"></div>
+</header>
+
+<main id="view" aria-live="polite"></main>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="tabs-in" id="tabs"></div>
+</nav>
+
+<section id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="shTitle">
+  <div class="sh-top">
+    <div class="sh-top-in">
+      <button class="icon-btn" id="shClose" aria-label="Close briefing"></button>
+      <div class="sh-title"><small id="shCode"></small><b id="shTitle"></b></div>
+      <button class="ooc-tg" id="oocTg" aria-pressed="true">OOC</button>
+    </div>
+    <div class="dots" id="shDots"></div>
+  </div>
+  <div class="sh-body" id="shBody"><div class="sh-body-in" id="shIn"></div></div>
+  <div class="sh-foot"><div class="sh-foot-in" id="shFoot"></div></div>
+</section>
+
+<section id="boot" hidden aria-label="Personnel registration"><div class="boot-in" id="bootIn"></div></section>
+<div id="toast" hidden role="status"></div>
+
+<script>
+(function () {
+"use strict";
+
+/* =====================================================================
+   CONTENT
+   Original summaries of SCP Wiki concepts (scp-wiki.wikidot.com),
+   which is licensed CC BY-SA 3.0. SCP-TRN-07 is invented for this app.
+   ===================================================================== */
+
+const W = "https://scp-wiki.wikidot.com/";
+
+const LEVELS = [
+  { n: 0, name: "For Official Use Only", d: "Basic, non-secret information. Staff with no need to know about anomalies." },
+  { n: 1, name: "Confidential", d: "Staff working near anomalies without direct access to them: clerical, logistics, maintenance." },
+  { n: 2, name: "Restricted", d: "Security and research staff who need direct information about the anomalies in their care." },
+  { n: 3, name: "Secret", d: "Senior security and research staff who need in-depth data on anomalies, their origins and recovery." },
+  { n: 4, name: "Top Secret", d: "Site Directors, security directors and MTF commanders. Site-wide and regional intelligence." },
+  { n: 5, name: "Thaumiel", d: "The O5 Council and a handful of designated staff. Complete access. Not issued at this terminal." }
+];
+
+const MODULES = [
+{
+  id: "m1", code: "ORI-01", short: "Foundation", title: "Secure. Contain. Protect.",
+  sub: "What the Foundation is, what it believes, and why it hides.",
+  cards: [
+    { h: "Welcome to the Foundation",
+      ic: `<p>You have been recruited into the <b>SCP Foundation</b>, a clandestine organization that operates worldwide and outside ordinary jurisdiction.</p>
+           <p>Its charge is to locate, contain and study <b>anomalies</b>: objects, entities, locations and phenomena that violate natural law as the public understands it.</p>
+           <p>Nothing you learn at this terminal leaves it.</p>`,
+      ooc: `<p>The SCP Wiki is a collaborative fiction project. It started in 2007 with a single anonymous post on 4chan's paranormal board (the file that became SCP-173) and moved to its own wiki in 2008.</p>
+            <p>Almost everything on it is written <i>in-universe</i>, as if it were a leaked Foundation document. A lot of the horror and the humour comes from the gap between that flat clinical tone and what's being described.</p>` },
+    { h: "The three verbs",
+      ic: `<dl class="defs">
+             <div><dt>Secure</dt><dd>The Foundation secures anomalies so they can't fall into civilian or hostile hands.</dd></div>
+             <div><dt>Contain</dt><dd>It contains anomalies so their influence and effects can't spread.</dd></div>
+             <div><dt>Protect</dt><dd>It protects humanity from anomalies, and protects anomalies from humanity until they can be understood.</dd></div>
+           </dl>`,
+      ooc: `<p>Look at the last clause. The Foundation sees itself as a custodian, not an exterminator. Stories test that self-image constantly, and many of them are about what it costs.</p>` },
+    { h: "Normalcy and the Veil",
+      ic: `<p>Public knowledge of the anomalous is treated as a threat in its own right. Panic, exploitation and belief can all destabilize what Foundation documents call <b>consensus reality</b>.</p>
+           <p>Keeping the secret is shared work among several organizations. The arrangement is commonly called <b>the Veil</b>, or the Masquerade. Its tools are cover stories, disinformation and <b>amnestics</b>, drugs that alter memory.</p>`,
+      ooc: `<p>When a file mentions a cover story (a gas leak, an animal attack, a hoax), that's the Veil at work. Whole canons ask what happens when it fails. <i>Broken Masquerade</i> is the best-known.</p>` },
+    { h: "Contain, don't destroy",
+      ic: `<p>Destruction is a last resort. Some anomalies can't be destroyed. Some can't be destroyed safely. Some may turn out to be essential later, and a destroyed anomaly can't be studied.</p>
+           <p>When termination is approved, it's logged. The file on SCP-682 contains a long record of failed attempts.</p>`,
+      ooc: `<p>This is the main ideological split in the setting. The <b>Global Occult Coalition</b> (GOC) takes the opposite view and destroys what it can. Many stories set the two organizations side by side.</p>` },
+    { h: "The cost",
+      ic: `<p>Containment needs testing, and testing needs people. The Foundation uses expendable <b>D-Class</b> personnel for high-risk work, and an <b>Ethics Committee</b> reviews its methods.</p>
+           <p>You'll be asked to accept that some decisions made here would count as crimes anywhere else.</p>`,
+      ooc: `<p>Whether the Foundation is good is deliberately left open. Some authors write it as heroic, some as a bureaucracy that has normalized atrocity, and many as both. Spotting which version a story is using will help you read it.</p>` },
+    { h: "From the charter",
+      ic: `<blockquote class="mission">"While the rest of mankind dwells in the light, we must stand in the darkness to fight it, contain it, and shield it from the eyes of the public, so that others may live in a sane and normal world."</blockquote>`,
+      ooc: `<p>Excerpt from the wiki's <a href="${W}about-the-scp-foundation" target="_blank" rel="noopener">About the SCP Foundation</a> page, the closest thing the Foundation has to a mission statement. Worth reading in full once you finish this module.</p>` }
+  ],
+  quiz: [
+    { q: "What does \"Protect\" cover in the Foundation's mission?", a: ["Humanity from anomalies, and anomalies from humanity", "Civilians from hostile entities only", "Foundation assets from rival groups", "The previous owners of recovered objects"], why: "Protect runs both ways. The Foundation shields people from anomalies and shields anomalies from people until they're understood." },
+    { q: "Which organization generally prefers destroying anomalies to containing them?", a: ["The Global Occult Coalition", "The Chaos Insurgency", "The Serpent's Hand", "Marshall, Carter & Dark"], why: "The GOC destroys what it can. That's the main ideological contrast with the Foundation." },
+    { q: "Why does the Foundation usually contain rather than destroy?", a: ["Destruction may be impossible or dangerous, and the anomaly may be needed later", "Destroying anomalies breaks international law", "Anomalies can't be harmed by conventional means", "The O5 Council has banned it outright"], why: "Destruction is a last resort for practical reasons: some anomalies can't be destroyed, some can't be destroyed safely, and some may prove essential." },
+    { q: "Out of character, how is an SCP article best read?", a: ["As collaborative fiction written as in-universe paperwork", "As a record of real events", "As one author's novel series", "As official lore for the video games"], why: "The wiki is a shared fiction project. Its documents are written as if they were real Foundation records." }
+  ]
+},
+{
+  id: "m2", code: "ORI-02", short: "Files", title: "Reading a File",
+  sub: "The standard document format, and how to read it like a researcher.",
+  cards: [
+    { h: "Anatomy of a file",
+      ic: `<p>Every SCP file follows a standard order. Learn it and you can find your way around any file in seconds.</p>
+           <dl class="defs">
+             <div><dt>Item #</dt><dd>The designation, e.g. SCP-173.</dd></div>
+             <div><dt>Object Class</dt><dd>How hard it is to contain (see ORI-03).</dd></div>
+             <div><dt>Special Containment Procedures</dt><dd>How to keep it contained.</dd></div>
+             <div><dt>Description</dt><dd>What it is and what it does.</dd></div>
+             <div><dt>Addenda</dt><dd>Logs, reports, interviews and notes.</dd></div>
+           </dl>`,
+      ooc: `<p>Older files are often a few hundred words. Newer ones can run to novella length, use custom formatting, or break the format on purpose. This standard order is the baseline those experiments play against.</p>` },
+    { h: "Training specimen", w: "specimen",
+      ic: `<p>Tap each section of SCP-TRN-07 to open its annotation.</p>`,
+      ooc: `<p>SCP-TRN-07 was invented for this terminal. You won't find it on the wiki.</p>` },
+    { h: "Read the procedures first",
+      ic: `<p>Special Containment Procedures come before the Description so staff know how to keep an anomaly contained before reading anything else.</p>
+           <p>Every precaution was earned.</p>`,
+      ooc: `<p>This is the most useful reading habit you can build. Odd rules (no humming, keep it facing a wall, never count the stairs) are clues. Experienced readers try to guess the anomaly from the procedures alone, and writers know it, so they plant the setup there.</p>` },
+    { h: "Addenda",
+      ic: `<dl class="defs">
+             <div><dt>Test log</dt><dd>Controlled experiments, usually with D-Class subjects.</dd></div>
+             <div><dt>Interview log</dt><dd>Transcripts of conversations with sapient anomalies or witnesses.</dd></div>
+             <div><dt>Exploration log</dt><dd>Teams or probes entering an anomalous space.</dd></div>
+             <div><dt>Incident report</dt><dd>What went wrong, and what changed afterwards.</dd></div>
+             <div><dt>Recovery log</dt><dd>How the Foundation found and acquired the anomaly.</dd></div>
+             <div><dt>Notes and memos</dt><dd>Staff commentary, orders and arguments.</dd></div>
+           </dl>`,
+      ooc: `<p>The story usually lives in the addenda. The Description sets up the premise; the logs show what people did with it, and what it did back.</p>` },
+    { h: "Redaction",
+      ic: `<dl class="defs">
+             <div><dt>[REDACTED]</dt><dd>Withheld from readers below the required clearance.</dd></div>
+             <div><dt>[DATA EXPUNGED]</dt><dd>Removed from the record: destroyed, or too dangerous to keep.</dd></div>
+             <div><dt><span class="rx">XXXXXX</span></dt><dd>Masked names, dates and locations.</dd></div>
+           </dl>
+           <p>Some files sit entirely behind a clearance check.</p>`,
+      ooc: `<p>Used well, redaction creates suspense: what's missing becomes the scariest part. The wiki's own writing guides warn against overusing it, because a file that's mostly black bars tells the reader nothing. Dates like ██/██/20██ are just masking, not a plot point.</p>` },
+    { h: "SCP-001",
+      ic: `<p>Designation SCP-001 is restricted to Level 5. Lower clearances that attempt access will be shown one of several conflicting records.</p>`,
+      ooc: `<p>On the wiki, SCP-001 has many "proposals". Each is by a different author and describes a completely different anomaly, and none is official. It's your first taste of "There Is No Canon" (ORI-07).</p>` }
+  ],
+  quiz: [
+    { q: "Why do Special Containment Procedures come before the Description?", a: ["Staff need to know how to contain it first, and readers can infer the threat from the precautions", "Procedures are shorter, so they go first", "Descriptions are often redacted", "It's alphabetical"], why: "Procedures-first is practical in-universe and a gift for readers: odd precautions are clues." },
+    { q: "What is the difference between [REDACTED] and [DATA EXPUNGED]?", a: ["REDACTED is hidden from your clearance; EXPUNGED was removed from the record", "They mean exactly the same thing", "EXPUNGED is hidden from your clearance; REDACTED was deleted", "REDACTED applies only to names"], why: "Redacted information still exists at a higher clearance. Expunged information has been removed from the record." },
+    { q: "Where would you find what happened when researchers fed objects into SCP-914?", a: ["A test log in the addenda", "The Item # line", "The Object Class", "The Special Containment Procedures"], why: "Experiments are recorded in test logs, which sit in the addenda." },
+    { q: "What's unusual about SCP-001?", a: ["Several competing proposals share the slot, and none is official", "It's the oldest article on the wiki", "It's always Safe class", "It can only be read on the Japanese branch"], why: "SCP-001 is a set of competing proposals by different authors. None is canon." }
+  ]
+},
+{
+  id: "m3", code: "ORI-03", short: "Classes", title: "Object Classes",
+  sub: "Safe, Euclid, Keter and beyond. What a class does and doesn't tell you.",
+  cards: [
+    { h: "Class is not danger",
+      ic: `<p><b>Object Class</b> describes how hard an anomaly is to contain. It does <b>not</b> describe how dangerous it is.</p>
+           <p>Apply the <b>Locked Box Test</b>. Lock the anomaly in a box and walk away:</p>
+           <dl class="defs">
+             <div><dt class="c-safe">Safe</dt><dd>Nothing bad happens.</dd></div>
+             <div><dt class="c-euclid">Euclid</dt><dd>You're not sure what will happen.</dd></div>
+             <div><dt class="c-keter">Keter</dt><dd>It gets out on its own.</dd></div>
+           </dl>`,
+      ooc: `<p>The Locked Box Test is the wiki's own rule of thumb, from its <a href="${W}object-classes" target="_blank" rel="noopener">Object Classes</a> guide. A Safe object can still be catastrophic if someone mishandles it. A Keter one might be fairly harmless and simply refuse to stay put.</p>` },
+    { h: "Primary classes", w: "classes",
+      ic: `<p>Most files use one of these.</p>`,
+      ooc: `<p>A file's class can change over time. Reclassification, upward or downward, is often a plot point in itself.</p>` },
+    { h: "Esoteric classes",
+      ic: `<p>Some anomalies don't fit any standard class, and their files use a nonstandard designation. Common ones:</p>
+           <dl class="defs">
+             <div><dt>Apollyon</dt><dd>Can't be contained and is expected to cause catastrophe soon. Usually an active end-of-the-world threat.</dd></div>
+             <div><dt>Archon</dt><dd>Could in theory be contained, but shouldn't be, because containing it would do more harm.</dd></div>
+             <div><dt>Tiamat</dt><dd>Requires the Foundation to take open, offensive action against it.</dd></div>
+           </dl>`,
+      ooc: `<p>Esoteric classes began as one-off author inventions, and a few caught on. You'll also see names like Ticonderoga, Cernunnos and Hiemal. When you meet an unfamiliar class, the file usually explains it.</p>` },
+    { h: "Anomaly Classification System", w: "acs",
+      ic: `<p>Newer files may carry an <b>ACS</b> bar instead of a single class line. It splits classification into four fields.</p>`,
+      ooc: `<p>The ACS is optional, so you'll see both formats. Its Risk Class finally gives you the "how dangerous is it" rating that Object Class deliberately leaves out.</p>` },
+    { h: "Field exercise: the locked box", w: "sorter",
+      ic: `<p>Classify each specimen. Think about containment effort, not how frightening it sounds.</p>`,
+      ooc: `<p>All seven specimens are invented for this exercise.</p>` }
+  ],
+  quiz: [
+    { q: "What does Object Class measure?", a: ["How hard the anomaly is to contain", "How dangerous the anomaly is", "How long the anomaly has been contained", "Which clearance level can read the file"], why: "Class is about containment difficulty. Danger is a separate question." },
+    { q: "A marble that detonates with nuclear force only when spoken to in Latin, kept in a soundproof vault. Most likely class?", a: ["Safe", "Keter", "Apollyon", "Euclid"], why: "It's well understood and reliably contained, so it's Safe, however destructive it is." },
+    { q: "Thaumiel anomalies are...", a: ["Used by the Foundation to contain or counter other anomalies", "The most dangerous anomalies known", "Anomalies that have been destroyed", "Anomalies explained by mainstream science"], why: "Thaumiel objects are tools the Foundation uses against other anomalies, and they're closely guarded." },
+    { q: "In the ACS, which field rates the danger to an exposed individual?", a: ["Risk Class", "Disruption Class", "Secondary Class", "Containment Class"], why: "Risk Class runs from Notice to Critical. Disruption Class measures threat to the Veil and normalcy." }
+  ]
+},
+{
+  id: "m4", code: "ORI-04", short: "Personnel", title: "Personnel & Clearance",
+  sub: "Who works here, who outranks whom, and who goes in first.",
+  cards: [
+    { h: "Security clearance", w: "levels",
+      ic: `<p>Access is need-to-know. Clearance makes you <i>eligible</i> for information; you still see only what your work requires.</p>`,
+      ooc: `<p>Some files open with a clearance warning ("LEVEL 4/XXXX CLASSIFIED"). It's set dressing that tells you how secret the contents are meant to be. This terminal raises your clearance as you clear briefings.</p>` },
+    { h: "Personnel classes",
+      ic: `<dl class="defs">
+             <div><dt>Class A</dt><dd>Essential staff. Never permitted direct contact with anomalies.</dd></div>
+             <div><dt>Class B</dt><dd>Essential to local operations. Access only to anomalies that have passed quarantine and decontamination.</dd></div>
+             <div><dt>Class C</dt><dd>Direct access to most anomalies that aren't strictly hostile. Quarantined after exposure to dangerous ones.</dd></div>
+             <div><dt>Class D</dt><dd>Expendable personnel for extremely hazardous work, usually drawn from prison populations.</dd></div>
+             <div><dt>Class E</dt><dd>Provisional class for staff exposed to potentially dangerous effects. Quarantined and monitored.</dd></div>
+           </dl>`,
+      ooc: `<p>D-Class are the most visible in the fiction because they're the subjects in the test logs ("D-9341"). How they're treated is one of the setting's recurring moral questions.</p>` },
+    { h: "Chain of command",
+      ic: `<dl class="defs">
+             <div><dt>O5 Council</dt><dd>Thirteen members, O5-1 to O5-13. The highest authority. Their identities are secret.</dd></div>
+             <div><dt>The Administrator</dt><dd>A figure who may or may not sit above the O5s. Records disagree.</dd></div>
+             <div><dt>Ethics Committee</dt><dd>Reviews Foundation methods and can veto them.</dd></div>
+             <div><dt>Site Director</dt><dd>Commands a single facility.</dd></div>
+             <div><dt>RAISA</dt><dd>Records and Information Security Administration. Keeps the files you're reading.</dd></div>
+           </dl>`,
+      ooc: `<p>The O5s' personalities vary wildly between stories. Some canons make them central characters; others keep them offstage forever. The Administrator is even less settled, and that's deliberate.</p>` },
+    { h: "Sites and Areas",
+      ic: `<dl class="defs">
+             <div><dt>Site</dt><dd>A facility for containment and research. Site-19 is the largest known.</dd></div>
+             <div><dt>Area</dt><dd>A facility devoted to one or a few anomalies, or of special sensitivity.</dd></div>
+             <div><dt>Armed Bio-Containment Area</dt><dd>A heavily defended facility for the most dangerous anomalies.</dd></div>
+           </dl>`,
+      ooc: `<p>Site-19 is the default setting for countless stories and for the games. Site-17 (humanoid anomalies) and Site-43 (a Canadian site with its own long-running cycle of tales) have devoted followings.</p>` },
+    { h: "Mobile Task Forces",
+      ic: `<p>MTFs are specialist field units drawn from across the Foundation.</p>
+           <dl class="defs">
+             <div><dt>Alpha-1 "Red Right Hand"</dt><dd>Answers directly to the O5 Council.</dd></div>
+             <div><dt>Epsilon-11 "Nine-Tailed Fox"</dt><dd>Internal security. Recaptures escaped anomalies at a site.</dd></div>
+             <div><dt>Eta-10 "See No Evil"</dt><dd>Handles anomalies with visual cognitohazards.</dd></div>
+             <div><dt>Nu-7 "Hammer Down"</dt><dd>The Foundation's main heavy military force.</dd></div>
+             <div><dt>Zeta-9 "Mole Rats"</dt><dd>Explores underground and enclosed anomalous spaces.</dd></div>
+             <div><dt>Omega-7 "Pandora's Box"</dt><dd>Disbanded. Used anomalies, including SCP-076-2, as operatives.</dd></div>
+             <div><dt>Tau-5 "Samsara"</dt><dd>Cloned cybernetic operatives who return after death.</dd></div>
+           </dl>`,
+      ooc: `<p>Games like <i>SCP – Containment Breach</i> made Epsilon-11 famous as the unit that arrives after a breach. Tau-5 belongs mostly to the <i>Third Law</i> canon.</p>` },
+    { h: "People you'll hear about",
+      ic: `<dl class="defs">
+             <div><dt>Dr. Jack Bright</dt><dd>Bound to SCP-963, an amulet that moves his mind into whoever touches it. Subject of a famous list of things he is not allowed to do.</dd></div>
+             <div><dt>Dr. Alto Clef</dt><dd>Unreliable and dangerous. One of the oldest characters on the wiki.</dd></div>
+             <div><dt>Dr. Gears</dt><dd>A researcher known for showing no emotion.</dd></div>
+             <div><dt>Director Tilda Moose</dt><dd>Site Director at Site-19 in many tales.</dd></div>
+             <div><dt>Marion Wheeler</dt><dd>Head of the Antimemetics Division in qntm's stories.</dd></div>
+           </dl>`,
+      ooc: `<p>Many authors write these characters, and the versions contradict each other. Take each story's version as that story's version. The wiki's <a href="${W}personnel-and-character-dossier" target="_blank" rel="noopener">Personnel and Character Dossier</a> has the full cast.</p>` }
+  ],
+  quiz: [
+    { q: "Which clearance level is Top Secret?", a: ["Level 4", "Level 3", "Level 5", "Level 2"], why: "Level 3 is Secret, Level 4 is Top Secret, and Level 5 is Thaumiel." },
+    { q: "D-Class personnel are...", a: ["Expendable personnel used for high-risk testing, usually from prisons", "Doctors and senior researchers", "Directors of containment sites", "Field agents on probation"], why: "D-Class are expendable test subjects, usually drawn from prison populations." },
+    { q: "What is the highest known authority in the Foundation?", a: ["The O5 Council", "The Ethics Committee", "The Site Director of Site-19", "MTF Alpha-1"], why: "The thirteen-member O5 Council. Alpha-1 answers to it." },
+    { q: "MTF Epsilon-11 \"Nine-Tailed Fox\" is best known for...", a: ["Internal security and recapturing escaped anomalies", "Handling visual cognitohazards", "Exploring underground spaces", "Answering only to the O5 Council"], why: "Epsilon-11 handles internal security and containment breaches. Visual hazards belong to Eta-10." }
+  ]
+},
+{
+  id: "m5", code: "ORI-05", short: "Hazards", title: "Hazard Lexicon",
+  sub: "Memetics, reality bending, and the vocabulary of how anomalies hurt you.",
+  cards: [
+    { h: "Information is a vector",
+      ic: `<p>Some anomalies harm you through perception or knowledge. Files flag these hazards in their headers.</p>
+           <dl class="defs">
+             <div><dt>Memetic</dt><dd>Relating to ideas that spread. A memetic agent alters or propagates thoughts in anyone exposed to it.</dd></div>
+             <div><dt>Cognitohazard</dt><dd>Harms through perception: seeing, hearing, sensing. Viewing the face of SCP-096 is the classic example.</dd></div>
+             <div><dt>Infohazard</dt><dd>Harms through <i>knowing</i> something, whatever the medium.</dd></div>
+           </dl>`,
+      ooc: `<p>Fans and authors use these terms loosely, and they overlap. A rough rule: if sensing it hurts, it's a cognitohazard; if knowing it hurts, it's an infohazard; if the idea spreads or changes you, it's memetic.</p>` },
+    { h: "Antimemetics",
+      ic: `<p>An <b>antimeme</b> is an idea that resists being remembered, recorded or passed on. An antimemetic anomaly could be in the room with you now.</p>
+           <p>The <b>Antimemetics Division</b> uses <b>mnestics</b>, drugs that strengthen memory, so its staff can perceive what others can't. SCP-055 is the textbook case.</p>`,
+      ooc: `<p>qntm's <i>There Is No Antimemetics Division</i> is the definitive work here and one of the most acclaimed things on the wiki. It was later published as a novel.</p>` },
+    { h: "Memory control",
+      ic: `<p><b>Amnestics</b> erase or alter memory. They're graded by class letter (Class-A, Class-B and so on), roughly by strength and scope.</p>
+           <p>They're the standard tool for keeping the Veil intact after a civilian is exposed.</p>`,
+      ooc: `<p>Amnestics come up constantly, often in passing ("witnesses were administered Class-A amnestics"). Stories that deal with what amnestics do to staff over a career tend to hit hard.</p>` },
+    { h: "Reality benders",
+      ic: `<dl class="defs">
+             <div><dt>Type Green</dt><dd>A person who can alter reality.</dd></div>
+             <div><dt>Hume</dt><dd>The unit of reality's local "solidity", measured with a <b>Kant counter</b>. A reality bender's Hume field is abnormal compared with its surroundings.</dd></div>
+             <div><dt>Scranton Reality Anchor</dt><dd>A device that stabilizes local Humes. The main tool for containing reality benders.</dd></div>
+           </dl>`,
+      ooc: `<p>SCP-239 and SCP-3001 are classic reads for Hume concepts. Once you know the terms, a lot of later files make more sense.</p>` },
+    { h: "Other sciences",
+      ic: `<dl class="defs">
+             <div><dt>Thaumaturgy</dt><dd>Magic practised as a discipline, with rules and measurable energies.</dd></div>
+             <div><dt>Akiva radiation</dt><dd>A measure of divinity and belief, studied by the Department of Tactical Theology.</dd></div>
+             <div><dt>Pataphysics</dt><dd>The study of narrative reality: anomalies that know they're in a story, or that reach the one writing it.</dd></div>
+           </dl>`,
+      ooc: `<p>Pataphysics is where the wiki gets self-aware. SCP-3999 is the landmark example. Save it until you've read a fair amount, because it plays with the format itself.</p>` },
+    { h: "When it goes wrong",
+      ic: `<dl class="defs">
+             <div><dt>Containment breach</dt><dd>An anomaly escapes containment. Lockdown procedures follow.</dd></div>
+             <div><dt>K-Class scenario</dt><dd>A world-ending or world-altering event. The prefix letter names the type.</dd></div>
+             <div><dt>XK-Class</dt><dd>The end of the world. SCP-2000 exists to recover from one.</dd></div>
+           </dl>`,
+      ooc: `<p>K-Class scenarios turn up in Keter and Apollyon files to set the stakes. The other prefixes (CK, SK, ZK and so on) are used inconsistently between articles, so trust the definition in the file you're reading.</p>` }
+  ],
+  quiz: [
+    { q: "An image that harms anyone who looks at it is a...", a: ["Cognitohazard", "Antimeme", "Thaumiel object", "Type Green"], why: "Harm through perception is a cognitohazard." },
+    { q: "An idea that resists being remembered or recorded is...", a: ["An antimeme", "An infohazard", "An amnestic", "A Hume field"], why: "Antimemes resist memory and transmission. Mnestics help staff perceive them." },
+    { q: "What is a Scranton Reality Anchor used for?", a: ["Stabilizing local reality against reality benders", "Erasing civilian memories", "Measuring belief and divinity", "Tracking MTF units"], why: "SRAs stabilize Hume levels. They're the main tool against Type Greens." },
+    { q: "An XK-Class scenario is...", a: ["An end-of-the-world event", "A minor containment breach", "A personnel transfer", "A Veil-maintenance operation"], why: "XK is the end of the world. SCP-2000 is the Foundation's fallback for it." }
+  ]
+},
+{
+  id: "m6", code: "ORI-06", short: "Groups", title: "Groups of Interest",
+  sub: "The other players: rivals, partners, merchants, cults and artists.",
+  cards: [
+    { h: "You are not alone",
+      ic: `<p>The Foundation is the largest anomalous organization, not the only one. <b>Groups of Interest</b> (GoIs) are organizations the Foundation tracks because they hold, use or study anomalies.</p>`,
+      ooc: `<p>GoI-format articles are written as that group's own documents: a GOC threat assessment, an MC&amp;D sales listing, a Wondertainment product catalogue. They're a great way to see the setting from other angles. Start at the <a href="${W}groups-of-interest" target="_blank" rel="noopener">Groups of Interest</a> page.</p>` },
+    { h: "Peers and partners",
+      ic: `<dl class="defs">
+             <div><dt>Global Occult Coalition</dt><dd>A UN-backed coalition. It shares the Veil with the Foundation but prefers to destroy anomalies.</dd></div>
+             <div><dt>Unusual Incidents Unit</dt><dd>A small, underfunded FBI department that investigates anomalies on US soil.</dd></div>
+             <div><dt>Horizon Initiative</dt><dd>A coalition of Jewish, Christian and Muslim groups that confronts the anomalous through faith.</dd></div>
+           </dl>`,
+      ooc: `<p>The GOC has its own canon, <i>Third Law</i>, where Foundation and Coalition technology go much further. UIU stories are often comedic: a tiny team doing its best with no budget.</p>` },
+    { h: "Hostile organizations",
+      ic: `<dl class="defs">
+             <div><dt>Chaos Insurgency</dt><dd>A splinter group of the Foundation that uses anomalies for its own ends.</dd></div>
+             <div><dt>Serpent's Hand</dt><dd>Believes anomalies and anomalous people should be free. Has access to the Wanderers' Library.</dd></div>
+             <div><dt>Marshall, Carter &amp; Dark Ltd.</dt><dd>A British firm that sells anomalies to very wealthy clients.</dd></div>
+           </dl>`,
+      ooc: `<p>Different canons give the Chaos Insurgency different origins. The Serpent's Hand is often written sympathetically, so not every "hostile" group is a villain. SCP-6000 is a big Serpent's Hand story.</p>` },
+    { h: "The old war",
+      ic: `<dl class="defs">
+             <div><dt>Church of the Broken God</dt><dd>Worships Mekhane, a shattered machine god. Holds that flesh is weak.</dd></div>
+             <div><dt>Sarkicism</dt><dd>Cults of flesh-crafting and body modification, descended from an ancient empire.</dd></div>
+           </dl>
+           <p>Their conflict, machine against flesh, is older than the Foundation by millennia.</p>`,
+      ooc: `<p>This is some of the deepest lore on the site. The hubs for each group are the places to start, and Sarkic files can be intense body horror.</p>` },
+    { h: "The strange and the commercial",
+      ic: `<dl class="defs">
+             <div><dt>Are We Cool Yet?</dt><dd>An art collective that makes anomalous, often dangerous, art.</dd></div>
+             <div><dt>Dr. Wondertainment</dt><dd>A company that makes anomalous toys.</dd></div>
+             <div><dt>Anderson Robotics</dt><dd>Builds advanced androids and cybernetics.</dd></div>
+             <div><dt>Prometheus Labs</dt><dd>A defunct anomalous research company. Many of its products are now in Foundation custody.</dd></div>
+             <div><dt>Wilson's Wildlife Solutions</dt><dd>A small rescue service for anomalous animals.</dd></div>
+             <div><dt>Fifth Church</dt><dd>A cult devoted to "the Fifth". Its documents are famously disorienting.</dd></div>
+           </dl>`,
+      ooc: `<p>These groups show how wide the wiki's tone runs. Wondertainment and Wilson's are often whimsical, and AWCY is satirical. The Fifth Church is strange in a way that's hard to describe until you read it.</p>` }
+  ],
+  quiz: [
+    { q: "Which group sells anomalies to wealthy clients?", a: ["Marshall, Carter & Dark Ltd.", "The Horizon Initiative", "The Unusual Incidents Unit", "Wilson's Wildlife Solutions"], why: "MC&D is the anomalous luxury trade." },
+    { q: "The Chaos Insurgency is...", a: ["A splinter group of the Foundation that uses anomalies for its own ends", "A UN-backed coalition", "An FBI department", "An art collective"], why: "The Insurgency broke away from the Foundation. Its origin story differs between canons." },
+    { q: "The Serpent's Hand believes...", a: ["Anomalies and anomalous people should be free", "All anomalies must be destroyed", "Anomalies should be sold", "Flesh is weak and must be replaced"], why: "The Hand opposes containment itself." },
+    { q: "The Church of the Broken God and the Sarkic cults are opposed over...", a: ["Machine against flesh", "Money against art", "Faith against science", "Secrecy against disclosure"], why: "Mekhane's machine faith against Sarkic flesh-crafting, an ancient war." }
+  ]
+},
+{
+  id: "m7", code: "ORI-07", short: "Archive", title: "Navigating the Archive",
+  sub: "Series, canons, tales and suffixes: how the wiki itself is organized.",
+  cards: [
+    { h: "Series",
+      ic: `<p>SCP designations are issued in Series of 1,000. Series I covers 001–999, Series II covers 1000–1999, and so on.</p>`,
+      ooc: `<p>New series open as the slots fill. The round numbers (2000, 3000, 4000, 5000...) are given to winners of special writing contests, which is why they're often ambitious and strange. The <a href="${W}scp-series" target="_blank" rel="noopener">Series I</a> page is the index.</p>` },
+    { h: "There Is No Canon",
+      ic: `<p>Records in this database may contradict one another. This is not an error.</p>`,
+      ooc: `<p>This is the most important idea on the wiki. There's no single official continuity. Each article stands alone unless it joins a <b>canon</b>, an opt-in shared setting with its own hub. Examples include <i>Broken Masquerade</i>, <i>Third Law</i>, <i>Resurrection</i> and <i>Dread &amp; Circuses</i>.</p>
+            <p>Contradictions between stories are expected, so don't spend energy reconciling them. Browse the <a href="${W}canon-hub" target="_blank" rel="noopener">Canon Hub</a>.</p>` },
+    { h: "Tales and hubs",
+      ic: `<p>Not every record is a containment file. Narrative accounts are archived separately.</p>`,
+      ooc: `<p><b>Tales</b> are short stories set in the universe. <b>Hubs</b> collect related files and tales for a canon, group, character or event. If a file seems to refer to a bigger story, look for a hub link at the bottom. Start at the <a href="${W}tales-hub" target="_blank" rel="noopener">Tales Hub</a>.</p>` },
+    { h: "Suffixes and branches",
+      ic: `<dl class="defs">
+             <div><dt>-J</dt><dd>Joke files. Parody and absurdity, usually not to be taken seriously.</dd></div>
+             <div><dt>-EX</dt><dd>Explained files. Phenomena that mainstream science can account for.</dd></div>
+             <div><dt>-ARC</dt><dd>Archived files, kept for historical reasons.</dd></div>
+             <div><dt>-JP, -RU, -KO, -CN, -FR, -PL, -ES, -DE, -IT, -UA ...</dt><dd>Files from international branches, each a separate wiki with its own culture.</dd></div>
+           </dl>`,
+      ooc: `<p>Many branch articles are translated into English, and the international branches have their own classics. They're a good way to widen your range once the English wiki feels familiar.</p>` },
+    { h: "Beyond the wiki",
+      ic: `<p>Unauthorized depictions of Foundation operations circulate in civilian media. They're inaccurate.</p>`,
+      ooc: `<p>Games (<i>SCP – Containment Breach</i>, 2012; <i>SCP: Secret Laboratory</i>) and YouTube narrations are popular ways in. They adapt freely, so game versions of 096 or 173 differ from the wiki. When in doubt, the wiki file is the source.</p>
+            <p>The wiki is licensed <b>CC BY-SA 3.0</b>: anyone can adapt it with credit, under the same licence. That's why there's so much derivative work. The licence also explains why SCP-173's original photo was removed in 2022: it showed a real sculpture by Izumi Kato that had never been licensed.</p>` },
+    { h: "Your reading paths",
+      ic: `<p>Orientation reading is assigned in the Archive tab. Mark files as read to keep your record current.</p>`,
+      ooc: `<p>Start with the Day One files, then read by concept. Save the long reads (5000, 6000, the Antimemetics Division) until the vocabulary feels natural. They reward it.</p>` }
+  ],
+  quiz: [
+    { q: "What does \"There Is No Canon\" mean?", a: ["There's no single continuity; stories can contradict, and canons are optional shared settings", "Only SCP-001 is canon", "The games are the official canon", "Articles must not reference each other"], why: "Every article stands alone unless it opts into a canon. Contradictions are expected." },
+    { q: "An article ending in -J is...", a: ["A joke article", "From the Japanese branch", "An archived article", "A Junior-level clearance file"], why: "-J is joke. The Japanese branch uses -JP." },
+    { q: "Where does an SCP-JP article come from?", a: ["The Japanese branch wiki", "A joke series", "The Joint Projects archive", "A judge-approved contest"], why: "Branch suffixes mark the international wikis." },
+    { q: "What licence is the SCP Wiki under?", a: ["CC BY-SA 3.0", "All rights reserved", "Public domain", "MIT"], why: "Creative Commons Attribution-ShareAlike 3.0. Adapt freely with credit and the same licence." }
+  ]
+}
+];
+
+const SPECIMEN = [
+  { tag: "Item #", html: `<b>Item #:</b> SCP-TRN-07`,
+    note: "The designation. Real files run from SCP-002 upward in Series of 1,000. TRN marks this one as a training specimen. It exists only at this terminal." },
+  { tag: "Class", html: `<b>Object Class:</b> Euclid`,
+    note: "Euclid, not Safe. The humming trigger was found by accident, so researchers can't yet promise it stays inert in a box. That uncertainty is what Euclid means." },
+  { tag: "Procedures", html: `<b>Special Containment Procedures:</b> SCP-TRN-07 is kept in a padded case in Locker 14, Low-Value Storage, Site-19. The case may be opened only by personnel holding Level 2 clearance or higher. Personnel passing Locker 14 must not whistle, hum or sing.`,
+    note: "Read this before the Description and play detective. Why would a locker need a no-humming rule? The rule sets up something the Description pays off." },
+  { tag: "Description", html: `<b>Description:</b> SCP-TRN-07 is a brass hotel service bell of 1920s manufacture. When it is struck, the nearest person holding Level 2 clearance or higher arrives at its location within four minutes, regardless of distance or obstacles. Arrivals report no memory of travelling. A sustained musical tone within 3 m produces the same effect.`,
+    note: "The premise, stated flatly. Notice the measurements: four minutes, 3 m, Level 2. Foundation prose quantifies everything, and the precision is part of the tone." },
+  { tag: "Addendum", html: `<b>Addendum TRN-07-A, Incident Report:</b> On <span class="rx">00/00</span>/20<span class="rx">00</span>, Dr. <span class="rx">Xxxxxxxx</span> struck SCP-TRN-07 to test its range. [DATA EXPUNGED]. The no-humming provision was added to the procedures the following day.`,
+    note: "Addenda show what happened when people dealt with the anomaly. Here an incident explains why a procedure exists. [DATA EXPUNGED] means that part of the record was removed, which invites you to imagine the worst. The black bars are only masked names and dates." },
+  { tag: "Note", html: `<b>Memo, Site Director:</b> "To whoever keeps ringing it at 3 a.m.: I live on site. I am always the nearest."`,
+    note: "Memos and personal notes give a file its voice. A lot of the wiki's humour lives in these margins, right next to deadly serious procedure." }
+];
+
+const CLASSES = [
+  { k: "safe", n: "Safe", d: "Reliably and easily contained, often because it does nothing unless someone activates it.", ex: "SCP-914, SCP-999" },
+  { k: "euclid", n: "Euclid", d: "Not understood well enough, or too unpredictable, for containment to be guaranteed. Sapient or autonomous anomalies usually rate Euclid at least.", ex: "SCP-173, SCP-096, SCP-049" },
+  { k: "keter", n: "Keter", d: "Hard to contain consistently or reliably. Procedures are extensive and complex, and the anomaly is often hostile.", ex: "SCP-682, SCP-106, SCP-055" },
+  { k: "thaumiel", n: "Thaumiel", d: "Used by the Foundation to contain or counteract other anomalies. Very rare and very secret.", ex: "SCP-2000" },
+  { k: "neutralized", n: "Neutralized", d: "No longer anomalous, because it was destroyed, disabled or simply stopped.", ex: "Kept on file for the record" },
+  { k: "explained", n: "Explained", d: "Fully understood by mainstream science. These files carry the -EX suffix.", ex: "See the SCP-EX series" }
+];
+
+const SORTER = [
+  { d: "A ceramic mug that refills itself with whatever its holder last drank. Locked in a cabinet, it does nothing at all.", a: "Safe", why: "Box it, walk away, nothing happens. Safe." },
+  { d: "A marble that detonates with the force of a nuclear warhead if spoken to in Latin. Kept in a soundproofed vault, it has never activated.", a: "Safe", why: "Terrifying, but easy to contain reliably. Class measures containment, not danger." },
+  { d: "A humanoid figure that moves whenever no camera is recording it. Researchers haven't mapped what triggers it.", a: "Euclid", why: "Its behaviour isn't fully understood, so containment can't be guaranteed. Euclid." },
+  { d: "A fungal colony that dissolves any container within 72 hours and actively seeks new hosts.", a: "Keter", why: "It defeats containment on its own and it's hostile. Keter." },
+  { d: "A sealed device, cleared at Level 4, that stops a different and far worse anomaly from activating.", a: "Thaumiel", why: "The Foundation uses it to contain something else. Thaumiel." },
+  { d: "A porcelain doll that moved on its own until a site fire in 2014. Testing since then shows no anomalous activity.", a: "Neutralized", why: "It used to be anomalous and no longer is. Neutralized." },
+  { d: "A radio that seemed to pick up voices of the dead, later traced to atmospheric ducting of distant broadcasts.", a: "Explained", why: "Mainstream science accounts for it. Explained." }
+];
+const SORT_OPTS = ["Safe", "Euclid", "Keter", "Thaumiel", "Neutralized", "Explained"];
+
+const DISRUPT = [["Dark", "Negligible. Few people would ever notice."], ["Vlam", "Could affect a small community."], ["Keneq", "Could affect a city or region."], ["Ekhi", "Could affect a nation. Hard to cover up."], ["Amida", "Global or worse. The Veil would not survive it."]];
+const RISK = [["Notice", "Little or no effect on an exposed person."], ["Caution", "Minor or temporary harm."], ["Warning", "Significant harm."], ["Danger", "Severe harm, possibly fatal."], ["Critical", "Death, or something worse, is almost certain."]];
+
+const LEX = [
+  // m1
+  { t: "SCP", m: "m1", d: "Secure, Contain, Protect: the Foundation's motto, and the prefix for anomaly designations.", o: "Also the name everyone uses for the wiki and the whole fandom." },
+  { t: "Anomaly", m: "m1", d: "Anything that violates natural law as the public understands it: objects, entities, locations, phenomena." },
+  { t: "The Foundation", m: "m1", d: "A secret worldwide organization that contains anomalies outside ordinary jurisdiction." },
+  { t: "Veil / Masquerade", m: "m1", d: "The shared secrecy that keeps the public ignorant of the anomalous.", o: "Broken Masquerade is the canon about what happens when it fails." },
+  { t: "Consensus reality", m: "m1", d: "Reality as most people believe it to be. Public belief can destabilize it." },
+  { t: "Cover story", m: "m1", d: "A mundane explanation (gas leak, hoax, animal attack) issued to hide an anomalous event." },
+  // m2
+  { t: "Item #", m: "m2", d: "An anomaly's designation, e.g. SCP-173. Issued in Series of 1,000." },
+  { t: "Special Containment Procedures", m: "m2", d: "How an anomaly is kept contained. Comes before the Description.", o: "Read it as a list of clues." },
+  { t: "Description", m: "m2", d: "What the anomaly is and does, in clinical language." },
+  { t: "Addendum", m: "m2", d: "Supplementary material appended to a file: logs, reports, memos.", o: "Where most of the story usually happens." },
+  { t: "[REDACTED]", m: "m2", d: "Information withheld from readers below the required clearance." },
+  { t: "[DATA EXPUNGED]", m: "m2", d: "Information removed from the record entirely." },
+  { t: "Test log", m: "m2", d: "Record of controlled experiments, often with D-Class subjects." },
+  { t: "Exploration log", m: "m2", d: "Record of a team or probe entering an anomalous space.", o: "SCP-087 and SCP-3001 are built around them." },
+  { t: "SCP-001", m: "m2", d: "A Level 5 slot held by many competing proposals.", o: "None is official, a deliberate expression of There Is No Canon." },
+  // m3
+  { t: "Object Class", m: "m3", d: "How difficult an anomaly is to contain. Not a measure of danger." },
+  { t: "Locked Box Test", m: "m3", d: "Lock it in a box: nothing happens = Safe; unsure = Euclid; it escapes = Keter." },
+  { t: "Safe", m: "m3", d: "Reliably and easily contained." },
+  { t: "Euclid", m: "m3", d: "Not understood or predictable enough for containment to be guaranteed." },
+  { t: "Keter", m: "m3", d: "Hard to contain consistently. Procedures are extensive; often hostile." },
+  { t: "Thaumiel", m: "m3", d: "Used by the Foundation to contain or counteract other anomalies." },
+  { t: "Neutralized", m: "m3", d: "No longer anomalous." },
+  { t: "Explained", m: "m3", d: "Fully understood by mainstream science. Files carry -EX." },
+  { t: "Apollyon", m: "m3", d: "An esoteric class: can't be contained and expected to cause catastrophe soon." },
+  { t: "Archon", m: "m3", d: "An esoteric class: could be contained, but shouldn't be." },
+  { t: "ACS", m: "m3", d: "Anomaly Classification System. An optional four-field format: Containment, Secondary, Disruption and Risk class." },
+  { t: "Disruption Class", m: "m3", d: "ACS rating of threat to the Veil: Dark, Vlam, Keneq, Ekhi, Amida." },
+  { t: "Risk Class", m: "m3", d: "ACS rating of danger to an exposed individual: Notice, Caution, Warning, Danger, Critical." },
+  // m4
+  { t: "Clearance Level", m: "m4", d: "Eligibility for classified information, from 0 (For Official Use Only) to 5 (Thaumiel)." },
+  { t: "D-Class", m: "m4", d: "Expendable personnel for hazardous testing, usually drawn from prison populations." },
+  { t: "E-Class", m: "m4", d: "Provisional class for personnel exposed to potentially dangerous effects." },
+  { t: "O5 Council", m: "m4", d: "The thirteen anonymous members who lead the Foundation." },
+  { t: "The Administrator", m: "m4", d: "A figure who may sit above the O5 Council. Records disagree." },
+  { t: "Ethics Committee", m: "m4", d: "The body that reviews and can veto Foundation methods." },
+  { t: "RAISA", m: "m4", d: "Records and Information Security Administration. Keeper of the files." },
+  { t: "Site", m: "m4", d: "A containment and research facility. Site-19 is the largest known." },
+  { t: "Area", m: "m4", d: "A facility for one or a few anomalies, or of special sensitivity." },
+  { t: "Mobile Task Force", m: "m4", d: "A specialist field unit, e.g. Epsilon-11 \"Nine-Tailed Fox\"." },
+  // m5
+  { t: "Memetic", m: "m5", d: "Relating to ideas that spread or alter thought in those exposed." },
+  { t: "Cognitohazard", m: "m5", d: "Harms through perception: seeing, hearing, sensing.", o: "Example: looking at SCP-096's face." },
+  { t: "Infohazard", m: "m5", d: "Harms through knowing a piece of information, by any medium." },
+  { t: "Antimeme", m: "m5", d: "An idea that resists being remembered, recorded or transmitted.", o: "Read qntm's There Is No Antimemetics Division." },
+  { t: "Amnestic", m: "m5", d: "A drug that erases or alters memory, graded by class letter." },
+  { t: "Mnestic", m: "m5", d: "A drug that strengthens memory, used to perceive antimemes." },
+  { t: "Type Green", m: "m5", d: "A person who can alter reality; a reality bender." },
+  { t: "Hume", m: "m5", d: "The unit of local reality strength, measured with a Kant counter." },
+  { t: "Scranton Reality Anchor", m: "m5", d: "A device that stabilizes local Hume levels." },
+  { t: "Thaumaturgy", m: "m5", d: "Magic practised as a systematic discipline." },
+  { t: "Pataphysics", m: "m5", d: "The study of narrative reality and the layers above a story.", o: "SCP-3999 is the landmark." },
+  { t: "K-Class Scenario", m: "m5", d: "A world-ending or world-altering event. XK is the end of the world." },
+  { t: "Containment breach", m: "m5", d: "An anomaly escaping containment." },
+  // m6
+  { t: "Group of Interest", m: "m6", d: "An outside organization that holds, uses or studies anomalies." },
+  { t: "Global Occult Coalition", m: "m6", d: "A UN-backed coalition that shares the Veil and prefers destruction." },
+  { t: "Chaos Insurgency", m: "m6", d: "A Foundation splinter group that uses anomalies for its own ends." },
+  { t: "Serpent's Hand", m: "m6", d: "A group that believes anomalies should be free." },
+  { t: "Wanderers' Library", m: "m6", d: "A library between worlds, connected to the Serpent's Hand." },
+  { t: "MC&D", m: "m6", d: "Marshall, Carter & Dark Ltd., dealers in anomalies for the very rich." },
+  { t: "Church of the Broken God", m: "m6", d: "Worshippers of Mekhane, a shattered machine god." },
+  { t: "Sarkicism", m: "m6", d: "Ancient cults of flesh-crafting, enemies of the Broken God." },
+  { t: "Are We Cool Yet?", m: "m6", d: "An anomalous art collective." },
+  { t: "Dr. Wondertainment", m: "m6", d: "A maker of anomalous toys." },
+  { t: "Unusual Incidents Unit", m: "m6", d: "The FBI's small anomalous-crimes unit." },
+  { t: "Horizon Initiative", m: "m6", d: "An Abrahamic interfaith coalition against the anomalous." },
+  // m7
+  { t: "There Is No Canon", m: "m7", d: "The wiki has no single continuity. Stories may contradict each other." },
+  { t: "Canon", m: "m7", d: "An opt-in shared setting with its own hub, e.g. Third Law." },
+  { t: "Tale", m: "m7", d: "A short story set in the SCP universe rather than a containment file." },
+  { t: "Hub", m: "m7", d: "A page collecting related files and tales." },
+  { t: "Series", m: "m7", d: "A block of 1,000 designations. Round numbers go to contest winners." },
+  { t: "-J", m: "m7", d: "A joke article." },
+  { t: "-EX", m: "m7", d: "An Explained article." },
+  { t: "International branch", m: "m7", d: "A separate wiki in another language, e.g. SCP-JP, SCP-RU." },
+  { t: "GoI format", m: "m7", d: "An article written as another organization's document." },
+  { t: "CC BY-SA 3.0", m: "m7", d: "The wiki's licence: adapt freely with credit and the same licence." }
+];
+
+const PATHS = [
+  { id: "p1", name: "Day One", sub: "Short, foundational, and the format at its cleanest.", files: [
+    { n: "SCP-173", t: "The Sculpture - The Original", c: "euclid", u: "scp-173", why: "The file that started everything. A good first look at how procedures and description work together." },
+    { n: "SCP-914", t: "The Clockworks", c: "safe", u: "scp-914", why: "Safe class, with test logs that are by turns funny and horrifying. Shows why the addenda matter." },
+    { n: "SCP-999", t: "The Tickle Monster", c: "safe", u: "scp-999", why: "The wiki's gentle side. Proof that not everything here is horror." },
+    { n: "SCP-087", t: "The Stairwell", c: "euclid", u: "scp-087", why: "Built around exploration logs. Pure atmosphere." }
+  ]},
+  { id: "p2", name: "Archetypes", sub: "Files the whole fandom references. You'll see them everywhere.", files: [
+    { n: "SCP-682", t: "Hard-to-Destroy Reptile", c: "keter", u: "scp-682", why: "The unkillable Keter. Its termination logs show why the Foundation contains rather than destroys." },
+    { n: "SCP-096", t: "The \"Shy Guy\"", c: "euclid", u: "scp-096", why: "A textbook visual cognitohazard trigger." },
+    { n: "SCP-106", t: "The Old Man", c: "keter", u: "scp-106", why: "Notorious recontainment procedures. Read them closely." },
+    { n: "SCP-049", t: "Plague Doctor", c: "euclid", u: "scp-049", why: "Interview logs with a sapient anomaly that follows its own logic." },
+    { n: "SCP-3008", t: "A Perfectly Normal, Regular Old IKEA", c: "euclid", u: "scp-3008", why: "Comedy that turns into survival horror. A modern favourite." }
+  ]},
+  { id: "p3", name: "Concepts in Action", sub: "Each file shows one idea from your briefings at its best.", files: [
+    { n: "SCP-055", t: "[unknown]", c: "keter", u: "scp-055", why: "Antimemetics, explained through what isn't there." },
+    { n: "SCP-140", t: "An Incomplete Chronicle", c: "keter", u: "scp-140", why: "An infohazard that acts on history itself." },
+    { n: "SCP-2521", t: "●●|●●●●●|●●|●", c: "keter", u: "scp-2521", why: "An anomaly that reacts to writing about it. The file's format is part of the idea." },
+    { n: "SCP-2317", t: "A Door to Another World", c: "keter", u: "scp-2317", why: "Procedures that hint at an apocalypse. Practise reading them first." },
+    { n: "SCP-1730", t: "What Happened to Site-13?", c: "", u: "scp-1730", why: "Incident reports and a site-scale mystery." },
+    { n: "SCP-3001", t: "Red Reality", c: "", u: "scp-3001", why: "Hume levels, and an exploration log you won't forget." },
+    { n: "SCP-239", t: "The Witch Child", c: "", u: "scp-239", why: "A Type Green reality bender and the problem of containing one." },
+    { n: "SCP-2000", t: "Deus Ex Machina", c: "thaumiel", u: "scp-2000", why: "Thaumiel class and the XK-Class fallback plan." },
+    { n: "SCP-3125", t: "The Escapee", c: "", u: "scp-3125", why: "A memetic threat on an abstract scale. Antimemetics Division adjacent." },
+    { n: "SCP-3999", t: "I Am At The Center of Everything That Happens to Me", c: "", u: "scp-3999", why: "Pataphysics. Read it after you know the format well, because it takes the format apart." }
+  ]},
+  { id: "p4", name: "Range & Voice", sub: "How far the form can stretch.", files: [
+    { n: "SCP-426", t: "I am a toaster", c: "", u: "scp-426", why: "Written in the first person, for a reason." },
+    { n: "SCP-4999", t: "Someone to Watch Over Us", c: "", u: "scp-4999", why: "Short and quietly moving." },
+    { n: "SCP-1000", t: "Bigfoot", c: "", u: "scp-1000", why: "A familiar myth, recast. The longer history behind it is the point." }
+  ]},
+  { id: "p5", name: "Long Reads", sub: "Best after twenty or so files, once the vocabulary comes naturally.", files: [
+    { n: "HUB", t: "There Is No Antimemetics Division", c: "", u: "antimemetics-division-hub", why: "qntm's serialized novel. Marion Wheeler, mnestics, and a war no one can remember." },
+    { n: "SCP-5000", t: "Why?", c: "", u: "scp-5000", why: "Format-breaking and divisive. Go in knowing as little as possible." },
+    { n: "SCP-6000", t: "The Serpent, the Moose, and the Wanderers' Library", c: "", u: "scp-6000", why: "The Serpent's Hand, the Wanderers' Library and Director Moose." },
+    { n: "HUB", t: "SCP-001 Proposals", c: "", u: "scp-001", why: "Many competing answers to the same question, side by side." },
+    { n: "HUB", t: "Canon Hub", c: "", u: "canon-hub", why: "Pick a canon and follow it." }
+  ]}
+];
+const ALL_FILES = PATHS.flatMap(function (p) { return p.files; });
+
+const FINAL_PASS = 8, FINAL_LEN = 10;
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+const KEY = "scpf-orientation-v1";
+function fresh() {
+  return { profile: null, briefed: {}, passed: {}, finalPassed: false, read: {},
+           settings: { ooc: true, haptics: true, reveal: false } };
+}
+let S = fresh();
+try {
+  const raw = localStorage.getItem(KEY);
+  if (raw) {
+    const p = JSON.parse(raw);
+    S = Object.assign(fresh(), p);
+    S.settings = Object.assign(fresh().settings, p.settings || {});
+  }
+} catch (e) { /* storage unavailable: run in memory */ }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+function passedCount() { return MODULES.filter(function (m) { return S.passed[m.id]; }).length; }
+function level() {
+  if (S.finalPassed) return 4;
+  const c = passedCount();
+  return c >= 7 ? 3 : c >= 4 ? 2 : c >= 2 ? 1 : 0;
+}
+function nextLevelNote() {
+  const L = level(), c = passedCount();
+  if (L >= 4) return "Maximum clearance this terminal can issue. Level 5 is granted only by the O5 Council.";
+  if (L === 3) return "Pass the certification exam for Level 4.";
+  const need = L === 0 ? 2 : L === 1 ? 4 : 7;
+  const left = need - c;
+  return left + " more briefing" + (left === 1 ? "" : "s") + " to Level " + (L + 1) + ".";
+}
+function isUnlocked(entry) { return S.settings.reveal || !!S.briefed[entry.m]; }
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+const $ = function (s, r) { return (r || document).querySelector(s); };
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function buzz(p) {
+  if (!S.settings.haptics) return;
+  try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {}
+}
+let toastT;
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, 2200);
+}
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+function redactLine(s) { return s.split(" ").map(function (w) { return '<span class="rx">' + "x".repeat(Math.max(2, w.length)) + "</span>"; }).join(" "); }
+function clsChip(c) { return c ? '<span class="chip c-' + c + '">' + c + "</span>" : '<span class="chip">Read to find out</span>'; }
+
+const ICONS = {
+  brief: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18M8 13h8M8 16h5"/></svg>',
+  modules: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2"/></svg>',
+  lexicon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/><path d="M9 8h6"/></svg>',
+  archive: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h18v13H3z"/><path d="M5 4h14v3H5z"/><path d="M10 12h4"/></svg>',
+  id: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="9" cy="11" r="2.2"/><path d="M5.5 16c.8-1.6 2-2.3 3.5-2.3s2.7.7 3.5 2.3M14 10h4M14 13h3"/></svg>',
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>'
+};
+function logoSVG() {
+  let arrows = "";
+  [0, 120, 240].forEach(function (a) {
+    arrows += '<g transform="rotate(' + a + ' 50 50)"><rect x="46.5" y="2" width="7" height="20" fill="currentColor"/><polygon points="38,20 62,20 50,34" fill="currentColor"/></g>';
+  });
+  return '<circle cx="50" cy="50" r="38" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="50" cy="50" r="13" fill="none" stroke="currentColor" stroke-width="6"/>' + arrows;
+}
+
+/* =====================================================================
+   SHELL + TABS
+   ===================================================================== */
+const TABS = [["brief", "Brief"], ["modules", "Briefings"], ["lexicon", "Lexicon"], ["archive", "Archive"], ["id", "ID"]];
+let tab = "brief";
+
+function renderShell() {
+  $("#logo").innerHTML = logoSVG();
+  $("#tabs").innerHTML = TABS.map(function (t) {
+    return '<button class="tab" data-tab="' + t[0] + '">' + ICONS[t[0]] + "<span>" + t[1] + "</span></button>";
+  }).join("");
+  $("#tabs").addEventListener("click", function (e) {
+    const b = e.target.closest("[data-tab]"); if (!b) return;
+    go(b.dataset.tab, true);
+  });
+  $("#shClose").innerHTML = ICONS.close;
+}
+function updateChrome() {
+  const L = level();
+  $("#clrChip").textContent = "LVL " + L;
+  $("#clrChip").setAttribute("aria-label", "Clearance level " + L + ", " + LEVELS[L].name);
+  $("#topSub").textContent = S.profile ? S.profile.site + " · " + S.profile.id : "Personnel Terminal";
+  document.querySelectorAll(".tab").forEach(function (b) {
+    if (b.dataset.tab === tab) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+  });
+}
+function go(t, push) {
+  if (!VIEWS[t]) t = "brief";
+  tab = t;
+  if (push) { try { history.pushState({ tab: t }, ""); } catch (e) {} }
+  render();
+  window.scrollTo(0, 0);
+}
+function render() {
+  $("#view").innerHTML = '<div class="wrap">' + VIEWS[tab]() + "</div>";
+  updateChrome();
+}
+
+/* =====================================================================
+   VIEWS
+   ===================================================================== */
+const VIEWS = {
+brief: function () {
+  const L = level();
+  const h = new Date().getHours();
+  const greet = h < 5 ? "Working late" : h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+  const name = S.profile ? S.profile.name : "Agent";
+  const next = MODULES.find(function (m) { return !S.passed[m.id]; });
+  const day = Math.floor(Date.now() / 86400000);
+  const term = LEX[day % LEX.length];
+  const nextFile = ALL_FILES.find(function (f) { return !S.read[f.u]; });
+  const declass = LEX.filter(isUnlocked).length;
+  const readN = ALL_FILES.filter(function (f) { return S.read[f.u]; }).length;
+
+  let segs = "", lbls = "";
+  for (let i = 0; i <= 5; i++) {
+    segs += '<div class="' + (i === 5 ? "lock" : i <= L ? "on" : "") + '"></div>';
+    lbls += "<span>L" + i + "</span>";
+  }
+
+  let nextCard;
+  if (next) {
+    nextCard = '<div class="doc stack"><div class="doc-h" style="margin-bottom:0"><span class="eyebrow">Next briefing</span><span class="eyebrow">' + next.code + '</span></div>' +
+      '<h2 class="h2">' + next.title + '</h2><p class="small">' + next.sub + '</p>' +
+      '<button class="btn pri block" data-open="' + next.id + '">' + (S.briefed[next.id] ? "Resume: take assessment" : "Begin briefing") + "</button></div>";
+  } else if (!S.finalPassed) {
+    nextCard = '<div class="doc stack"><div class="doc-h" style="margin-bottom:0"><span class="eyebrow">All briefings cleared</span><span class="eyebrow">CERT</span></div>' +
+      '<h2 class="h2">Certification exam</h2><p class="small">' + FINAL_LEN + " questions from every briefing. Pass " + FINAL_PASS + " to receive Level 4.</p>" +
+      '<button class="btn pri block" data-final="1">Sit the exam</button></div>';
+  } else {
+    nextCard = '<div class="doc stack"><span class="eyebrow">Orientation complete</span><h2 class="h2">You are cleared for field reading</h2><p class="small">Keep working through the Archive. The Lexicon is your reference.</p><button class="btn pri block" data-tab-go="archive">Open the Archive</button></div>';
+  }
+
+  return '<section class="greet"><p class="eyebrow">' + greet + "</p>" +
+    '<h1 class="display">Agent ' + esc(name) + "</h1></section>" +
+
+    '<section class="doc"><div class="doc-h"><span class="eyebrow">Security clearance</span><span class="eyebrow num">LEVEL ' + L + "</span></div>" +
+    '<p class="h3">' + LEVELS[L].name + "</p>" +
+    '<div class="segs" aria-hidden="true">' + segs + '</div><div class="seg-lbl" aria-hidden="true">' + lbls + "</div>" +
+    '<p class="small" style="margin-top:10px">' + nextLevelNote() + "</p></section>" +
+
+    nextCard +
+
+    '<section class="stats" aria-label="Progress">' +
+      '<div><b>' + passedCount() + '/7</b><span>Briefings cleared</span></div>' +
+      '<div><b>' + declass + "/" + LEX.length + '</b><span>Terms declassified</span></div>' +
+      '<div><b>' + readN + "/" + ALL_FILES.length + '</b><span>Files read</span></div>' +
+    "</section>" +
+
+    '<section class="doc stack"><div class="doc-h" style="margin-bottom:0"><span class="eyebrow">Declassified today</span><span class="eyebrow">' + MODULES.find(function (m) { return m.id === term.m; }).code + "</span></div>" +
+      '<h2 class="h2">' + esc(term.t) + "</h2><p>" + esc(term.d) + "</p>" +
+      (term.o ? '<p class="lx-ooc">' + esc(term.o) + "</p>" : "") + "</section>" +
+
+    (nextFile ? '<section class="doc stack"><div class="doc-h" style="margin-bottom:0"><span class="eyebrow">Reading queue</span><span class="eyebrow">' + esc(nextFile.n) + "</span></div>" +
+      '<h2 class="h3">' + esc(nextFile.t) + '</h2><p class="small">' + esc(nextFile.why) + "</p>" +
+      '<div class="row"><a class="btn sm" href="' + W + nextFile.u + '" target="_blank" rel="noopener">Open on the wiki ↗</a><button class="btn sm ghost" data-read="' + nextFile.u + '">Mark as read</button></div></section>' : "");
+},
+
+modules: function () {
+  const items = MODULES.map(function (m, i) {
+    const st = S.passed[m.id] ? '<span class="chip c-safe">Cleared ' + S.passed[m.id] + "/4</span>"
+      : S.briefed[m.id] ? '<span class="chip c-accent">Assessment due</span>'
+      : '<span class="chip">Unread</span>';
+    return '<button class="mod" data-open="' + m.id + '"><div class="mn"><small>ORI</small><b class="num">0' + (i + 1) + '</b></div>' +
+      '<div class="mb"><div class="row"><span class="eyebrow">' + m.short + "</span>" + st + "</div>" +
+      '<span class="h3">' + m.title + '</span><span class="small">' + m.sub + "</span></div></button>";
+  }).join("");
+  const allDone = passedCount() === 7;
+  const fin = '<button class="mod' + (allDone ? "" : " locked") + '" data-final="1"' + (allDone ? "" : ' aria-disabled="true"') + '><div class="mn"><small>CERT</small><b>★</b></div>' +
+    '<div class="mb"><div class="row"><span class="eyebrow">Certification</span>' +
+    (S.finalPassed ? '<span class="chip c-safe">Passed</span>' : allDone ? '<span class="chip c-accent">Available</span>' : '<span class="chip">Requires Level 3</span>') +
+    '</div><span class="h3">Certification exam</span><span class="small">' + FINAL_LEN + " mixed questions. Pass " + FINAL_PASS + " for Level 4.</span></div></button>";
+  return '<section><p class="eyebrow">Orientation programme</p><h1 class="display">Briefings</h1></section>' +
+    '<p class="small">Take them in order. Each briefing ends with a four-question assessment; score 3 or more to clear it. Finishing a briefing declassifies its Lexicon entries.</p>' +
+    '<div class="stack">' + items + fin + "</div>";
+},
+
+lexicon: function () {
+  const chips = [["all", "All"]].concat(MODULES.map(function (m) { return [m.id, m.short]; }));
+  const declass = LEX.filter(isUnlocked).length;
+  return '<section><p class="eyebrow">Reference</p><h1 class="display">Lexicon</h1></section>' +
+    '<p class="small num">' + declass + " of " + LEX.length + " entries declassified" + (S.settings.reveal ? " (override active)" : "") + ". Entries open when you finish the matching briefing.</p>" +
+    '<input class="search" id="lxq" type="search" placeholder="Search terms" aria-label="Search the lexicon" autocomplete="off" value="' + esc(lexQ) + '">' +
+    '<div class="filters" role="group" aria-label="Filter by briefing">' + chips.map(function (c) {
+      return '<button class="fbtn" data-lf="' + c[0] + '" aria-pressed="' + (lexF === c[0]) + '">' + c[1] + "</button>";
+    }).join("") + "</div>" +
+    '<div class="stack" id="lxList">' + lexList() + "</div>";
+},
+
+archive: function () {
+  const readN = ALL_FILES.filter(function (f) { return S.read[f.u]; }).length;
+  return '<section><p class="eyebrow">Assigned reading</p><h1 class="display">Archive</h1></section>' +
+    '<p class="small num">' + readN + " of " + ALL_FILES.length + " read. Files open on scp-wiki.wikidot.com. Some wiki articles show a content warning at the top; it's worth reading before you scroll on.</p>" +
+    PATHS.map(function (p) {
+      return '<section class="stack"><div class="path-h"><span class="eyebrow">Path</span><h2 class="h2">' + p.name + '</h2><p class="small">' + p.sub + "</p></div>" +
+        p.files.map(function (f) {
+          const r = !!S.read[f.u];
+          return '<article class="file' + (r ? " read" : "") + '"><div class="fh"><span class="fnum">' + esc(f.n) + "</span>" + (f.n === "HUB" ? '<span class="chip">Hub</span>' : clsChip(f.c)) + "</div>" +
+            '<div class="fb"><h3 class="h3">' + esc(f.t) + '</h3><p class="small">' + esc(f.why) + "</p>" +
+            '<div class="row"><a class="btn sm" href="' + W + f.u + '" target="_blank" rel="noopener">Open on the wiki ↗</a>' +
+            '<button class="btn sm ghost" data-read="' + f.u + '" aria-pressed="' + r + '">' + (r ? "Read ✓" : "Mark as read") + "</button></div></div></article>";
+        }).join("") + "</section>";
+    }).join("");
+},
+
+id: function () {
+  const p = S.profile || { name: "Unregistered", id: "AGT-0000-X", site: "Site-19", issued: "—" };
+  const L = level();
+  const initials = p.name.split(/\s+/).map(function (w) { return w[0] || ""; }).join("").slice(0, 2).toUpperCase();
+  const sw = function (k, label, sub) {
+    return '<div class="toggle"><div class="tl"><div class="h3" style="font-size:15px">' + label + '</div><div class="small">' + sub + "</div></div>" +
+      '<button class="sw" role="switch" data-set="' + k + '" aria-checked="' + !!S.settings[k] + '" aria-label="' + label + '"></button></div>';
+  };
+  return '<section><p class="eyebrow">Personnel record</p><h1 class="display">Identification</h1></section>' +
+    '<article class="badge"><div class="bt"><svg class="logo" viewBox="0 0 100 100" aria-hidden="true">' + logoSVG() + '</svg><div><b>SCP FOUNDATION</b><small>SECURE · CONTAIN · PROTECT</small></div></div>' +
+    '<div class="stripe"></div>' +
+    '<div class="bb"><div class="photo" aria-hidden="true">' + esc(initials) + '</div><div class="fields">' +
+      '<div class="full"><small>Designation</small><b>Agent ' + esc(p.name) + "</b></div>" +
+      '<div><small>Personnel No.</small><b class="mono">' + esc(p.id) + "</b></div>" +
+      '<div><small>Assignment</small><b>' + esc(p.site) + "</b></div>" +
+      '<div><small>Clearance</small><b>Level ' + L + "</b></div>" +
+      '<div><small>Class</small><b>C · Field</b></div>' +
+      '<div class="full"><small>Clearance name</small><b>' + LEVELS[L].name + "</b></div>" +
+      '<div class="full"><small>Issued</small><b class="mono">' + esc(p.issued) + "</b></div>" +
+    "</div></div>" +
+    '<div class="bf">' + barcode(p.id) + '<span class="small mono">' + esc(p.id) + " · RAISA</span></div></article>" +
+
+    '<section class="doc"><div class="doc-h"><span class="eyebrow">Terminal settings</span></div>' +
+      sw("ooc", "Reader's notes", "Show out-of-character notes about how each idea appears on the wiki.") +
+      sw("haptics", "Haptic feedback", "Vibrate on answers. Android only; ignored elsewhere.") +
+      sw("reveal", "Clearance override", "Declassify every Lexicon entry now, for use as a reference.") +
+    "</section>" +
+
+    '<section class="doc stack"><div class="doc-h" style="margin-bottom:0"><span class="eyebrow">Change designation</span></div>' +
+      '<form class="field-in" id="nameForm"><input class="search" id="nameIn" maxlength="28" value="' + esc(S.profile ? S.profile.name : "") + '" aria-label="Designation" autocomplete="off"><button class="btn" type="submit">Save</button></form></section>' +
+
+    '<section class="doc stack"><div class="doc-h" style="margin-bottom:0"><span class="eyebrow">Sources and licence</span></div>' +
+      '<p class="small">Concepts summarized from the <a href="' + W + '" target="_blank" rel="noopener">SCP Wiki</a>, licensed <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>. Orientation text, quizzes and SCP-TRN-07 are original to this app and shared under the same licence.</p>' +
+      '<div class="row"><a class="btn sm ghost" href="' + W + 'object-classes" target="_blank" rel="noopener">Object Classes ↗</a>' +
+      '<a class="btn sm ghost" href="' + W + 'security-clearance-levels" target="_blank" rel="noopener">Clearance Levels ↗</a>' +
+      '<a class="btn sm ghost" href="' + W + 'groups-of-interest" target="_blank" rel="noopener">Groups of Interest ↗</a>' +
+      '<a class="btn sm ghost" href="' + W + 'guide-hub" target="_blank" rel="noopener">Guide Hub ↗</a></div></section>' +
+
+    '<section class="doc stack"><div class="doc-h" style="margin-bottom:0"><span class="eyebrow">Reset</span></div>' +
+      '<p class="small">Erase your record and start orientation again. This can’t be undone.</p>' +
+      (confirmReset ? '<div class="row"><button class="btn danger" data-reset="yes">Erase my record</button><button class="btn ghost" data-reset="no">Keep it</button></div>'
+                    : '<button class="btn ghost" data-reset="ask">Reset progress</button>') + "</section>";
+}
+};
+
+let lexQ = "", lexF = "all", confirmReset = false;
+
+function lexList() {
+  const q = lexQ.trim().toLowerCase();
+  const rows = LEX.filter(function (e) {
+    if (lexF !== "all" && e.m !== lexF) return false;
+    if (!q) return true;
+    return (e.t + " " + (isUnlocked(e) ? e.d + " " + (e.o || "") : "")).toLowerCase().indexOf(q) >= 0;
+  });
+  if (!rows.length) return '<p class="small">No entries match “' + esc(lexQ) + '”. Try a shorter search or another filter.</p>';
+  return rows.map(function (e) {
+    const mod = MODULES.find(function (m) { return m.id === e.m; });
+    if (!isUnlocked(e)) {
+      return '<article class="lx locked"><div class="lx-h"><h3 class="h3">' + esc(e.t) + '</h3><span class="chip c-stamp">Classified</span></div>' +
+        "<p>" + redactLine(e.d) + '</p><p class="small">Declassified on completing ' + mod.code + " · " + mod.title + ".</p></article>";
+    }
+    return '<article class="lx"><div class="lx-h"><h3 class="h3">' + esc(e.t) + '</h3><span class="chip">' + mod.code + "</span></div>" +
+      "<p>" + esc(e.d) + "</p>" + (e.o && S.settings.ooc ? '<p class="lx-ooc">' + esc(e.o) + "</p>" : "") + "</article>";
+  }).join("");
+}
+
+function barcode(seed) {
+  let h = 0; for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  let x = 0, rects = "";
+  while (x < 300) {
+    h = (h * 1103515245 + 12345) >>> 0;
+    const w = 1 + (h >>> 28) % 4;
+    if ((h >>> 8) & 1) rects += '<rect x="' + x + '" y="0" width="' + w + '" height="40" fill="currentColor"/>';
+    x += w + 1;
+  }
+  return '<svg class="barcode" viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true">' + rects + "</svg>";
+}
+
+/* =====================================================================
+   GLOBAL EVENTS (main view)
+   ===================================================================== */
+document.addEventListener("click", function (e) {
+  const t = e.target.closest("[data-open],[data-final],[data-read],[data-lf],[data-set],[data-reset],[data-tab-go]");
+  if (!t || t.closest("#sheet") || t.closest("#boot")) return;
+  if (t.dataset.open) { openModule(t.dataset.open); return; }
+  if (t.dataset.final) {
+    if (passedCount() < 7) { toast("Clear all seven briefings first"); return; }
+    openFinal(); return;
+  }
+  if (t.dataset.tabGo) { go(t.dataset.tabGo, true); return; }
+  if (t.dataset.read) {
+    const u = t.dataset.read;
+    if (S.read[u]) delete S.read[u]; else S.read[u] = Date.now();
+    save(); buzz(15); toast(S.read[u] ? "Marked as read" : "Marked as unread");
+    const y = window.scrollY; render(); window.scrollTo(0, y); return;
+  }
+  if (t.dataset.lf) { lexF = t.dataset.lf; render(); return; }
+  if (t.dataset.set) {
+    const k = t.dataset.set; S.settings[k] = !S.settings[k]; save(); buzz(10);
+    const y = window.scrollY; render(); window.scrollTo(0, y); return;
+  }
+  if (t.dataset.reset) {
+    if (t.dataset.reset === "ask") confirmReset = true;
+    else if (t.dataset.reset === "no") confirmReset = false;
+    else { S = fresh(); save(); confirmReset = false; tab = "brief"; render(); boot(); return; }
+    render(); return;
+  }
+});
+document.addEventListener("input", function (e) {
+  if (e.target.id === "lxq") { lexQ = e.target.value; $("#lxList").innerHTML = lexList(); }
+});
+document.addEventListener("submit", function (e) {
+  if (e.target.id === "nameForm") {
+    e.preventDefault();
+    const v = $("#nameIn").value.trim();
+    if (!v) { toast("Enter a designation first"); return; }
+    if (S.profile) { S.profile.name = v; save(); toast("Designation updated"); render(); }
+  }
+});
+
+/* =====================================================================
+   BRIEFING SHEET
+   ===================================================================== */
+let sh = null;          // { mode, mod, i, quiz... }
+let sheetPushed = false;
+
+function openSheet() {
+  $("#sheet").hidden = false;
+  document.body.style.overflow = "hidden";
+  try { history.pushState({ sheet: 1, tab: tab }, ""); sheetPushed = true; } catch (e) { sheetPushed = false; }
+}
+function hideSheet() {
+  $("#sheet").hidden = true;
+  document.body.style.overflow = "";
+  sh = null;
+  render();
+}
+function closeSheet() {
+  if (sheetPushed) { sheetPushed = false; history.back(); } else hideSheet();
+}
+window.addEventListener("popstate", function (e) {
+  if (!$("#sheet").hidden) { sheetPushed = false; hideSheet(); return; }
+  const st = e.state || {};
+  tab = VIEWS[st.tab] ? st.tab : "brief";
+  render();
+});
+$("#shClose").addEventListener("click", closeSheet);
+$("#oocTg").addEventListener("click", function () {
+  S.settings.ooc = !S.settings.ooc; save(); buzz(10); renderSheet();
+});
+
+function openModule(id) {
+  const mod = MODULES.find(function (m) { return m.id === id; });
+  sh = { mode: "lesson", mod: mod, i: 0 };
+  sorter = { i: 0, score: 0, pick: null };
+  openSheet(); renderSheet();
+}
+function openFinal() {
+  const pool = shuffle(MODULES.flatMap(function (m) { return m.quiz.map(function (q) { return Object.assign({ from: m.code }, q); }); })).slice(0, FINAL_LEN);
+  sh = { mode: "quiz", final: true, mod: { code: "CERT", title: "Certification exam", id: "final" }, qs: prepQs(pool), qi: 0, pick: null, score: 0 };
+  openSheet(); renderSheet();
+}
+function prepQs(list) {
+  return list.map(function (q) {
+    return { q: q.q, why: q.why, from: q.from, opts: shuffle(q.a.map(function (t, i) { return { t: t, ok: i === 0 }; })) };
+  });
+}
+function startQuiz() {
+  sh = { mode: "quiz", mod: sh.mod, qs: prepQs(sh.mod.quiz), qi: 0, pick: null, score: 0 };
+  renderSheet();
+}
+
+function renderSheet() {
+  if (!sh) return;
+  $("#oocTg").setAttribute("aria-pressed", String(!!S.settings.ooc));
+  $("#oocTg").hidden = sh.mode !== "lesson";
+  $("#shCode").textContent = sh.mod.code + (sh.mode === "quiz" ? " · ASSESSMENT" : sh.mode === "result" ? " · RESULT" : " · BRIEFING");
+  $("#shTitle").textContent = sh.mod.title;
+
+  let total, cur;
+  if (sh.mode === "lesson") { total = sh.mod.cards.length; cur = sh.i; }
+  else if (sh.mode === "quiz") { total = sh.qs.length; cur = sh.qi; }
+  else { total = 1; cur = 0; }
+  let dots = "";
+  for (let i = 0; i < total; i++) dots += '<i class="' + (i <= cur ? "on" : "") + '"></i>';
+  $("#shDots").innerHTML = dots;
+
+  const body = $("#shIn"), foot = $("#shFoot");
+  if (sh.mode === "lesson") {
+    const c = sh.mod.cards[sh.i];
+    body.innerHTML = '<div class="stack card-anim"><p class="eyebrow num">Card ' + (sh.i + 1) + " of " + total + "</p>" +
+      '<h2 class="display">' + c.h + "</h2>" +
+      '<div class="prose">' + c.ic + "</div>" +
+      (c.w ? widget(c.w) : "") +
+      (S.settings.ooc ? '<aside class="ooc"><span class="ooc-lbl">Out of character · Reader’s note</span><div class="prose">' + c.ooc + "</div></aside>" : "") +
+      "</div>";
+    const last = sh.i === total - 1;
+    foot.innerHTML = '<button class="btn ghost" data-sh="prev"' + (sh.i === 0 ? " disabled" : "") + ">Back</button>" +
+      '<button class="btn pri" data-sh="' + (last ? "quiz" : "next") + '">' + (last ? "Begin assessment" : "Next") + "</button>";
+  } else if (sh.mode === "quiz") {
+    const q = sh.qs[sh.qi], picked = sh.pick !== null;
+    body.innerHTML = '<div class="stack card-anim"><p class="eyebrow num">Question ' + (sh.qi + 1) + " of " + total + (q.from ? " · " + q.from : "") + "</p>" +
+      '<h2 class="q">' + esc(q.q) + "</h2>" +
+      '<div class="opts-q">' + q.opts.map(function (o, i) {
+        let cls = "";
+        if (picked) { if (o.ok) cls = " ok"; else if (i === sh.pick) cls = " bad"; }
+        return '<button class="opt' + cls + '" data-pick="' + i + '"' + (picked ? " disabled" : "") + '><span class="k">' + "ABCD"[i] + "</span><span>" + esc(o.t) + "</span></button>";
+      }).join("") + "</div>" +
+      (picked ? '<div class="verdict" role="status"><b class="' + (q.opts[sh.pick].ok ? "c-safe" : "c-keter") + '">' + (q.opts[sh.pick].ok ? "CORRECT" : "INCORRECT") + "</b>" + esc(q.why) + "</div>" : "") +
+      "</div>";
+    foot.innerHTML = picked
+      ? '<button class="btn pri" data-sh="qnext">' + (sh.qi === total - 1 ? "See result" : "Next question") + "</button>"
+      : '<button class="btn ghost" disabled>Choose an answer</button>';
+  } else {
+    body.innerHTML = sh.html;
+    foot.innerHTML = sh.foot;
+  }
+  $("#shBody").scrollTop = 0;
+}
+
+$("#sheet").addEventListener("click", function (e) {
+  const b = e.target.closest("[data-sh],[data-pick],[data-seg],[data-sort],[data-sortnext]");
+  if (!b || !sh) return;
+  if (b.dataset.seg !== undefined) {
+    const open = b.getAttribute("aria-expanded") === "true";
+    b.setAttribute("aria-expanded", String(!open));
+    $("#segn" + b.dataset.seg).hidden = open;
+    buzz(8); return;
+  }
+  if (b.dataset.sort) { sortPick(b.dataset.sort); return; }
+  if (b.dataset.sortnext) { sorter.i++; sorter.pick = null; refreshSorter(); return; }
+  if (b.dataset.pick !== undefined) {
+    if (sh.pick !== null) return;
+    sh.pick = +b.dataset.pick;
+    const ok = sh.qs[sh.qi].opts[sh.pick].ok;
+    if (ok) { sh.score++; buzz(20); } else buzz([40, 60, 40]);
+    const y = $("#shBody").scrollTop; renderSheet(); $("#shBody").scrollTop = y;
+    return;
+  }
+  const a = b.dataset.sh;
+  if (a === "next") { sh.i++; renderSheet(); }
+  else if (a === "prev") { if (sh.i > 0) { sh.i--; renderSheet(); } }
+  else if (a === "quiz") { S.briefed[sh.mod.id] = true; save(); startQuiz(); }
+  else if (a === "qnext") {
+    if (sh.qi < sh.qs.length - 1) { sh.qi++; sh.pick = null; renderSheet(); }
+    else finishQuiz();
+  }
+  else if (a === "close") closeSheet();
+  else if (a === "retry") { if (sh.final) openFinalInPlace(); else { sh = { mode: "lesson", mod: sh.mod, i: 0 }; startQuiz(); } }
+  else if (a === "review") { sh = { mode: "lesson", mod: sh.mod, i: 0 }; sorter = { i: 0, score: 0, pick: null }; renderSheet(); }
+});
+function openFinalInPlace() {
+  const pool = shuffle(MODULES.flatMap(function (m) { return m.quiz.map(function (q) { return Object.assign({ from: m.code }, q); }); })).slice(0, FINAL_LEN);
+  sh = { mode: "quiz", final: true, mod: sh.mod, qs: prepQs(pool), qi: 0, pick: null, score: 0 };
+  renderSheet();
+}
+
+function finishQuiz() {
+  const before = level();
+  const total = sh.qs.length, score = sh.score;
+  const need = sh.final ? FINAL_PASS : 3;
+  const pass = score >= need;
+  if (pass) {
+    if (sh.final) S.finalPassed = true;
+    else S.passed[sh.mod.id] = Math.max(S.passed[sh.mod.id] || 0, score);
+    save();
+  }
+  const after = level();
+  const up = after > before;
+  buzz(pass ? (up ? [30, 50, 30, 50, 80] : [30, 40, 30]) : [80]);
+  const nextMod = MODULES.find(function (m) { return !S.passed[m.id]; });
+
+  let html = '<div class="stack card-anim">' +
+    '<span class="stamp' + (pass ? " pass" : "") + '">' + (pass ? "Cleared" : "Not cleared") + "</span>" +
+    '<h2 class="display num">' + score + " / " + total + "</h2>" +
+    '<p>' + (pass ? (sh.final ? "Certification complete. Your record has been updated." : "Briefing cleared. Its Lexicon entries are declassified.")
+                 : "You need " + need + " correct to clear this " + (sh.final ? "exam" : "briefing") + ". Review the material and try again.") + "</p>";
+  if (up) {
+    html += '<div class="doc stack"><div class="doc-h" style="margin-bottom:0"><span class="eyebrow">Clearance updated</span><span class="eyebrow num">LEVEL ' + before + " → " + after + "</span></div>" +
+      '<p class="h2">Level ' + after + " · " + LEVELS[after].name + '</p><p class="small">' + LEVELS[after].d + "</p></div>";
+  }
+  html += "</div>";
+
+  let foot;
+  if (pass) {
+    if (!sh.final && nextMod) foot = '<button class="btn ghost" data-sh="close">Done</button><button class="btn pri" data-next-mod="' + nextMod.id + '">Next: ' + nextMod.code + "</button>";
+    else if (!sh.final && passedCount() === 7 && !S.finalPassed) foot = '<button class="btn ghost" data-sh="close">Done</button><button class="btn pri" data-go-final="1">Certification exam</button>';
+    else foot = '<button class="btn pri" data-sh="close">Return to terminal</button>';
+  } else {
+    foot = (sh.final ? "" : '<button class="btn ghost" data-sh="review">Review cards</button>') + '<button class="btn pri" data-sh="retry">Try again</button>';
+  }
+  sh = { mode: "result", mod: sh.mod, final: sh.final, html: html, foot: foot };
+  renderSheet();
+}
+$("#shFoot").addEventListener("click", function (e) {
+  const n = e.target.closest("[data-next-mod]");
+  if (n) { const mod = MODULES.find(function (m) { return m.id === n.dataset.nextMod; }); sh = { mode: "lesson", mod: mod, i: 0 }; sorter = { i: 0, score: 0, pick: null }; renderSheet(); return; }
+  const f = e.target.closest("[data-go-final]");
+  if (f) { sh = { mod: { code: "CERT", title: "Certification exam", id: "final" }, final: true }; openFinalInPlace(); }
+});
+
+/* swipe between cards */
+(function () {
+  let x0 = null, y0 = null;
+  const el = $("#shBody");
+  el.addEventListener("touchstart", function (e) { const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; }, { passive: true });
+  el.addEventListener("touchend", function (e) {
+    if (x0 === null || !sh || sh.mode !== "lesson") { x0 = null; return; }
+    const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0;
+    x0 = null;
+    if (Math.abs(dx) < 70 || Math.abs(dy) > 50) return;
+    if (dx < 0 && sh.i < sh.mod.cards.length - 1) { sh.i++; buzz(6); renderSheet(); }
+    else if (dx > 0 && sh.i > 0) { sh.i--; buzz(6); renderSheet(); }
+  }, { passive: true });
+})();
+
+/* =====================================================================
+   WIDGETS
+   ===================================================================== */
+let sorter = { i: 0, score: 0, pick: null };
+
+function widget(w) {
+  if (w === "specimen") {
+    return '<div class="spec"><div class="spec-head"><span>RAISA · TRAINING FILE</span><span>LEVEL 2</span></div>' +
+      SPECIMEN.map(function (s, i) {
+        return '<button class="seg" data-seg="' + i + '" aria-expanded="false" aria-controls="segn' + i + '"><span class="tag">' + s.tag + "</span>" + s.html + "</button>" +
+          '<div class="seg-note" id="segn' + i + '" hidden>' + esc(s.note) + "</div>";
+      }).join("") + "</div>";
+  }
+  if (w === "classes") {
+    return '<div class="classes">' + CLASSES.map(function (c) {
+      return '<div class="cls c-' + c.k + '"><h3>' + c.n + "</h3><p>" + c.d + '</p><span class="small mono">e.g. ' + c.ex + "</span></div>";
+    }).join("") + "</div>";
+  }
+  if (w === "levels") {
+    const L = level();
+    return '<div class="lvls">' + LEVELS.map(function (l) {
+      return '<div class="lvl' + (l.n === L ? " you" : "") + '"><div class="ln num">' + l.n + '</div><div class="lb"><span class="h3" style="font-size:15px">' + l.name + (l.n === L ? ' <span class="chip c-accent">You</span>' : "") + '</span><span class="small">' + l.d + "</span></div></div>";
+    }).join("") + "</div>";
+  }
+  if (w === "acs") {
+    const scale = function (arr, cur) { return '<div class="scale">' + arr.map(function (x, i) { return '<div class="' + (i === cur ? "cur" : "") + '">' + x[0] + "</div>"; }).join("") + "</div>"; };
+    const defs = function (arr) { return '<dl class="defs">' + arr.map(function (x) { return "<div><dt>" + x[0] + "</dt><dd>" + x[1] + "</dd></div>"; }).join("") + "</dl>"; };
+    return '<div class="stack"><p class="eyebrow">Example: SCP-TRN-07</p>' +
+      '<div class="acs-bar"><div><small>Containment class</small><b class="c-euclid">Euclid</b></div><div><small>Secondary class</small><b>None</b></div>' +
+      '<div><small>Disruption class</small><b>Dark</b></div><div><small>Risk class</small><b>Notice</b></div></div>' +
+      '<p class="small"><b>Containment class</b> is the familiar Object Class, with Esoteric as an option. <b>Secondary class</b> is used when the containment class is Esoteric, e.g. Thaumiel or Apollyon.</p>' +
+      '<p class="eyebrow">Disruption class · threat to the Veil and normalcy</p>' + scale(DISRUPT, 0) + defs(DISRUPT) +
+      '<p class="eyebrow">Risk class · danger to an exposed individual</p>' + scale(RISK, 0) + defs(RISK) + "</div>";
+  }
+  if (w === "sorter") return '<div class="doc sorter stack" id="sorter">' + sorterHTML() + "</div>";
+  return "";
+}
+function sorterHTML() {
+  if (sorter.i >= SORTER.length) {
+    return '<div class="doc-h" style="margin-bottom:0"><span class="eyebrow">Exercise complete</span><span class="eyebrow num">' + sorter.score + "/" + SORTER.length + "</span></div>" +
+      '<p>' + (sorter.score >= 6 ? "Excellent. You're thinking in containment terms." : sorter.score >= 4 ? "Good. Remember: how scary it is isn't the question." : "Look at the Locked Box Test again, then retry.") + "</p>" +
+      '<button class="btn ghost" data-sortnext="reset">Run it again</button>';
+  }
+  const c = SORTER[sorter.i], picked = sorter.pick !== null;
+  return '<div class="doc-h" style="margin-bottom:0"><span class="eyebrow">Specimen ' + (sorter.i + 1) + " of " + SORTER.length + '</span><span class="eyebrow num">Score ' + sorter.score + "</span></div>" +
+    '<p class="case">' + c.d + "</p>" +
+    '<div class="opts">' + SORT_OPTS.map(function (o) {
+      return '<button class="c-' + o.toLowerCase() + (sorter.pick === o ? " picked" : "") + '" data-sort="' + o + '"' + (picked ? " disabled" : "") + "><span>" + o + "</span></button>";
+    }).join("") + "</div>" +
+    (picked ? '<div class="verdict" role="status"><b class="' + (sorter.pick === c.a ? "c-safe" : "c-keter") + '">' + (sorter.pick === c.a ? "CORRECT" : "FILED AS " + c.a.toUpperCase()) + "</b>" + c.why + "</div>" +
+      '<button class="btn pri" data-sortnext="1">' + (sorter.i === SORTER.length - 1 ? "Finish exercise" : "Next specimen") + "</button>" : "");
+}
+function sortPick(o) {
+  if (sorter.pick !== null) return;
+  sorter.pick = o;
+  if (o === SORTER[sorter.i].a) { sorter.score++; buzz(20); } else buzz([40, 60, 40]);
+  refreshSorter();
+}
+function refreshSorter() {
+  if (sorter.i > SORTER.length) sorter = { i: 0, score: 0, pick: null };
+  const el = $("#sorter"); if (el) el.innerHTML = sorterHTML();
+}
+
+/* =====================================================================
+   BOOT / REGISTRATION
+   ===================================================================== */
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let bootTimers = [];
+function later(fn, ms) { bootTimers.push(setTimeout(fn, reduce ? 0 : ms)); }
+
+function boot() {
+  const b = $("#boot"); b.hidden = false;
+  bootTimers.forEach(clearTimeout); bootTimers = [];
+  const lines = [
+    ["", "SCP FOUNDATION · PERSONNEL TERMINAL v4.1"],
+    ["", "> establishing link to RAISA personnel registry ... OK"],
+    ["", "> new personnel record detected"],
+    ["w", "> NOTICE: this terminal displays information classified Level 0 and above."],
+    ["w", "> All access is logged. Unauthorized use will result in termination of access."],
+    ["", "> beginning cognitohazard screening"]
+  ];
+  $("#bootIn").innerHTML = '<button class="skip" id="skip">Skip sequence</button>' +
+    '<div class="boot-logo"><svg viewBox="0 0 100 100" aria-hidden="true">' + logoSVG() + '</svg><div><b>SCP FOUNDATION</b><small>SECURE · CONTAIN · PROTECT</small></div></div>' +
+    '<div class="lines" id="lines" aria-live="polite"></div><div id="bootStep"></div>';
+  $("#skip").onclick = function () { bootTimers.forEach(clearTimeout); bootTimers = []; $("#lines").innerHTML = lines.map(function (l) { return '<div class="' + l[0] + '">' + l[1] + "</div>"; }).join(""); stepForm(); };
+  lines.forEach(function (l, i) {
+    later(function () { const d = document.createElement("div"); d.className = l[0]; d.textContent = l[1]; $("#lines").appendChild(d); }, 350 + i * 420);
+  });
+  later(stepGlyph, 350 + lines.length * 420 + 200);
+}
+function stepGlyph() {
+  let rings = "";
+  for (let r = 10; r <= 46; r += 6) rings += '<circle cx="50" cy="50" r="' + r + '" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="' + (r / 3) + ' ' + (r / 5) + '"/>';
+  let spokes = "";
+  for (let a = 0; a < 360; a += 30) spokes += '<line x1="50" y1="50" x2="50" y2="4" stroke="currentColor" stroke-width="1" transform="rotate(' + a + ' 50 50)"/>';
+  $("#bootStep").innerHTML = '<div class="stack"><p>Keep your eyes on the pattern until the meter fills.</p>' +
+    '<svg class="glyph" viewBox="0 0 100 100" aria-hidden="true"><g>' + rings + "</g><g>" + spokes + '</g><circle cx="50" cy="50" r="3" fill="currentColor"/></svg>' +
+    '<div class="meter"><i id="meter"></i></div></div>';
+  let p = 0;
+  const tick = function () {
+    p += 4; const m = $("#meter"); if (m) m.style.width = Math.min(100, p) + "%";
+    if (p < 100) later(tick, 110);
+    else later(function () {
+      const d = document.createElement("div"); d.textContent = "> screening complete. No memetic contamination detected."; $("#lines").appendChild(d);
+      stepForm();
+    }, 300);
+  };
+  if (reduce) { p = 100; tick(); } else tick();
+}
+function stepForm() {
+  $("#bootStep").innerHTML = '<form class="stack" id="regForm"><label for="regName">Enter your designation (surname or codename)</label>' +
+    '<input id="regName" maxlength="28" autocomplete="off" placeholder="e.g. Reyes" required>' +
+    '<button class="btn pri" type="submit">Issue credentials</button></form>';
+  $("#regForm").onsubmit = function (e) {
+    e.preventDefault();
+    const name = $("#regName").value.trim();
+    if (!name) { $("#regName").focus(); return; }
+    const sites = ["Site-19", "Site-17", "Site-43", "Site-19"];
+    const letters = "ABCDEFGHJKLMNPRSTUVWXYZ";
+    S.profile = {
+      name: name,
+      id: "AGT-" + String(1000 + Math.floor(Math.random() * 9000)) + "-" + letters[Math.floor(Math.random() * letters.length)],
+      site: sites[Math.floor(Math.random() * sites.length)],
+      issued: new Date().toISOString().slice(0, 10)
+    };
+    save(); buzz([20, 40, 20]);
+    $("#bootStep").innerHTML = '<div class="stack"><div>> credentials issued: ' + esc(S.profile.id) + "</div>" +
+      "<div>> assignment: " + esc(S.profile.site) + "</div>" +
+      '<div class="w">> clearance: LEVEL 0 · FOR OFFICIAL USE ONLY</div>' +
+      "<div>> orientation required before field reading.</div>" +
+      '<button class="btn pri" id="enter">Enter terminal</button></div>';
+    $("#enter").onclick = function () { $("#boot").hidden = true; tab = "brief"; render(); };
+    $("#enter").focus();
+  };
+  const n = $("#regName"); if (n) n.focus({ preventScroll: true });
+}
+
+/* =====================================================================
+   START
+   ===================================================================== */
+renderShell();
+const h0 = (location.hash || "").slice(1);
+tab = VIEWS[h0] ? h0 : "brief";
+try { history.replaceState({ tab: tab }, ""); } catch (e) {}
+render();
+if (!S.profile) boot();
+})();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+}
+</script>
+</body>
+</html>
