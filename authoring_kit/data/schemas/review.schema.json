@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "authoring_kit/review.schema.json",
+  "title": "Kit craft review",
+  "description": "Written by S6. Scores and IDs only. Any free text fails the check.",
+  "type": "object",
+  "required": ["scores", "flags"],
+  "additionalProperties": false,
+  "properties": {
+    "scores": {"type": "object", "propertyNames": {"pattern": "^RUB-[0-9]{2}$"}, "additionalProperties": {"type": "integer", "minimum": 0, "maximum": 3}},
+    "flags": {"type": "array", "items": {"type": "string", "pattern": "^(FM|RUB)-[0-9]{2}$"}}
+  }
+}

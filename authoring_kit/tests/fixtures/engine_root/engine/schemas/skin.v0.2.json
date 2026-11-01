@@ -1,0 +1,1 @@
+{"title": "NONSENSE fixture skin schema", "type": "object", "properties": {"skin_id": {"type": "string"}, "departments": {"type": "array", "items": {"type": "object", "properties": {"dept_id": {"type": "string"}, "label": {"type": "string"}}}}}}

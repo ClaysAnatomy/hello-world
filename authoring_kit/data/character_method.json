@@ -1,0 +1,34 @@
+{
+  "version": "1.0.0",
+  "purpose": "How a named person is built so they feel lived in. The S1 author fills one sheet per named person in bible.json. Fields marked required are checked for presence by KT-BI-08; their quality is judged by RUB-12 and RUB-18.",
+  "sheet": [
+    {"field": "want", "required": true, "ask": "What did this person want last month, before any of this? Something ordinary and specific: a transfer, a repaid loan, a quiet retirement, credit for a piece of work."},
+    {"field": "obligation", "required": true, "ask": "What duty, person or rule pulls against that want?"},
+    {"field": "attention", "required": true, "ask": "What does this person notice that others do not, and what do they habitually fail to notice? This decides what their documents record."},
+    {"field": "pressure", "required": true, "ask": "What do they stand to lose if the truth comes out, including truths that are not the crime?"},
+    {"field": "would_lie_about", "required": true, "ask": "What would they lie about on paper?"},
+    {"field": "lie_reason", "required": true, "ask": "Why, in their own terms? The reason should be sympathetic or at least understandable."},
+    {"field": "life_outside", "required": true, "ask": "Where would they be on an ordinary evening? Who depends on them outside the institution?"},
+    {"field": "voice_notes", "required": true, "ask": "How do they write when they write for work? Sentence length, what they abbreviate, how they sign off, what they never say."},
+    {"field": "relationships", "required": true, "ask": "At least two ties to other named people, each with a history that predates the case and a current temperature."},
+    {"field": "secret", "required": false, "ask": "A true thing they keep, which may or may not touch the case. The red-herring suspect's secret is the secondary secret fact."}
+  ],
+  "tests": [
+    {"id": "CT-01", "name": "Deletion test", "ask": "Delete each distinguishing trait in turn. If no document and no choice changes, the trait was decoration. Cut it."},
+    {"id": "CT-02", "name": "Off-page test", "ask": "Could you write this person's next ordinary working day without the case? If not, they are a function, not a person."},
+    {"id": "CT-03", "name": "Reason test", "ask": "Could a fair-minded colleague explain why this person behaved as they did, without calling them evil, mad or greedy?"},
+    {"id": "CT-04", "name": "Paper test", "ask": "Does this person leave paper in at least two documents written by different hands?"},
+    {"id": "CT-05", "name": "Blind voice test", "ask": "With the header removed, could a reader tell this person's documents from another author's?"},
+    {"id": "CT-06", "name": "Cost test", "ask": "Does at least one trait cost this person something in the story: a missed chance, a mistake, a debt?"}
+  ],
+  "avoid": [
+    "Traits that are props: a signature hat, a catchphrase, a hobby mentioned once.",
+    "Professions as personalities: the gruff officer, the cold scientist, the nervous clerk, unless the document form itself requires the register.",
+    "Villains whose motive is the plot's convenience.",
+    "Victims who exist only to be found. The subject of the case had a want and an obligation too."
+  ],
+  "page_presence": {
+    "rule": "Each suspect appears on paper at least twice, in documents by at least two different authors, and at least once in a document that carries no solution-critical fact.",
+    "checks": ["KT-PL-06"]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "purpose": "After-play ratings. IDs and numbers only: no free text is accepted or stored. Each answer nudges the taste weights of the seeds the case actually used (looked up from the sealed workspace), so the next run leans toward what landed.",
+  "scale": {"min": 1, "max": 5},
+  "questions": [
+    {"id": "FB-01", "rubric": "RUB-21", "text": "I wanted to open the next record.", "targets": ["setting_texture", "human_question", "stakes"]},
+    {"id": "FB-02", "rubric": "RUB-22", "text": "The turn felt like mine.", "targets": ["patterns"]},
+    {"id": "FB-03", "rubric": "RUB-23", "text": "The people felt real.", "targets": ["name_pool", "stakes"]},
+    {"id": "FB-04", "rubric": "RUB-24", "text": "The world felt like it went on outside the records.", "targets": ["setting_texture"]},
+    {"id": "FB-05", "rubric": "RUB-25", "text": "The ending stayed with me.", "targets": ["irony", "human_question"]},
+    {"id": "FB-06", "rubric": "RUB-26", "text": "It was fair.", "targets": ["patterns", "mechanism"]},
+    {"id": "FB-07", "rubric": null, "text": "The false lead held me for a while before it fell.", "targets": ["red_herring"]},
+    {"id": "FB-08", "rubric": null, "text": "Difficulty felt right (1 too easy, 3 right, 5 too hard).", "targets": [], "kind": "difficulty"}
+  ],
+  "extra_numbers": [
+    {"id": "FB-N1", "text": "Minutes played", "min": 0, "max": 6000},
+    {"id": "FB-N2", "text": "Determinations submitted", "min": 0, "max": 100}
+  ]
+}

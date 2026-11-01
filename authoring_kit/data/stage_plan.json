@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "purpose": "The authoring stages in order. Each stage runs in its own folder with only the inputs listed, so context is isolated by construction. The sealed answer key travels only to stages with needs_answer_key true.",
+  "stages": [
+    {
+      "id": "S1", "name": "story and truth bible", "prompt": "S1_truth_bible.md",
+      "inputs": ["brief", "seeds", "pattern_briefs", "craft", "character_method", "authoring_readme", "bible_schema"],
+      "outputs": ["bible.json"], "check": "bible", "needs_answer_key": true, "iterate": null, "optional": false
+    },
+    {
+      "id": "S2", "name": "document cut", "prompt": "S2_clue_plan.md",
+      "inputs": ["bible", "seeds", "pattern_briefs", "document_forms", "voice_profiles", "authoring_readme", "fixture_case", "fixture_skin", "engine_schemas", "plan_schema"],
+      "outputs": ["case.json", "skin.json", "clue_plan.json"], "check": "plan", "needs_answer_key": true, "iterate": null, "optional": false
+    },
+    {
+      "id": "S3", "name": "document prose, one record at a time", "prompt": "S3_clue_prose.md",
+      "inputs": ["unit_brief", "fill_schema"],
+      "outputs": ["fill.json"], "check": "fill", "needs_answer_key": false, "iterate": "s3_owners", "optional": false
+    },
+    {
+      "id": "S4", "name": "desk fields: options, mail, subjects", "prompt": "S4_desk_fields.md",
+      "inputs": ["unit_brief", "fill_schema"],
+      "outputs": ["fill.json"], "check": "fill", "needs_answer_key": false, "iterate": null, "optional": false
+    },
+    {
+      "id": "S6", "name": "craft review (scores only)", "prompt": "S6_craft_review.md",
+      "inputs": ["bible", "clue_plan", "case", "rubric", "review_schema"],
+      "outputs": ["review.json"], "check": "review", "needs_answer_key": true, "iterate": null, "optional": true
+    }
+  ],
+  "repair": {"id": "S5", "prompt": "S5_repair.md", "outputs_from_target": true},
+  "s4_owner": "DESK-01"
+}

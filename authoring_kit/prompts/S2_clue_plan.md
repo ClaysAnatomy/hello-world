@@ -1,0 +1,70 @@
+{{HEADER}}
+
+# STAGE {{STAGE_ID}}: CUTTING THE STORY INTO PAPER
+
+The story exists in `bible.json`. Now decide which documents this world would naturally have produced, and cut the story into them. The puzzle is the shape of that archive. Write no player-facing prose: every prose field gets a placeholder that later stages fill one document at a time.
+
+## INPUT
+{{INPUT_FILES}}
+
+## OUTPUT
+{{OUTPUT_FILES}}
+
+## Method
+
+### 1. List the paper trail before you choose anything
+Walk through the bible's timeline and ask, at each step, what paper the institution's ordinary work would have produced: rosters, logs, slips, notes, minutes, invoices, transcripts. Add the paper the cover story generated afterwards. Add the paper of the institution's everyday life that has nothing to do with the case. Most of the real archive was written by people who did not know what they were recording.
+
+### 2. Choose and shape the documents
+Pick the documents the player will see from that trail. For each one, the plan records:
+- `form_id` from the catalogue below; `author` (a person ID or a department ID); `intended_reader`; `in_world_reason` (why it was written, in the author's terms). Ask: would this paper exist if nobody ever investigated? If not, it is a clue in costume. Re-cut it.
+- `facts`: the bible fact IDs this document carries. `mentions`: the people it names.
+- `tier`: 0 for documents available at the start, rising with each gate or delay the engine applies. The engine decides reachability; the tier is your declared order.
+- `search_free`: true if a player can reach this document by reading and following references, with keyword search switched off.
+- `role`: `solution`, `support`, `herring_induce`, `herring_refute`, `mask`, `reframe` or `world`.
+- `technique_ids`: optional, from the technique list below.
+
+### 3. Build the routes
+For every solution-critical fact, list routes in `routes`: each route is a set of documents that together establish the fact. At least {{MIN_ROUTES}} routes per fact; two of them share no document; at least one route uses only search-free documents. No single document may carry every supporting fact of a correct option.
+
+### 4. Place the turn and the false lead
+- The masking document sits at a lower tier than the reframing document. No document lists the aha conclusion fact: the player assembles it.
+- The herring's inducing document is at tier {{HERRING_MAX_TIER}} or lower. The documents carrying its refuting facts sit at a higher tier. A document establishes the secondary secret.
+- Follow each pattern brief's pre-signalling list.
+
+### 5. Give people a life on paper
+Each suspect appears in at least {{MIN_DOCS_PER_SUSPECT}} documents written by at least {{MIN_AUTHORS_PER_SUSPECT}} different authors, and at least once in a document with no solution-critical fact: a rota swap, a complaint about the heating, a birthday collection. World documents make up between {{WORLD_MIN}} and {{WORLD_MAX}} of the archive, and each involves a named person.
+
+### 6. Departments and voices
+The kit assigned these voice profiles to department slots, in order:
+{{VOICE_SLOTS}}
+Map the case's departments onto the slots in that order and record it in `departments`. Department-processed documents keep raw findings and assessment in separate fields. The finding is plain; the assessment carries the department's bias.
+
+### 7. Write the engine files with placeholders
+Write `case.json` and `skin.json` exactly as the authoring contract {{AUTHORING_README}} requires. Use the fixture files as the format example; they are nonsense and teach shape only. Reuse the bible's IDs for people, solution-critical facts, questions and options unchanged.
+
+In every player-facing prose field, write a placeholder instead of prose: the whole string is a token in the format `{{PLACEHOLDER_FORMAT}}`, where `owner` is the document ID for document prose (filled in stage S3) or `{{S4_OWNER}}` for desk fields such as option wording, question stems, mail and subjects that do not belong to one document (filled in stage S4), and `n` counts from 1 within each owner. List every placeholder in `placeholders`, with:
+- `slot`: which field it is, in the contract's terms; `kind`: one of the enum values.
+- `facts`: the bible fact IDs that text may assert (a subset of its document's facts). Titles and subjects usually assert none.
+- `required_strings`: critical-string IDs that must appear in it verbatim. Every critical string is required somewhere.
+- `max_words`, and for option or stem placeholders the `question` and `option` IDs.
+
+Dates and times that are not prose fields are written directly, exactly as in the bible.
+
+## Document forms
+{{FORMS_TABLE}}
+
+## Techniques
+{{TECHNIQUES_TABLE}}
+
+## Limits
+{{LIMITS_TEXT}}
+
+## Engine terms resolved for this run
+{{CAPABILITY_TERMS}}
+
+## The kit will check
+{{CHECK_LIST}}
+It then runs the engine's own checks on `case.json`.
+
+Write the three files. Then reply `DONE`.

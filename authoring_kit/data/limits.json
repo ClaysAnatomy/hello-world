@@ -1,0 +1,147 @@
+{
+  "version": "1.0.0",
+  "purpose": "Every number the kit enforces. Turn and dollar figures are planning caps, not measurements: all credit and cost estimates are UNVERIFIED until a real run is measured. Stage caps stay inside the project's 80 turns and $6.00 per run (Entry 024).",
+  "budget": {
+    "max_suspects": 5,
+    "min_suspects": 3,
+    "max_locations": 4,
+    "max_critical_strings": 2,
+    "max_cast_total": 8,
+    "max_departments": 4,
+    "max_patterns": 2
+  },
+  "routes": {
+    "min_routes_per_solution_fact": 2,
+    "require_disjoint_pair": true,
+    "require_search_free_route": true
+  },
+  "people": {
+    "min_relationships_per_person": 2,
+    "min_documents_per_suspect": 2,
+    "min_authors_per_suspect": 2,
+    "require_non_crime_appearance": true
+  },
+  "world": {
+    "min_setting_texture": 5,
+    "min_internal_terms": 3,
+    "min_rhythms": 2,
+    "min_distinct_forms": 5,
+    "max_form_share": 0.35,
+    "world_clue_share_min": 0.1,
+    "world_clue_share_max": 0.35
+  },
+  "order": {
+    "herring_induce_max_tier": 1
+  },
+  "prose": {
+    "option_length_tolerance": 0.15,
+    "default_max_words": 220,
+    "ngram_n": 5,
+    "max_shared_ngrams_between_owners": 3,
+    "name_drift_max_distance": 1,
+    "name_drift_min_length": 5,
+    "overlap_severity": "ERROR"
+  },
+  "repair": {
+    "max_repair_rounds": 2,
+    "abort_on_repeated_id": true
+  },
+  "turns": {
+    "run_cap": 80,
+    "stage_caps": {
+      "S1": 6,
+      "S2": 16,
+      "S3": 36,
+      "S4": 6,
+      "S5": 12,
+      "S6": 4
+    },
+    "unit_caps": {
+      "S1": 6,
+      "S2": 16,
+      "S3": 3,
+      "S4": 6,
+      "S5": 6,
+      "S6": 4
+    }
+  },
+  "cost_usd_unverified": {
+    "run_cap": 6.0,
+    "stage_caps": {
+      "S1": 0.6,
+      "S2": 1.6,
+      "S3": 2.0,
+      "S4": 0.4,
+      "S5": 1.0,
+      "S6": 0.4
+    }
+  },
+  "timeouts": {
+    "stage_minutes": 30,
+    "engine_check_seconds": 300
+  },
+  "tolerated_engine_rules": {
+    "S2": [],
+    "S3_GATE": [],
+    "purpose": "Rule IDs that may fail while placeholders are still in the case (for example a search rule that needs real prose). Empty by default; the local builder fills these only after seeing which rules depend on prose."
+  },
+  "ids": {
+    "opaque_id_regex": "^[A-Z][A-Z0-9]{0,5}(-[A-Z0-9]{1,5}){0,3}$",
+    "print_prefixes": [
+      "CLUE",
+      "FACT",
+      "RULE",
+      "OPT",
+      "CHAR",
+      "DEPT",
+      "REC",
+      "Q",
+      "S",
+      "KT",
+      "VL",
+      "FM",
+      "RUB",
+      "PAT",
+      "CAP",
+      "MECH",
+      "RH",
+      "STK",
+      "HQ",
+      "IR",
+      "TX",
+      "NP",
+      "CS",
+      "V",
+      "DF",
+      "TQ",
+      "CP",
+      "FB",
+      "MAIL",
+      "REQ",
+      "SLIP",
+      "IMG",
+      "LOC",
+      "PP",
+      "CHK",
+      "DESK",
+      "BL",
+      "R",
+      "FP",
+      "DK",
+      "BC",
+      "P",
+      "F",
+      "L"
+    ],
+    "placeholder_format": "PP-{owner}-{n}"
+  },
+  "ledger": {
+    "window": 6,
+    "novelty_penalty": 0.2
+  },
+  "taste": {
+    "learning_rate": 0.15,
+    "min_weight": 0.3,
+    "max_weight": 2.0
+  }
+}

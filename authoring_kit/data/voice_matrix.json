@@ -1,0 +1,239 @@
+{
+  "version": "1.0.0",
+  "purpose": "Department voices, keyed by four style axes (project decision, Entry 024: not by department names). The seed sampler assigns one profile to each department slot; S2 maps the case's real departments onto those slots. Findings are always plain; the profile governs the assessment section and any document the department authors. Exemplars are nonsense and show syntax only.",
+  "axes": [
+    {
+      "id": "AX-1",
+      "name": "certainty",
+      "poles": [
+        "hedged",
+        "categorical"
+      ]
+    },
+    {
+      "id": "AX-2",
+      "name": "attention",
+      "poles": [
+        "material and procedural",
+        "human and relational"
+      ]
+    },
+    {
+      "id": "AX-3",
+      "name": "syntax",
+      "poles": [
+        "clipped and enumerated",
+        "periodic and discursive"
+      ]
+    },
+    {
+      "id": "AX-4",
+      "name": "loyalty",
+      "poles": [
+        "protects the institution",
+        "protects the individual"
+      ]
+    }
+  ],
+  "profiles": [
+    {
+      "id": "V1",
+      "position": {
+        "AX-1": "categorical",
+        "AX-2": "material and procedural",
+        "AX-3": "clipped and enumerated",
+        "AX-4": "protects the institution"
+      },
+      "bias": "Trusts the record over the person. If it is not logged, it did not happen; if it is logged, it is true.",
+      "bias_lexicon": [
+        "per register",
+        "as logged",
+        "no record of",
+        "recorded as",
+        "per entry",
+        "not logged"
+      ],
+      "rules": {
+        "assessment_sentence_words": [
+          4,
+          14
+        ],
+        "first_person": "forbidden",
+        "hedges": "forbidden",
+        "required_in_assessment_any": [
+          "per register",
+          "as logged",
+          "no record of",
+          "recorded as",
+          "per entry",
+          "not logged"
+        ]
+      },
+      "exemplars": [
+        "Item FIXTURE-03 received 09:10. Seal intact. Mass 212 g. No record of transfer in register FIXTURE-R2. Transfer did not occur.",
+        "Entry FIXTURE-07 recorded as complete at 16:42. Countersignature present. Per entry, procedure FIXTURE-P1 followed in full."
+      ]
+    },
+    {
+      "id": "V2",
+      "position": {
+        "AX-1": "hedged",
+        "AX-2": "material and procedural",
+        "AX-3": "periodic and discursive",
+        "AX-4": "protects the individual"
+      },
+      "bias": "Looks for equipment, process or environment before intent. Reluctant to blame a person while any mechanical explanation remains.",
+      "bias_lexicon": [
+        "consistent with",
+        "cannot exclude",
+        "equipment",
+        "wear",
+        "tolerance",
+        "process"
+      ],
+      "rules": {
+        "assessment_sentence_words": [
+          14,
+          40
+        ],
+        "first_person": "plural_only",
+        "hedges": "required",
+        "required_in_assessment_any": [
+          "consistent with",
+          "cannot exclude",
+          "equipment",
+          "wear",
+          "tolerance",
+          "process"
+        ]
+      },
+      "exemplars": [
+        "The surface of FIXTURE-05 shows a pattern consistent with ordinary wear, although we cannot exclude a single event of the kind described in FIXTURE-R4, and we would want a second sample before saying more.",
+        "We note that the reading at FIXTURE-09 sits just outside tolerance, which in our experience more often reflects the calibration of the instrument than anything done to it, though we cannot exclude handling."
+      ]
+    },
+    {
+      "id": "V3",
+      "position": {
+        "AX-1": "categorical",
+        "AX-2": "human and relational",
+        "AX-3": "periodic and discursive",
+        "AX-4": "protects the institution"
+      },
+      "bias": "Reads intent into behaviour and defers to rank. Assumes the senior account is the reliable one.",
+      "bias_lexicon": [
+        "evidently",
+        "clearly intended",
+        "chose to",
+        "in keeping with",
+        "senior",
+        "reliable account"
+      ],
+      "rules": {
+        "assessment_sentence_words": [
+          12,
+          34
+        ],
+        "first_person": "allowed",
+        "hedges": "forbidden",
+        "required_in_assessment_any": [
+          "evidently",
+          "clearly intended",
+          "chose to",
+          "in keeping with",
+          "senior",
+          "reliable account"
+        ]
+      },
+      "exemplars": [
+        "Person A evidently chose to leave FIXTURE-02 unattended, which is in keeping with the account given by the senior officer of FIXTURE-D1, and I see no reason to doubt it.",
+        "The sequence at FIXTURE-11 was clearly intended to be read as routine; the reliable account here is the supervisor's, and the junior statement adds little."
+      ]
+    },
+    {
+      "id": "V4",
+      "position": {
+        "AX-1": "hedged",
+        "AX-2": "human and relational",
+        "AX-3": "clipped and enumerated",
+        "AX-4": "protects the individual"
+      },
+      "bias": "Sympathises with the junior or vulnerable party and discounts their culpability; notices pressure on people.",
+      "bias_lexicon": [
+        "may have",
+        "under pressure",
+        "understandably",
+        "workload",
+        "unsupported",
+        "likely felt"
+      ],
+      "rules": {
+        "assessment_sentence_words": [
+          5,
+          18
+        ],
+        "first_person": "allowed",
+        "hedges": "required",
+        "required_in_assessment_any": [
+          "may have",
+          "under pressure",
+          "understandably",
+          "workload",
+          "unsupported",
+          "likely felt"
+        ]
+      },
+      "exemplars": [
+        "Person B may have missed FIXTURE-04. Workload that week was high. Unsupported on two shifts. Understandably slow to report.",
+        "Note: FIXTURE-08 was filed late. Person C likely felt unable to raise it. Recommend no action on the delay itself."
+      ]
+    }
+  ],
+  "lexicons": {
+    "hedges": [
+      "may",
+      "might",
+      "possibly",
+      "perhaps",
+      "appears",
+      "seems",
+      "likely",
+      "cannot exclude",
+      "consistent with",
+      "suggests"
+    ],
+    "first_person_singular": [
+      "i",
+      "me",
+      "my",
+      "mine",
+      "i'm",
+      "i've",
+      "i'd"
+    ],
+    "first_person_plural": [
+      "we",
+      "us",
+      "our",
+      "ours",
+      "we're",
+      "we've"
+    ],
+    "assessment_markers": [
+      "likely",
+      "probably",
+      "suggests",
+      "indicates",
+      "we believe",
+      "in our view",
+      "in my view",
+      "appears to",
+      "it is possible",
+      "evidently",
+      "clearly",
+      "may have",
+      "assess",
+      "conclude"
+    ]
+  }
+}

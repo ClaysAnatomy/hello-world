@@ -1,0 +1,110 @@
+{
+  "version": "1.0.0",
+  "purpose": "Where the engine lives (relative to the project root passed with --root), how engine checks are called, and how an agent is invoked in Mode A. Model-agnostic: the agent command is a template the local builder fills. The kit never reads, stores or prints a key; it removes environment variables whose names end with a listed suffix before starting any child process.",
+  "python": "",
+  "mode": "B",
+  "engine": {
+    "case_schema_globs": [
+      "engine/schemas/case*.json"
+    ],
+    "skin_schema_globs": [
+      "engine/schemas/skin*.json"
+    ],
+    "vocabulary_globs": [
+      "engine/schemas/vocabulary*.json",
+      "engine/vocabulary*.json"
+    ],
+    "rules_glob": "engine/rules/*.json",
+    "rule_id_keys": [
+      "id",
+      "rule_id"
+    ],
+    "rule_text_keys": [
+      "description",
+      "summary",
+      "title"
+    ],
+    "contract_json": "engine/contract/bundle_contract.json",
+    "authoring_readme": "engine/README_AUTHORING_FOR_OPUS.md",
+    "fixture_case": "engine/fixtures/CASE-FIX-01/case.json",
+    "fixture_skin": "engine/fixtures/skins/SKIN-FIX_A.json"
+  },
+  "engine_checks": [
+    {
+      "id": "CHK-1",
+      "argv": [
+        "{python}",
+        "engine/tools/check_case.py",
+        "{case}",
+        "--skin",
+        "{skin}"
+      ],
+      "at": [
+        "S2",
+        "S3_GATE",
+        "S4",
+        "FINISH"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "CHK-2",
+      "argv": [
+        "{python}",
+        "engine/tools/pack.py",
+        "{case}",
+        "--skin",
+        "{skin}"
+      ],
+      "at": [
+        "FINISH"
+      ],
+      "enabled": false
+    },
+    {
+      "id": "CHK-3",
+      "argv": [
+        "{python}",
+        "engine/tools/export_desk.py",
+        "{case}",
+        "--skin",
+        "{skin}",
+        "--out",
+        "{ws}/desk_export"
+      ],
+      "at": [
+        "FINISH"
+      ],
+      "enabled": false
+    }
+  ],
+  "engine_output": {
+    "fail_word": "FAIL",
+    "pass_word": "PASS",
+    "path_regex": "\\$[A-Za-z0-9_.\\[\\]]*"
+  },
+  "agent": {
+    "argv": [],
+    "stdin": "prompt",
+    "env_strip_suffixes": [
+      "_API_KEY",
+      "_AUTH_TOKEN"
+    ],
+    "usage_from_stdout_json": false,
+    "usage_keys": {
+      "turns": "num_turns",
+      "cost_usd": "total_cost_usd"
+    },
+    "examples_note": "Fill argv for your agent. Tokens: {prompt_file} {stage_dir} {max_turns}. The prompt is also sent on stdin when stdin is 'prompt'. Examples live in docs/INTEGRATION.md."
+  },
+  "workspace": {
+    "case_file": "case.json",
+    "skin_file": "skin.json"
+  },
+  "state": {
+    "ledger": "authoring_kit/state/ledger.json",
+    "taste_profile": "authoring_kit/state/taste_profile.json"
+  },
+  "run_optional_S6": false,
+  "python_note": "Empty means the interpreter running the kit. Set a full path to force another."
+}

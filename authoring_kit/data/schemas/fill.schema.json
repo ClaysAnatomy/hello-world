@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "authoring_kit/fill.schema.json",
+  "title": "Kit prose fill",
+  "description": "Written by S3 (one document) or S4 (desk fields). Maps each placeholder token to its text and to the fact IDs that text asserts.",
+  "type": "object",
+  "required": ["owner", "fills", "claims"],
+  "additionalProperties": false,
+  "properties": {
+    "owner": {"type": "string", "minLength": 2, "maxLength": 24},
+    "fills": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string", "minLength": 1, "maxLength": 12000}},
+    "claims": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string", "minLength": 2, "maxLength": 24}}}
+  }
+}
