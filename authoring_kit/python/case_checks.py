@@ -59,14 +59,8 @@ def check_bible(bible: dict, seeds: dict) -> list[dict]:
             out.append(F("KT-BI-14", path))
         seen.add(value)
 
-    # names
-    seeded = {(n["given"], n["family"]) for n in seeds["cast_names"]}
-    used = [(c["name"]["given"], c["name"]["family"]) for c in bible["cast"]]
-    for i, nm in enumerate(used):
-        if nm not in seeded:
-            out.append(F("KT-BI-02", f"$.cast[{i}].name"))
-    if len(set(used)) != len(used) or set(used) != seeded:
-        out.append(F("KT-BI-02", "$.cast"))
+    # names: seeded, or rule-passing replacements when the setting needs them
+    out += _check_names(bible, seeds, lim)
 
     # budget
     b = lim["budget"]
@@ -154,6 +148,16 @@ def check_bible(bible: dict, seeds: dict) -> list[dict]:
     if any(K.phrase_in(blob, t) for _, _, t in trope):
         out.append(F("KT-BI-10", "$.truth", WARN))
 
+    # voice samples
+    lo, hi = lim["people"].get("voice_sample_words", [30, 120])
+    bans = _ban_terms({"BL-SIGNPOST", "BL-META", "BL-CONFESS", "BL-LLM"})
+    for i, c in enumerate(bible["cast"]):
+        sample = c.get("voice_sample", "")
+        n = len(K.words(sample))
+        low = sample.lower()
+        if n < lo or n > hi or any(K.phrase_in(low, t) for _, sev, t in bans if sev == ERROR):
+            out.append(F("KT-BI-15", f"$.cast[{i}].voice_sample"))
+
     # setting
     st = bible["premise"]["setting"]
     w = lim["world"]
@@ -163,6 +167,32 @@ def check_bible(bible: dict, seeds: dict) -> list[dict]:
         out.append(F("KT-BI-12", "$.premise.setting.internal_terms"))
     if len(st["rhythms"]) < w["min_rhythms"]:
         out.append(F("KT-BI-12", "$.premise.setting.rhythms"))
+    return out
+
+
+def _name_ok(name: str, banned: set[str]) -> bool:
+    return (name.isascii() and 2 <= len(name) <= 24 and name[0].isupper()
+            and all(ch.isalpha() or ch in "-'" for ch in name) and name.lower() not in banned)
+
+
+def _check_names(bible: dict, seeds: dict, lim: dict) -> list[dict]:
+    from seed_sampler import _sound_key
+    out: list[dict] = []
+    banned = {t.lower() for cat in K.data("ban_lists")["categories"] if cat["id"].startswith("BL-NAMES") for t in cat["terms"]}
+    seeded = {(n["given"], n["family"]) for n in seeds["cast_names"]}
+    mode = lim["people"].get("names_mode", "seeded")
+    used = [(c["name"]["given"], c["name"]["family"]) for c in bible["cast"]]
+    for i, (g, f) in enumerate(used):
+        if (g, f) in seeded:
+            continue
+        if mode != "seeded_or_rules" or not (_name_ok(g, banned) and _name_ok(f, banned)):
+            out.append(F("KT-BI-02", f"$.cast[{i}].name"))
+    givens = [g for g, _ in used]
+    families = [f for _, f in used]
+    distinct = (len({g[0] for g in givens}) == len(givens) and len({f[0] for f in families}) == len(families)
+                and len({_sound_key(f) for f in families}) == len(families))
+    if len(used) != seeds.get("cast_total", len(seeded)) or len(set(used)) != len(used) or not distinct:
+        out.append(F("KT-BI-02", "$.cast"))
     return out
 
 
@@ -296,10 +326,24 @@ def check_plan(plan: dict, bible: dict, case_obj: dict, seeds: dict, s4_owner: s
     share = len(world) / n
     if share < w["world_clue_share_min"] - 1e-9 or share > w["world_clue_share_max"] + 1e-9:
         out.append(F("KT-PL-11", "$.clues"))
+    crit_ids = {fid for fid, f in facts.items() if f["solution_critical"]}
+    world_ids = {c["id"] for c in world}
     for c in world:
-        if not c["mentions"] and c["author"] not in cast:
+        if (not c["mentions"] and c["author"] not in cast) or set(c["facts"]) & crit_ids:
             out.append(F("KT-PL-11", "$.clues"))
             break
+    cap = w.get("flavor_max_words")
+    if cap:
+        dflt = lim["prose"]["default_max_words"]
+        for i, ph in enumerate(plan["placeholders"]):
+            if ph["owner"] in world_ids and ph.get("max_words", dflt) > cap:
+                out.append(F("KT-PL-11", f"$.placeholders[{i}].max_words"))
+
+    # document count and shape
+    if not (w.get("min_documents", 1) <= n <= w.get("max_documents", 999)):
+        out.append(F("KT-PL-16", "$.clues"))
+    if len({c["tier"] for c in plan["clues"]}) < min(w.get("min_tiers", 1), n):
+        out.append(F("KT-PL-17", "$.clues"))
 
     # placeholders
     rx = K.placeholder_regex(lim["ids"]["placeholder_format"])

@@ -1,191 +1,182 @@
 {
-  "version": "1.0.0",
-  "purpose": "Department voices, keyed by four style axes (project decision, Entry 024: not by department names). The seed sampler assigns one profile to each department slot; S2 maps the case's real departments onto those slots. Findings are always plain; the profile governs the assessment section and any document the department authors. Exemplars are nonsense and show syntax only.",
+  "version": "2.0.0",
+  "purpose": "Department voices from the Four-Axis Voice and Bias Matrix (Mystery Engine Design Research, Track 6). Profiles are keyed by style, not by department name (project decision, Entry 024): the seed sampler assigns one profile to each department slot and S2 maps the case's real departments onto those slots. Findings are always plain; a profile governs the assessment section and any document the department authors. Exemplars are nonsense and show syntax only.",
+  "source": "Mystery Engine Design Research, Track 6, 'Character Voice Differentiation, Detectable Bias, and Unreliable Testimony'. The research names example departments (records, signal, optics, assay); here they are only sources, not keys.",
   "axes": [
     {
       "id": "AX-1",
-      "name": "certainty",
-      "poles": [
-        "hedged",
-        "categorical"
-      ]
+      "name": "signature",
+      "meaning": "syntactic and lexical signature"
     },
     {
       "id": "AX-2",
-      "name": "attention",
-      "poles": [
-        "material and procedural",
-        "human and relational"
-      ]
+      "name": "worldview",
+      "meaning": "the ideological bias profile"
     },
     {
       "id": "AX-3",
-      "name": "syntax",
-      "poles": [
-        "clipped and enumerated",
-        "periodic and discursive"
-      ]
+      "name": "lens",
+      "meaning": "how the bias colours an assessment"
     },
     {
       "id": "AX-4",
-      "name": "loyalty",
-      "poles": [
-        "protects the institution",
-        "protects the individual"
-      ]
+      "name": "tell",
+      "meaning": "how a careful player detects the bias"
     }
   ],
   "profiles": [
     {
       "id": "V1",
+      "style_key": "clipped-determinist",
+      "research_archetype": "records and cryptography",
       "position": {
-        "AX-1": "categorical",
-        "AX-2": "material and procedural",
-        "AX-3": "clipped and enumerated",
-        "AX-4": "protects the institution"
+        "AX-1": "clipped telegraphic clauses, passive verbs, numbers always in digits, probability brackets",
+        "AX-2": "every anomaly is deliberate; nobody is ever merely careless",
+        "AX-3": "reads an erased line, a typo or a late entry as premeditated",
+        "AX-4": "attaches precise probabilities of intent to mundane irregularities that other documents explain as petty and human"
       },
-      "bias": "Trusts the record over the person. If it is not logged, it did not happen; if it is logged, it is true.",
-      "bias_lexicon": [
-        "per register",
-        "as logged",
-        "no record of",
-        "recorded as",
-        "per entry",
-        "not logged"
-      ],
+      "bias": "Every irregularity is assumed deliberate.",
       "rules": {
         "assessment_sentence_words": [
-          4,
-          14
+          3,
+          16
         ],
         "first_person": "forbidden",
         "hedges": "forbidden",
+        "digits_required": true,
+        "forbidden_any": [],
         "required_in_assessment_any": [
-          "per register",
-          "as logged",
-          "no record of",
-          "recorded as",
-          "per entry",
-          "not logged"
+          "probability",
+          "deliberate",
+          "premeditated",
+          "assessed",
+          "intentional",
+          "%"
         ]
       },
       "exemplars": [
-        "Item FIXTURE-03 received 09:10. Seal intact. Mass 212 g. No record of transfer in register FIXTURE-R2. Transfer did not occur.",
-        "Entry FIXTURE-07 recorded as complete at 16:42. Countersignature present. Per entry, procedure FIXTURE-P1 followed in full."
+        "Line 4 of FIXTURE-R2 erased. Erasure assessed deliberate. [Probability 91%.] Entry FIXTURE-03 re-written at 16:42.",
+        "Two seals on FIXTURE-07 replaced in 1 shift. Replacement pattern assessed intentional. [Probability 87%.]"
       ]
     },
     {
       "id": "V2",
+      "style_key": "sensory-empath",
+      "research_archetype": "audio and signal analysis",
       "position": {
-        "AX-1": "hedged",
-        "AX-2": "material and procedural",
-        "AX-3": "periodic and discursive",
-        "AX-4": "protects the individual"
+        "AX-1": "rhythmic, sensory prose about cadence, breath, room sound and emotional subtext",
+        "AX-2": "trusts the sound of sincerity over records and rank",
+        "AX-3": "defends a speaker who sounds frightened or grieving, even when their facts are wrong",
+        "AX-4": "excuses a spoken claim as strain while faithfully bracketing the background sound that contradicts it"
       },
-      "bias": "Looks for equipment, process or environment before intent. Reluctant to blame a person while any mechanical explanation remains.",
-      "bias_lexicon": [
-        "consistent with",
-        "cannot exclude",
-        "equipment",
-        "wear",
-        "tolerance",
-        "process"
-      ],
+      "bias": "A sincere-sounding voice is believed over the record.",
       "rules": {
         "assessment_sentence_words": [
-          14,
-          40
+          12,
+          36
         ],
-        "first_person": "plural_only",
+        "first_person": "allowed",
         "hedges": "required",
+        "digits_required": false,
+        "forbidden_any": [],
         "required_in_assessment_any": [
-          "consistent with",
-          "cannot exclude",
-          "equipment",
-          "wear",
-          "tolerance",
-          "process"
+          "breath",
+          "cadence",
+          "tone",
+          "strain",
+          "sincere",
+          "voice"
         ]
       },
       "exemplars": [
-        "The surface of FIXTURE-05 shows a pattern consistent with ordinary wear, although we cannot exclude a single event of the kind described in FIXTURE-R4, and we would want a second sample before saying more.",
-        "We note that the reading at FIXTURE-09 sits just outside tolerance, which in our experience more often reflects the calibration of the instrument than anything done to it, though we cannot exclude handling."
+        "The speaker in FIXTURE-09 slows on every third phrase, a cadence that seems to me the strain of someone tired rather than someone hiding, and I would not read the pause as anything more.",
+        "There is a held breath before the reply in FIXTURE-11 that likely reflects grief, and the voice stays level and sincere even where the account wanders."
       ]
     },
     {
       "id": "V3",
+      "style_key": "material-positivist",
+      "research_archetype": "imaging and spatial optics",
       "position": {
-        "AX-1": "categorical",
-        "AX-2": "human and relational",
-        "AX-3": "periodic and discursive",
-        "AX-4": "protects the institution"
+        "AX-1": "hyper-precise geometric and material description, positions and measurements, no emotional adjectives",
+        "AX-2": "only what an instrument records is real; testimony and rank are noise",
+        "AX-3": "fixes on the prominent physical subject and treats human use of the space as irrelevant",
+        "AX-4": "lists every object in the frame with the same neutrality, so the decisive background item is there for the player to notice"
       },
-      "bias": "Reads intent into behaviour and defers to rank. Assumes the senior account is the reliable one.",
-      "bias_lexicon": [
-        "evidently",
-        "clearly intended",
-        "chose to",
-        "in keeping with",
-        "senior",
-        "reliable account"
-      ],
+      "bias": "Only recorded physical evidence counts; human context is dismissed.",
       "rules": {
         "assessment_sentence_words": [
-          12,
-          34
+          6,
+          24
         ],
-        "first_person": "allowed",
+        "first_person": "forbidden",
         "hedges": "forbidden",
+        "digits_required": true,
+        "forbidden_any": [
+          "sad",
+          "sadly",
+          "tragic",
+          "worrying",
+          "alarming",
+          "unfortunate",
+          "unfortunately",
+          "disturbing",
+          "troubling",
+          "terrible",
+          "beautiful",
+          "poignant"
+        ],
         "required_in_assessment_any": [
-          "evidently",
-          "clearly intended",
-          "chose to",
-          "in keeping with",
-          "senior",
-          "reliable account"
+          "foreground",
+          "background",
+          "quadrant",
+          "left",
+          "right",
+          "mm",
+          "cm",
+          "angle",
+          "non-structural"
         ]
       },
       "exemplars": [
-        "Person A evidently chose to leave FIXTURE-02 unattended, which is in keeping with the account given by the senior officer of FIXTURE-D1, and I see no reason to doubt it.",
-        "The sequence at FIXTURE-11 was clearly intended to be read as routine; the reliable account here is the supervisor's, and the junior statement adds little."
+        "Foreground: FIXTURE-05 lies at 30 degrees to the bench edge, 412 mm from the left upright. Background, upper right quadrant: 2 cups, 1 cloth, non-structural.",
+        "The panel in FIXTURE-08 shows 3 parallel marks, 14 mm apart, left of centre. Testimony regarding use of the room is not relevant to the frame."
       ]
     },
     {
       "id": "V4",
+      "style_key": "deferential-academic",
+      "research_archetype": "forensics and assay",
       "position": {
-        "AX-1": "hedged",
-        "AX-2": "human and relational",
-        "AX-3": "clipped and enumerated",
-        "AX-4": "protects the individual"
+        "AX-1": "formal academic prose, long subordinate clauses, deference to hierarchy and protocol",
+        "AX-2": "loyal to senior people and the institution's reputation; blames outsiders and juniors",
+        "AX-3": "interprets residue and records in ways that protect senior staff and flagship work",
+        "AX-4": "uses deferential hedging immediately after logging a finding that implicates someone senior"
       },
-      "bias": "Sympathises with the junior or vulnerable party and discounts their culpability; notices pressure on people.",
-      "bias_lexicon": [
-        "may have",
-        "under pressure",
-        "understandably",
-        "workload",
-        "unsupported",
-        "likely felt"
-      ],
+      "bias": "Senior people and the institution are protected; juniors and outsiders are blamed.",
       "rules": {
         "assessment_sentence_words": [
-          5,
-          18
+          16,
+          48
         ],
-        "first_person": "allowed",
+        "first_person": "plural_only",
         "hedges": "required",
+        "digits_required": false,
+        "forbidden_any": [],
         "required_in_assessment_any": [
-          "may have",
-          "under pressure",
-          "understandably",
-          "workload",
-          "unsupported",
-          "likely felt"
+          "given",
+          "standing",
+          "tenure",
+          "senior",
+          "unauthorised",
+          "unauthorized",
+          "protocol",
+          "borrowing"
         ]
       },
       "exemplars": [
-        "Person B may have missed FIXTURE-04. Workload that week was high. Unsupported on two shifts. Understandably slow to report.",
-        "Note: FIXTURE-08 was filed late. Person C likely felt unable to raise it. Recommend no action on the delay itself."
+        "Given the long standing of the senior officer named in FIXTURE-R4, we consider it far more likely that the material was obtained through unauthorised borrowing by junior staff than that it was used by its registered holder.",
+        "While the match recorded in FIXTURE-06 is clear, we would suggest that protocol was most probably breached by a visitor, since nothing in the senior team's conduct to date would support a different reading."
       ]
     }
   ],
@@ -198,9 +189,12 @@
       "appears",
       "seems",
       "likely",
+      "probably",
       "cannot exclude",
       "consistent with",
-      "suggests"
+      "suggests",
+      "suggest",
+      "would not"
     ],
     "first_person_singular": [
       "i",
@@ -233,6 +227,7 @@
       "clearly",
       "may have",
       "assess",
+      "assessed",
       "conclude"
     ]
   }

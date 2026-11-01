@@ -12,24 +12,24 @@ import compat_check as CC  # noqa: E402
 r = Report("test_compat_check")
 reset_data()
 
-EXPECTED = """COMPAT PAT-01 AVAILABLE
-COMPAT PAT-02 AVAILABLE
-COMPAT PAT-03 AVAILABLE
-COMPAT PAT-04 AVAILABLE
-COMPAT PAT-05 AVAILABLE
-COMPAT PAT-06 UNAVAILABLE missing aliases
-COMPAT PAT-07 UNAVAILABLE missing aliases
-COMPAT PAT-08 AVAILABLE
-COMPAT PAT-09 AVAILABLE
-COMPAT PAT-10 AVAILABLE
-COMPAT PAT-11 AVAILABLE
+EXPECTED = """COMPAT PAT-01 AVAILABLE NATIVE
+COMPAT PAT-02 AVAILABLE NATIVE
+COMPAT PAT-03 AVAILABLE GENERIC
+COMPAT PAT-04 AVAILABLE GENERIC
+COMPAT PAT-05 AVAILABLE GENERIC
+COMPAT PAT-06 AVAILABLE GENERIC
+COMPAT PAT-07 AVAILABLE GENERIC
+COMPAT PAT-08 AVAILABLE GENERIC
+COMPAT PAT-09 AVAILABLE GENERIC
+COMPAT PAT-10 AVAILABLE GENERIC
+COMPAT PAT-11 AVAILABLE NATIVE
 COMPAT PAT-12 UNAVAILABLE missing accepted_fragment_orders
-COMPAT PAT-13 AVAILABLE
-COMPAT PAT-14 AVAILABLE
-COMPAT PAT-15 AVAILABLE
-COMPAT PAT-16 AVAILABLE
-COMPAT 13 of 16 patterns available
-COMPAT engine rules found 3
+COMPAT PAT-13 AVAILABLE GENERIC
+COMPAT PAT-14 AVAILABLE GENERIC
+COMPAT PAT-15 AVAILABLE GENERIC
+COMPAT PAT-16 AVAILABLE GENERIC
+COMPAT 15 of 16 patterns available
+COMPAT engine rules found 4
 COMPAT prose-like schema fields 6
 """
 
@@ -38,11 +38,14 @@ buf = io.StringIO()
 code = CC.print_report(rep, K.Out(stream=buf))
 r.eq("exit code", code, 0)
 r.eq("exact output", buf.getvalue(), EXPECTED)
-r.eq("rule ids", rep["rule_ids"], ["DK-01", "FP-01", "FP-02"])
+r.eq("rule ids", rep["rule_ids"], ["DK-01", "FP-01", "FP-02", "FP-03"])
 r.eq("masks resolved", rep["capabilities"]["CAP-03"], "MASKS")
 r.eq("defeat resolved", rep["capabilities"]["CAP-05"], "defeaters")
 r.eq("time resolved", rep["capabilities"]["CAP-08"], "record_date")
 r.eq("aliases missing", rep["capabilities"]["CAP-10"], None)
+r.eq("native relation missing", rep["capabilities"]["CAP-21"], None)
+r.eq("generic mode recorded", rep["patterns"]["PAT-08"], {"available": True, "missing": [], "mode": "GENERIC"})
+r.eq("native mode recorded", rep["patterns"]["PAT-01"]["mode"], "NATIVE")
 r.check("property names collected", "raw_observation_text" in rep["property_names"])
 r.eq("engine files hashed", sorted(rep["engine_files"]), [
     "engine/contract/bundle_contract.json", "engine/schemas/case.v0.2.json",
@@ -67,8 +70,8 @@ try:
     voc = full / "engine" / "schemas" / "vocabulary.json"
     voc.write_text(voc.read_text().replace('"MASKS", ', ""), encoding="utf-8")
     rep3 = CC.run_compat(full)
-    r.eq("PAT-02 needs MASKS", rep3["patterns"]["PAT-02"], {"available": False, "missing": ["CAP-03"]})
-    r.eq("PAT-01 unaffected", rep3["patterns"]["PAT-01"]["available"], True)
+    r.eq("PAT-01 needs MASKS", rep3["patterns"]["PAT-01"], {"available": False, "missing": ["CAP-03"], "mode": "NATIVE"})
+    r.eq("PAT-02 unaffected", rep3["patterns"]["PAT-02"]["available"], True)
 finally:
     shutil.rmtree(tmp, ignore_errors=True)
 

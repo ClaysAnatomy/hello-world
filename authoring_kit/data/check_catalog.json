@@ -3,7 +3,7 @@
   "purpose": "Fixed sentences describing what each kit check requires. They are given to the repair stage beside the failing IDs and JSON paths, so a repair sees the requirement without ever seeing raw tool output.",
   "checks": {
     "KT-BI-01": "bible.json must exist and match the bible schema.",
-    "KT-BI-02": "Every named person in the cast must use exactly one of the seeded names, spelled exactly, and every seeded name must be used.",
+    "KT-BI-02": "Each named person uses a seeded name spelled exactly, or a replacement that passes the name rules: distinct initials, distinct sound keys, plain ASCII, not on a ban list. The cast size must equal the seeded cast size.",
     "KT-BI-03": "Respect the cognitive budget: suspect count within limits, locations, critical strings and total cast at or under the caps.",
     "KT-BI-04": "Every option must be supported by at least two facts, and every cited fact must exist.",
     "KT-BI-05": "Every question must have exactly one correct option.",
@@ -26,7 +26,7 @@
     "KT-PL-08": "Every document needs an author who is a named person or a department, an intended reader, and an in-world reason.",
     "KT-PL-09": "Each department must use a different seeded voice profile, within the department cap.",
     "KT-PL-10": "Placeholders must follow the format, belong to a known owner, appear exactly once as a whole string in case.json, carry only facts their document holds, and no unlisted placeholder may appear.",
-    "KT-PL-11": "World documents must stay within the share range and each must involve a named person.",
+    "KT-PL-11": "World documents must stay within the share range, each must involve a named person, carry no solution-critical fact, and every world placeholder must have a word limit at or under the flavor cap.",
     "KT-PL-12": "case.json must reuse the bible's IDs for people, solution-critical facts, questions and options.",
     "KT-PL-13": "Every critical string must be required by at least one placeholder.",
     "KT-PL-14": "Every planned document ID must appear in case.json, and no document ID may repeat.",
@@ -49,6 +49,15 @@
     "VL-16": "A word is one letter away from a cast name. Spell names exactly.",
     "KT-RV-01": "review.json must contain an integer score in range for every SECOND-MODEL rubric item, flags from the failure-mode list only, and no text.",
     "KT-RN-01": "Placeholders remain in the case.",
-    "KT-RN-02": "Engine schema or vocabulary changed since this run started. Run compat_check and start a new run."
+    "KT-RN-02": "Engine schema or vocabulary changed since this run started. Run compat_check and start a new run.",
+    "KT-BI-15": "Every named person needs a voice sample within the word limits, free of banned phrases, that asserts no case fact.",
+    "KT-PL-16": "The number of documents must be within the document range for this build.",
+    "KT-PL-17": "Documents must use at least the minimum number of tiers, so the case has an intake, an impasse and a reframing.",
+    "VL-17": "An assessment uses none of its voice profile's signature words. Soft warning.",
+    "KT-AU-01": "The audit agent is not configured, or is declared as the same model family as the authoring agent.",
+    "KT-AU-02": "The audit answer file is missing or does not match its schema.",
+    "AU-01": "The blind solver must pick the correct option for every question.",
+    "AU-02": "Every document the blind solver cites for a question must be valid for that answer, and together they must cover every fact the answer rests on.",
+    "AU-03": "With only the questions and options, the shortcut probe must not find the correct answer above chance plus the margin."
   }
 }

@@ -2,27 +2,265 @@
   "version": "1.0.0",
   "purpose": "Abstract capabilities the aha patterns need, each with candidate terms. compat_check looks for the candidates (case-insensitive, exact) among every key and string value in the real schema, vocabulary and contract files, and records which term matched. The candidates come from the project dev log and are guesses until compat_check confirms them. Edit this file, never the code, when the engine's names differ.",
   "capabilities": [
-    {"id": "CAP-01", "label": "a relation by which a clue establishes a fact", "candidates": ["ESTABLISHES"]},
-    {"id": "CAP-02", "label": "a relation by which a clue contradicts a fact", "candidates": ["CONTRADICTS"]},
-    {"id": "CAP-03", "label": "a masking relation for the aha", "candidates": ["MASKS"]},
-    {"id": "CAP-04", "label": "a reframing relation for the aha", "candidates": ["REFRAMES"]},
-    {"id": "CAP-05", "label": "rule defeat or exception", "candidates": ["DEFEATS", "defeaters", "defeated_by", "defeats", "exceptions", "UNLESS"]},
-    {"id": "CAP-06", "label": "a department-processed clue", "candidates": ["is_dept_processed", "dept_commentary_text", "delivering_dept_id"]},
-    {"id": "CAP-07", "label": "a raw observation layer separate from assessment", "candidates": ["raw_observation_text"]},
-    {"id": "CAP-08", "label": "a record date or time field", "candidates": ["record_date", "timestamp", "clock_start", "time"]},
-    {"id": "CAP-09", "label": "a location reference", "candidates": ["location_id", "location_ids", "locations", "place_id"]},
-    {"id": "CAP-10", "label": "search aliases or alternate references", "candidates": ["aliases", "alias", "search_aliases"]},
-    {"id": "CAP-11", "label": "fragments with an assembly order", "candidates": ["accepted_fragment_orders", "fragments", "fragment_of"]},
-    {"id": "CAP-12", "label": "a second modality (photo overlay, audio or sensory tags)", "candidates": ["overlay_text", "sensory_tags", "media_type", "photo", "audio"]},
-    {"id": "CAP-13", "label": "derived facts built from premise facts", "candidates": ["premises", "premise_fact_ids", "requires_facts", "derived_from"]},
-    {"id": "CAP-14", "label": "a soft order between aha facts", "candidates": ["preferred_first_fact_id"]},
-    {"id": "CAP-15", "label": "a requisition gate", "candidates": ["REQUISITION"]},
-    {"id": "CAP-16", "label": "authored desk mail", "candidates": ["desk_mail"]},
-    {"id": "CAP-17", "label": "a world-context clue role", "candidates": ["FLAVOR"]}
+    {
+      "id": "CAP-01",
+      "label": "a relation by which a clue establishes a fact",
+      "candidates": [
+        "ESTABLISHES"
+      ]
+    },
+    {
+      "id": "CAP-02",
+      "label": "a relation by which a clue contradicts a fact",
+      "candidates": [
+        "CONTRADICTS"
+      ]
+    },
+    {
+      "id": "CAP-03",
+      "label": "a masking relation for the aha",
+      "candidates": [
+        "MASKS"
+      ]
+    },
+    {
+      "id": "CAP-04",
+      "label": "a reframing relation for the aha",
+      "candidates": [
+        "REFRAMES"
+      ]
+    },
+    {
+      "id": "CAP-05",
+      "label": "rule defeat or exception",
+      "candidates": [
+        "DEFEATS",
+        "defeaters",
+        "defeated_by",
+        "defeats",
+        "exceptions",
+        "UNLESS"
+      ]
+    },
+    {
+      "id": "CAP-06",
+      "label": "a department-processed clue",
+      "candidates": [
+        "is_dept_processed",
+        "dept_commentary_text",
+        "delivering_dept_id"
+      ]
+    },
+    {
+      "id": "CAP-07",
+      "label": "a raw observation layer separate from assessment",
+      "candidates": [
+        "raw_observation_text"
+      ]
+    },
+    {
+      "id": "CAP-08",
+      "label": "a record date or time field",
+      "candidates": [
+        "record_date",
+        "timestamp",
+        "clock_start",
+        "time"
+      ]
+    },
+    {
+      "id": "CAP-09",
+      "label": "a location reference",
+      "candidates": [
+        "location_id",
+        "location_ids",
+        "locations",
+        "place_id"
+      ]
+    },
+    {
+      "id": "CAP-10",
+      "label": "search aliases or alternate references",
+      "candidates": [
+        "aliases",
+        "alias",
+        "search_aliases"
+      ]
+    },
+    {
+      "id": "CAP-11",
+      "label": "fragments with an assembly order",
+      "candidates": [
+        "accepted_fragment_orders",
+        "fragments",
+        "fragment_of"
+      ]
+    },
+    {
+      "id": "CAP-12",
+      "label": "a second modality (photo overlay, audio or sensory tags)",
+      "candidates": [
+        "overlay_text",
+        "sensory_tags",
+        "media_type",
+        "photo",
+        "audio"
+      ]
+    },
+    {
+      "id": "CAP-13",
+      "label": "derived facts built from premise facts",
+      "candidates": [
+        "premises",
+        "premise_fact_ids",
+        "requires_facts",
+        "derived_from"
+      ]
+    },
+    {
+      "id": "CAP-14",
+      "label": "a soft order between aha facts",
+      "candidates": [
+        "preferred_first_fact_id"
+      ]
+    },
+    {
+      "id": "CAP-15",
+      "label": "a requisition gate",
+      "candidates": [
+        "REQUISITION"
+      ]
+    },
+    {
+      "id": "CAP-16",
+      "label": "authored desk mail",
+      "candidates": [
+        "desk_mail"
+      ]
+    },
+    {
+      "id": "CAP-17",
+      "label": "a world-context clue role",
+      "candidates": [
+        "FLAVOR"
+      ]
+    },
+    {
+      "id": "CAP-18",
+      "label": "a polarity-inverting relation",
+      "candidates": [
+        "INVERTS-POLARITY",
+        "INVERTS_POLARITY",
+        "inverts_polarity"
+      ]
+    },
+    {
+      "id": "CAP-19",
+      "label": "an identity-collapsing relation",
+      "candidates": [
+        "COLLAPSES-IDENTITY",
+        "COLLAPSES_IDENTITY",
+        "collapses_identity"
+      ]
+    },
+    {
+      "id": "CAP-20",
+      "label": "a role-splitting relation",
+      "candidates": [
+        "SPLITS-ROLE",
+        "SPLITS_ROLE",
+        "splits_role"
+      ]
+    },
+    {
+      "id": "CAP-21",
+      "label": "a time-window-shifting relation",
+      "candidates": [
+        "SHIFTS-WINDOW",
+        "SHIFTS_WINDOW",
+        "shifts_window"
+      ]
+    },
+    {
+      "id": "CAP-22",
+      "label": "a location-shifting relation",
+      "candidates": [
+        "SHIFTS-LOCATION",
+        "SHIFTS_LOCATION",
+        "shifts_location"
+      ]
+    },
+    {
+      "id": "CAP-23",
+      "label": "an absence-exposing relation",
+      "candidates": [
+        "EXPOSES-ABSENCE",
+        "EXPOSES_ABSENCE",
+        "exposes_absence"
+      ]
+    },
+    {
+      "id": "CAP-24",
+      "label": "a presupposition (guilty knowledge) relation",
+      "candidates": [
+        "PRESUPPOSES",
+        "presupposes"
+      ]
+    },
+    {
+      "id": "CAP-25",
+      "label": "a target-redirecting relation",
+      "candidates": [
+        "REDIRECTS-TARGET",
+        "REDIRECTS_TARGET",
+        "redirects_target"
+      ]
+    },
+    {
+      "id": "CAP-26",
+      "label": "a relation by which a document teaches a domain rule",
+      "candidates": [
+        "TEACHES",
+        "teaches"
+      ]
+    },
+    {
+      "id": "CAP-27",
+      "label": "a rules-out relation from a rule to an option",
+      "candidates": [
+        "RULES-OUT",
+        "RULES_OUT",
+        "rules_out"
+      ]
+    },
+    {
+      "id": "CAP-28",
+      "label": "a fragment-of relation",
+      "candidates": [
+        "FRAGMENT-OF",
+        "FRAGMENT_OF",
+        "fragment_of"
+      ]
+    }
   ],
   "prose_field_hints": {
     "purpose": "Names that suggest a player-facing prose field. compat_check reports how many schema properties match, so the local builder can confirm the S2 placeholder rule covers them. Advisory only.",
-    "suffixes": ["_text", "_title", "_subject", "_lines", "_stem", "transcript", "overlay_text", "caption", "body", "label"]
+    "suffixes": [
+      "_text",
+      "_title",
+      "_subject",
+      "_lines",
+      "_stem",
+      "transcript",
+      "overlay_text",
+      "caption",
+      "body",
+      "label"
+    ]
   },
-  "id_key_hints": ["id", "_id"]
+  "id_key_hints": [
+    "id",
+    "_id"
+  ],
+  "source_note": "Relations CAP-18 to CAP-28 come from the research document 'Mystery Engine Design Research', Appendix B.2 (Schema v0.2 relation types). Whether the built engine has them is decided by compat_check."
 }

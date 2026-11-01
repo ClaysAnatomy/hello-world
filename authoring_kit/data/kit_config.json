@@ -95,7 +95,20 @@
       "turns": "num_turns",
       "cost_usd": "total_cost_usd"
     },
-    "examples_note": "Fill argv for your agent. Tokens: {prompt_file} {stage_dir} {max_turns}. The prompt is also sent on stdin when stdin is 'prompt'. Examples live in docs/INTEGRATION.md."
+    "examples_note": "Fill argv for your agent. Tokens: {prompt_file} {stage_dir} {max_turns} {model} {effort} {python}. The prompt is also sent on stdin when stdin is 'prompt'. Examples live in docs/INTEGRATION.md.",
+    "default_model": "",
+    "default_effort": "",
+    "family": "",
+    "pause": {
+      "exit_codes": [],
+      "output_patterns": [
+        "usage limit reached",
+        "rate limit",
+        "quota exceeded",
+        "limit will reset"
+      ],
+      "note": "UNVERIFIED signals. When the agent stops because a plan or rate limit was reached, the run pauses instead of failing. Patterns are matched case-insensitively in memory against the agent's output and never stored or printed. Confirm the real signals from the agent's documentation."
+    }
   },
   "workspace": {
     "case_file": "case.json",
@@ -106,5 +119,54 @@
     "taste_profile": "authoring_kit/state/taste_profile.json"
   },
   "run_optional_S6": false,
-  "python_note": "Empty means the interpreter running the kit. Set a full path to force another."
+  "python_note": "Empty means the interpreter running the kit. Set a full path to force another.",
+  "audit_agent": {
+    "argv": [],
+    "stdin": "prompt",
+    "family": "",
+    "default_model": "",
+    "default_effort": "",
+    "usage_from_stdout_json": false,
+    "usage_keys": {
+      "turns": "num_turns",
+      "cost_usd": "total_cost_usd"
+    },
+    "note": "Must be a different model family from agent.family (research Track 5: Strict Cross-Family Separation). The kit refuses to run the audit when either family is blank or they match.",
+    "env_strip_suffixes": [
+      "_AUTH_TOKEN"
+    ],
+    "env_note": "The audit agent may need its own key from the environment (for example a Gemini key), so by default only *_AUTH_TOKEN is removed. The kit itself never reads any key."
+  },
+  "audit": {
+    "questions_path": "$.questions",
+    "question_id_keys": [
+      "question_id",
+      "id"
+    ],
+    "option_list_keys": [
+      "options"
+    ],
+    "option_id_keys": [
+      "option_id",
+      "id"
+    ],
+    "cite_map": "",
+    "note": "How to find questions and options in the player bundle for the options-only probe. cite_map, if set, is a JSON file (relative to the workspace) mapping cited record references to clue IDs, for bundles that re-key clues."
+  },
+  "stage_root": "",
+  "stage_root_note": "Where stage folders are created. Empty means a new folder under the system temp directory per run. Never inside the workspace: an agent's working folder is never inside the vault (Entry 014).",
+  "probe": {
+    "exact_keys": [
+      "text",
+      "title",
+      "subject",
+      "caption",
+      "body",
+      "stem",
+      "label",
+      "lines",
+      "transcript"
+    ],
+    "note": "Keys treated as player-facing prose by placeholder_probe.py, in addition to capability_map.json prose_field_hints.suffixes. Edit to match the real schema."
+  }
 }

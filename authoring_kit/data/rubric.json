@@ -1,33 +1,199 @@
 {
   "version": "1.0.0",
   "purpose": "What a good case is, item by item. MACHINE items are decided by kit or engine checks. SECOND-MODEL items are scored 0 to 3 by the optional S6 craft review (a cheap self-check, or a different model for independence). HUMAN items come from the player after play, through feedback_form.json. Scores are numbers only; no story text is ever recorded.",
-  "scale": {"min": 0, "max": 3, "anchors": {"0": "absent or broken", "1": "present but weak", "2": "solid", "3": "exemplary"}},
+  "scale": {
+    "min": 0,
+    "max": 3,
+    "anchors": {
+      "0": "absent or broken",
+      "1": "present but weak",
+      "2": "solid",
+      "3": "exemplary"
+    }
+  },
   "items": [
-    {"id": "RUB-01", "tag": "MACHINE", "text": "All engine fair-play rules pass.", "checks": ["engine"]},
-    {"id": "RUB-02", "tag": "MACHINE", "text": "Every solution fact has two independent routes, one of them search-free.", "checks": ["KT-PL-02"]},
-    {"id": "RUB-03", "tag": "MACHINE", "text": "Cognitive budget respected: suspects, locations, critical strings.", "checks": ["KT-BI-03"]},
-    {"id": "RUB-04", "tag": "MACHINE", "text": "No banned phrase, meta word or confession in player-facing text.", "checks": ["VL-01", "VL-03", "VL-10"]},
-    {"id": "RUB-05", "tag": "MACHINE", "text": "Options length-normalised; every distractor names a real entity.", "checks": ["VL-04", "VL-05"]},
-    {"id": "RUB-06", "tag": "MACHINE", "text": "Names, times and codes preserved exactly everywhere.", "checks": ["VL-06", "VL-16"]},
-    {"id": "RUB-07", "tag": "MACHINE", "text": "Every text claims only its assigned facts.", "checks": ["VL-11"]},
-    {"id": "RUB-08", "tag": "MACHINE", "text": "Findings and assessment kept apart; assessments carry their voice.", "checks": ["VL-07", "VL-08"]},
-    {"id": "RUB-09", "tag": "MACHINE", "text": "Varied document forms, each with an author, a reader and an in-world reason.", "checks": ["KT-PL-07", "KT-PL-08"]},
-    {"id": "RUB-10", "tag": "MACHINE", "text": "Each suspect appears in several hands and once outside the crime.", "checks": ["KT-PL-06"]},
-    {"id": "RUB-11", "tag": "SECOND-MODEL", "text": "Hook: the first documents raise a human question a reader wants answered regardless of the puzzle."},
-    {"id": "RUB-12", "tag": "SECOND-MODEL", "text": "Lived-in cast: each named person has wants, obligations and a life that shows on the page, beyond the crime."},
-    {"id": "RUB-13", "tag": "SECOND-MODEL", "text": "Blind voice test: with headers removed, authors can be told apart by syntax and attention."},
-    {"id": "RUB-14", "tag": "SECOND-MODEL", "text": "The turn is earned: the masking document reads innocently, and the reframe works on paper already held."},
-    {"id": "RUB-15", "tag": "SECOND-MODEL", "text": "The herring induces real early suspicion and is refuted cleanly by findable paper."},
-    {"id": "RUB-16", "tag": "SECOND-MODEL", "text": "Diegetic integrity: every document would exist if nobody ever investigated."},
-    {"id": "RUB-17", "tag": "SECOND-MODEL", "text": "Semantic honesty: titles, subjects and findings describe and never conclude."},
-    {"id": "RUB-18", "tag": "SECOND-MODEL", "text": "No quirk for its own sake: every trait changes what a person does, notices or hides."},
-    {"id": "RUB-19", "tag": "SECOND-MODEL", "text": "The truth changes the meaning of the human question; the motive is understandable."},
-    {"id": "RUB-20", "tag": "SECOND-MODEL", "text": "Register: calm, archival, specific, restrained; feeling carried by particulars."},
-    {"id": "RUB-21", "tag": "HUMAN", "text": "I wanted to open the next record."},
-    {"id": "RUB-22", "tag": "HUMAN", "text": "The turn felt like mine."},
-    {"id": "RUB-23", "tag": "HUMAN", "text": "The people felt real."},
-    {"id": "RUB-24", "tag": "HUMAN", "text": "The world felt like it went on outside the records."},
-    {"id": "RUB-25", "tag": "HUMAN", "text": "The ending stayed with me."},
-    {"id": "RUB-26", "tag": "HUMAN", "text": "It was fair."}
+    {
+      "id": "RUB-01",
+      "tag": "MACHINE",
+      "text": "All engine fair-play rules pass.",
+      "checks": [
+        "engine"
+      ]
+    },
+    {
+      "id": "RUB-02",
+      "tag": "MACHINE",
+      "text": "Every solution fact has two independent routes, one of them search-free.",
+      "checks": [
+        "KT-PL-02"
+      ]
+    },
+    {
+      "id": "RUB-03",
+      "tag": "MACHINE",
+      "text": "Cognitive budget respected: suspects, locations, critical strings.",
+      "checks": [
+        "KT-BI-03"
+      ]
+    },
+    {
+      "id": "RUB-04",
+      "tag": "MACHINE",
+      "text": "No banned phrase, meta word or confession in player-facing text.",
+      "checks": [
+        "VL-01",
+        "VL-03",
+        "VL-10"
+      ]
+    },
+    {
+      "id": "RUB-05",
+      "tag": "MACHINE",
+      "text": "Options length-normalised; every distractor names a real entity.",
+      "checks": [
+        "VL-04",
+        "VL-05"
+      ]
+    },
+    {
+      "id": "RUB-06",
+      "tag": "MACHINE",
+      "text": "Names, times and codes preserved exactly everywhere.",
+      "checks": [
+        "VL-06",
+        "VL-16"
+      ]
+    },
+    {
+      "id": "RUB-07",
+      "tag": "MACHINE",
+      "text": "Every text claims only its assigned facts.",
+      "checks": [
+        "VL-11"
+      ]
+    },
+    {
+      "id": "RUB-08",
+      "tag": "MACHINE",
+      "text": "Findings and assessment kept apart; assessments carry their voice.",
+      "checks": [
+        "VL-07",
+        "VL-08"
+      ]
+    },
+    {
+      "id": "RUB-09",
+      "tag": "MACHINE",
+      "text": "Varied document forms, each with an author, a reader and an in-world reason.",
+      "checks": [
+        "KT-PL-07",
+        "KT-PL-08"
+      ]
+    },
+    {
+      "id": "RUB-10",
+      "tag": "MACHINE",
+      "text": "Each suspect appears in several hands and once outside the crime.",
+      "checks": [
+        "KT-PL-06"
+      ]
+    },
+    {
+      "id": "RUB-11",
+      "tag": "SECOND-MODEL",
+      "text": "Hook: the first documents raise a human question a reader wants answered regardless of the puzzle."
+    },
+    {
+      "id": "RUB-12",
+      "tag": "SECOND-MODEL",
+      "text": "Lived-in cast: each named person has wants, obligations and a life that shows on the page, beyond the crime."
+    },
+    {
+      "id": "RUB-13",
+      "tag": "SECOND-MODEL",
+      "text": "Blind voice test: with headers removed, authors can be told apart by syntax and attention."
+    },
+    {
+      "id": "RUB-14",
+      "tag": "SECOND-MODEL",
+      "text": "The turn is earned: the masking document reads innocently, and the reframe works on paper already held."
+    },
+    {
+      "id": "RUB-15",
+      "tag": "SECOND-MODEL",
+      "text": "The herring induces real early suspicion and is refuted cleanly by findable paper."
+    },
+    {
+      "id": "RUB-16",
+      "tag": "SECOND-MODEL",
+      "text": "Diegetic integrity: every document would exist if nobody ever investigated."
+    },
+    {
+      "id": "RUB-17",
+      "tag": "SECOND-MODEL",
+      "text": "Semantic honesty: titles, subjects and findings describe and never conclude."
+    },
+    {
+      "id": "RUB-18",
+      "tag": "SECOND-MODEL",
+      "text": "No quirk for its own sake: every trait changes what a person does, notices or hides."
+    },
+    {
+      "id": "RUB-19",
+      "tag": "SECOND-MODEL",
+      "text": "The truth changes the meaning of the human question; the motive is understandable."
+    },
+    {
+      "id": "RUB-20",
+      "tag": "SECOND-MODEL",
+      "text": "Register: calm, archival, specific, restrained; feeling carried by particulars."
+    },
+    {
+      "id": "RUB-21",
+      "tag": "HUMAN",
+      "text": "I wanted to open the next record."
+    },
+    {
+      "id": "RUB-22",
+      "tag": "HUMAN",
+      "text": "The turn felt like mine."
+    },
+    {
+      "id": "RUB-23",
+      "tag": "HUMAN",
+      "text": "The people felt real."
+    },
+    {
+      "id": "RUB-24",
+      "tag": "HUMAN",
+      "text": "The world felt like it went on outside the records."
+    },
+    {
+      "id": "RUB-25",
+      "tag": "HUMAN",
+      "text": "The ending stayed with me."
+    },
+    {
+      "id": "RUB-26",
+      "tag": "HUMAN",
+      "text": "It was fair."
+    },
+    {
+      "id": "RUB-27",
+      "tag": "MACHINE",
+      "text": "A cross-family blind solver gets every question right, citing only valid documents.",
+      "checks": [
+        "AU-01",
+        "AU-02"
+      ]
+    },
+    {
+      "id": "RUB-28",
+      "tag": "MACHINE",
+      "text": "With options alone, no answer is guessable above chance plus the margin.",
+      "checks": [
+        "AU-03"
+      ]
+    }
   ]
 }

@@ -33,12 +33,16 @@ Write one document. You know only what its author knew and what this document mu
 ## Names, spelled exactly
 {{CAST_NAMES}}
 
+## The other papers in this archive
+These exist alongside this document. The author may refer to one the way people do at work ("see the rota for 4 March", "as per Tuesday's slip") if it fits their business. Never cite reference numbers: the Desk assigns those later. Nothing here tells you what those papers say, and you must not invent their contents.
+{{NEIGHBOURS}}
+
 ## Fields to fill
 {{SLOTS_TABLE}}
 
 ## How to write it
 1. Write as the author, for the reader, about the author's own business. The author does not know a mystery is being read. They are filling in a form, handing over a shift, complaining, asking for supplies, keeping a record.
-2. Carry each assigned fact in the detail the author would naturally record: a time in a log, a count on a slip, a name in a margin. Never point at it, explain it, or set it apart.
+2. Carry each assigned fact in the detail the author would naturally record: a time in a log, a count on a slip, a name in a margin. State only the raw observation; never state what it proves about anyone or anything. Never point at it, explain it, or set it apart.
 3. You may add texture that asserts nothing about people, times, places or events in the case: the form's printed headings, the weather, a stain, the author's habitual sign-off. Texture makes the paper real. It must never smuggle in a fact.
 4. Let the author's habit of attention decide what is detailed and what is skipped. What a person notices is how the reader meets them.
 5. Titles and subjects are filed the way the institution files things: by form, number, date or routine subject. They describe; they never conclude.

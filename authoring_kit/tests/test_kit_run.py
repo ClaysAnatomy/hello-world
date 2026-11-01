@@ -1,15 +1,19 @@
 """End-to-end tests for kit_run with the fake engine and fake agent.
 
-Covers Mode A and Mode B, repair success, abort on repeat, abort at the cap,
-budget stop, engine-rule failure and repair, engine drift, setup errors, and
-canary tests proving planted strings never reach the screen, the logs, the
-ledger, the project tree, or the stage folders that must not see them.
+Covers Mode A and Mode B, stage folders outside the workspace that close after
+acceptance, repair success, abort on repeat, abort at the cap, budget stop,
+pause and resume on a usage limit, engine-rule failure and repair, placeholder
+tolerance, engine drift, setup errors, the optional review, the cross-family
+blind audit, estimates, and canary tests proving planted strings never reach
+the screen, the logs, the ledger, the project tree, or the folders that must
+not see them.
 
 Run: python test_kit_run.py            (compare with the golden transcript)
      python test_kit_run.py --regold   (rewrite the golden transcript)
 """
 import copy
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -24,29 +28,42 @@ r = Report("test_kit_run")
 
 def new(mode_a=True, usage_json=True, seed=7, overrides=None, review=False):
     sb = Sandbox(mode_a=mode_a, usage_json=usage_json)
-    extra = ["--root", str(sb.root), "--seed", str(seed)] + (["--review"] if review else [])
+    extra = ["--root", str(sb.root), "--seed", str(seed), "--stage-root", str(sb.tmp / "stages_root")]
+    extra += ["--review"] if review else []
     code, out = sb.kit("init", *extra)
     assert code == 0, out
     scenario.stage_all(sb.agent_dir, sb.seeds(), overrides)
     return sb, out
 
 
+def state(sb):
+    return json.loads((sb.ws / "checkpoints" / "state.json").read_text(encoding="utf-8"))
+
+
+def norm(text, sb):
+    """Replace this sandbox's temp paths so the golden transcript is stable."""
+    return text.replace(str(sb.tmp / "stages_root"), "<STAGE_ROOT>")
+
+
 # ------------------------------------------------------------------ 1. happy path, Mode A
 sb, init_out = new()
 try:
+    sr = Path(state(sb)["stage_root"])
+    r.check("stage root outside workspace", sb.ws not in sr.parents and sr != sb.ws)
     code, run_out = sb.kit("next", "--all")
     r.eq("mode A next exit", code, 0)
+    r.eq("no stage folder inside the workspace", (sb.ws / "stages").exists(), False)
+    r.eq("accepted stage folders closed", sorted(p.name for p in sr.iterdir()), [".mm_kit_stage_root"])
     code, fin_out = sb.kit("finish")
     r.eq("finish exit", code, 0)
-    transcript = init_out + "--- next --all\n" + run_out + "--- finish\n" + fin_out
+    r.eq("stage root removed at finish", sr.exists(), False)
+    transcript = norm(init_out + "--- next --all\n" + run_out + "--- finish\n" + fin_out, sb)
     if "--regold" in sys.argv:
         GOLDEN.write_text(transcript, encoding="utf-8")
     r.eq("golden transcript", transcript, GOLDEN.read_text(encoding="utf-8"))
-    r.check("finish pass line", fin_out.strip().endswith("FINISH PASS"))
-    state = json.loads((sb.ws / "checkpoints" / "state.json").read_text(encoding="utf-8"))
-    r.eq("status finished", state["status"], "finished")
-    r.eq("turns from usage report", state["budget"]["turns"]["S3"], 20)
-    # canaries
+    st = state(sb)
+    r.eq("status finished", st["status"], "finished")
+    r.eq("turns from usage report", st["budget"]["turns"]["S3"], 20)
     everything = init_out + run_out + fin_out
     r.check("canary not on screen", CANARY not in everything and KEY_CANARY not in everything)
     for name in ("state.json", "history.json", "compat.json", "seeds.json"):
@@ -58,14 +75,16 @@ try:
     r.check("ledger written", ledger.is_file())
     seeds = sb.seeds()
     r.check("ledger has no plain seeds", not any(file_contains(ledger, x) for x in seeds["patterns"] + [seeds["cast_names"][0]["family"]]))
-    blind = [p for d in (sb.ws / "stages").iterdir() if d.name.startswith(("S3-", "S4"))
-             for p in files_under(d) if file_contains(p, KEY_CANARY)]
-    r.eq("answer key never in S3 or S4 folders", blind, [])
-    s3_inputs = sorted({p.name for d in (sb.ws / "stages").iterdir() if d.name.startswith("S3-") for p in (d / "inputs").iterdir()})
-    r.eq("S3 folders hold only the fill schema", s3_inputs, ["fill.schema.json"])
-    s4 = (sb.ws / "stages" / "S4" / "prompt.md").read_text(encoding="utf-8")
-    r.check("S4 brief hides correctness", '"correct"' not in s4 and "correct:" not in s4.lower().replace("correct.", ""))
-    r.check("all prompts rendered", not any("{{" in p.read_text(encoding="utf-8") for p in (sb.ws / "stages").rglob("prompt.md")))
+    units = sb.ws / "checkpoints" / "units"
+    blind = [p for d in units.iterdir() if d.name.startswith(("S3-", "S4")) for p in files_under(d) if file_contains(p, KEY_CANARY)]
+    r.eq("answer key never in S3 or S4 briefs", blind, [])
+    s4 = (units / "S4" / "prompt.md").read_text(encoding="utf-8")
+    r.check("S4 brief hides correctness", '"correct"' not in s4)
+    prompts = list(units.rglob("prompt.md"))
+    r.check("all prompts rendered", len(prompts) >= 13 and not any("{{" in p.read_text(encoding="utf-8") for p in prompts))
+    s3 = (units / "S3-CLUE-04" / "prompt.md").read_text(encoding="utf-8")
+    r.check("S3 brief has the neighbour index", "## The other papers in this archive" in s3 and "dated 2026-03-04, by" in s3)
+    r.check("neighbour index carries no facts", "FACT-0" not in s3.split("## The other papers in this archive")[1].split("## Fields")[0])
     calls = sb.calls()
     r.eq("agent saw no secret variables", sorted({v for c in calls for v in c["secret_vars"]}), [])
     r.check("prompt sent on stdin", all(c["stdin_chars"] > 500 for c in calls))
@@ -77,23 +96,32 @@ try:
 finally:
     sb.close()
 
-# ------------------------------------------------------------------ 2. Mode B
+# ------------------------------------------------------------------ 2. Mode B, and live stage-folder isolation
 sb, _ = new(mode_a=False)
 try:
+    sr = Path(state(sb)["stage_root"])
     code, out = sb.kit("next")
-    r.eq("mode B next", (code, out), (3, "NEXT S1 READY\nPROMPT stages/S1/prompt.md\n"))
+    r.eq("mode B next", (code, norm(out, sb)), (3, "NEXT S1 READY\nPROMPT <STAGE_ROOT>/S1/prompt.md\n"))
     code, out = sb.kit("next")
     r.eq("mode B waiting", (code, out), (3, "Stage S1 is waiting for a check. Run check.\n"))
-    for name in ("bible.json",):
-        (sb.ws / "stages" / "S1" / name).write_bytes((sb.agent_dir / "S1" / name).read_bytes())
+    (sr / "S1" / "bible.json").write_bytes((sb.agent_dir / "S1" / "bible.json").read_bytes())
     code, out = sb.kit("check")
     r.eq("mode B check", (code, out), (0, "CHECK errors 0 warnings 0\nCHECK S1 PASS\n"))
+    r.eq("S1 folder closed after acceptance", (sr / "S1").exists(), False)
     code, out = sb.kit("check")
     r.eq("nothing to check", (code, out), (3, "No stage is waiting for a check. Run next first.\n"))
     code, out = sb.kit("status")
     r.eq("status", (code, out), (0, "STATUS units done 1 of 2\nSTATUS active\nBUDGET run turns 0 of 80\n"))
-    code, out = sb.kit("finish")
-    r.eq("finish too early", (code, out), (3, "FINISH FAIL\n"))
+    r.eq("finish too early", sb.kit("finish"), (3, "FINISH FAIL\n"))
+    sb.kit("next")
+    for n in ("clue_plan.json", "case.json", "skin.json"):
+        (sr / "S2" / n).write_bytes((sb.agent_dir / "S2" / n).read_bytes())
+    r.eq("mode B S2 check", sb.kit("check")[0], 0)
+    sb.kit("next")
+    live = sorted(p.name for p in sr.iterdir())
+    r.eq("only the current unit exists on disk", live, [".mm_kit_stage_root", "S3-CLUE-01"])
+    r.eq("S3 folder holds only the fill schema", sorted(p.name for p in (sr / "S3-CLUE-01" / "inputs").iterdir()), ["fill.schema.json"])
+    r.check("S3 folder holds no answer key", not any(file_contains(p, KEY_CANARY) for p in files_under(sr)))
 finally:
     sb.close()
 
@@ -109,9 +137,8 @@ try:
     r.check("repair lines", "CHECK VL-01 FAIL PP-CLUE-04-2\nCHECK errors 1 warnings 0\nCHECK S3-CLUE-04 FAIL\nREPAIR S3-CLUE-04 round 1 READY\nAGENT S5-S3-CLUE-04-R1 started\n" in out
             and "CHECK S3-CLUE-04 PASS" in out and out.strip().endswith("All stages passed. Run finish."))
     r.eq("finish after repair", sb.kit("finish")[0], 0)
-    rp = (sb.ws / "stages" / "S5-S3-CLUE-04-R1" / "prompt.md").read_text(encoding="utf-8")
+    rp = (sb.ws / "checkpoints" / "units" / "S3-CLUE-04" / "prompt.md").read_text(encoding="utf-8")
     r.check("repair brief lists ID and requirement", "| VL-01 | PP-CLUE-04-2 | Remove signposting" in rp)
-    r.check("repair brief has previous output", (sb.ws / "stages" / "S5-S3-CLUE-04-R1" / "inputs" / "previous" / "fill.json").is_file())
 finally:
     sb.close()
 
@@ -154,12 +181,38 @@ try:
     code, out = sb.kit("next", "--all")
     r.eq("budget stop exit", code, 4)
     r.check("budget stop lines", out.endswith("BUDGET STOP S3 stage turn cap reached\nBUDGET S3 turns 3 of 3\nBUDGET run turns 25 of 80\n"))
-    st = json.loads((sb.ws / "checkpoints" / "state.json").read_text())
+    st = state(sb)
     r.eq("budget stop leaves run resumable", (st["status"], st["current"]), ("active", None))
 finally:
     sb.close()
 
-# ------------------------------------------------------------------ 7. engine rule fails at S2, repair fixes it
+# ------------------------------------------------------------------ 7. usage limit pauses, next resumes
+sb, _ = new()
+try:
+    (sb.agent_dir / "_pause_S3-CLUE-02").write_text("x")
+    code, out = sb.kit("next", "--all")
+    r.eq("pause exit", code, 5)
+    r.check("pause lines", out.endswith("AGENT S3-CLUE-02 paused: usage limit. Run next again later to resume.\nBUDGET S3 turns 3 of 36\nBUDGET run turns 7 of 80\n"))
+    st = state(sb)
+    r.eq("paused state kept", (st["status"], st["current"]["unit"], st["failure"]), ("paused", "S3-CLUE-02", None))
+    r.eq("status shows paused", sb.kit("status")[1].splitlines()[1], "STATUS paused")
+    code, out = sb.kit("next", "--all")
+    r.eq("resume completes", code, 0)
+    r.check("resume restarts the same unit and uses no repair", out.startswith("AGENT S3-CLUE-02 started") and "REPAIR" not in out)
+finally:
+    sb.close()
+
+# ------------------------------------------------------------------ 8. engine rules: tolerated at S2, enforced later, repaired when real
+sb, _ = new()
+try:
+    lim = copy.deepcopy(K.data("limits"))
+    lim["tolerated_engine_rules"]["S2"] = []
+    override_data("limits", lim)
+    code, out = sb.kit("next")
+    code, out = sb.kit("next")
+    r.check("prose rule fails on placeholders without tolerance", "CHECK FP-03 FAIL $.clues[0].raw_observation_text" in out and "CHECK S2 FAIL" in out)
+finally:
+    sb.close()
 sb, _ = new()
 try:
     case = json.loads((sb.agent_dir / "S2" / "case.json").read_text())
@@ -172,23 +225,41 @@ try:
     code, out = sb.kit("next", "--all")
     r.eq("engine repair exit", code, 0)
     r.check("engine failure reported as ID and path", "CHECK FP-02 FAIL $.clues[0].record_date\n" in out and "REPAIR S2 round 1 READY" in out)
-    rp = (sb.ws / "stages" / "S5-S2-R1" / "prompt.md").read_text(encoding="utf-8")
+    rp = (sb.ws / "checkpoints" / "units" / "S2" / "prompt.md").read_text(encoding="utf-8")
     r.check("engine rule text from rules file", "| FP-02 | $.clues[0].record_date | Fixture rule FP-02: nonsense requirement. |" in rp)
 finally:
     sb.close()
 
-# ------------------------------------------------------------------ 8. engine files change mid-run
+# ------------------------------------------------------------------ 9. gate failure re-opens a closed unit
+sb, _ = new()
+try:
+    plan = json.loads((sb.agent_dir / "S2" / "clue_plan.json").read_text())
+    bible = json.loads((sb.agent_dir / "S1" / "bible.json").read_text())
+    shared = "the boiler in the east store was cold again by the second bell and nobody had signed the book"
+    for o in ("CLUE-02", "CLUE-03"):
+        f = scenario.make_fill(o, plan, bible)
+        f["fills"][f"PP-{o}-2"] += " " + shared
+        scenario.write_outputs(sb.agent_dir, f"S3-{o}", {"fill.json": f})
+    scenario.write_outputs(sb.agent_dir, "S5-S3-CLUE-03-R1", {"fill.json": scenario.make_fill("CLUE-03", plan, bible)})
+    code, out = sb.kit("next", "--all")
+    r.eq("gate repair exit", code, 0)
+    r.check("gate blames the later document", "CHECK VL-09 FAIL CLUE-03\n" in out and "GATE S3 FAIL" in out and "REPAIR S3-CLUE-03 round 1 READY" in out and "GATE S3 PASS" in out)
+finally:
+    sb.close()
+
+# ------------------------------------------------------------------ 10. engine files change mid-run
 sb, _ = new(mode_a=False)
 try:
     sb.kit("next")
-    (sb.ws / "stages" / "S1" / "bible.json").write_bytes((sb.agent_dir / "S1" / "bible.json").read_bytes())
+    sr = Path(state(sb)["stage_root"])
+    (sr / "S1" / "bible.json").write_bytes((sb.agent_dir / "S1" / "bible.json").read_bytes())
     vocab = sb.root / "engine" / "schemas" / "vocabulary.json"
     vocab.write_text(vocab.read_text() + " ", encoding="utf-8")
     r.eq("drift aborts", sb.kit("check"), (4, "ABORT engine files changed since init\nABORT check KT-RN-02\n"))
 finally:
     sb.close()
 
-# ------------------------------------------------------------------ 9. setup errors
+# ------------------------------------------------------------------ 11. setup errors
 sb, _ = new()
 try:
     r.eq("workspace reuse refused", sb.kit("init", "--root", str(sb.root)),
@@ -203,16 +274,18 @@ finally:
 sb = Sandbox()
 try:
     r.eq("no run yet", sb.kit("next"), (2, "No run found in this workspace. Run init first.\n"))
+    code, out = sb.kit("init", "--root", str(sb.root), "--stage-root", str(sb.ws / "inside"))
+    r.eq("stage root inside workspace refused", (code, out.splitlines()[-1]), (2, "The stage folder must not be inside the workspace. Choose another --stage-root."))
 finally:
     sb.close()
 
-# ------------------------------------------------------------------ 10. optional craft review (S6)
+# ------------------------------------------------------------------ 12. optional craft review (S6)
 sb, _ = new(review=True)
 try:
-    scenario.write_outputs(sb.agent_dir, "S6", {"review.json": {"scores": {f"RUB-{i}": 2 for i in range(11, 21)}, "flags": ["FM-05"]}})
+    scenario.write_outputs(sb.agent_dir, "S6", {"review.json": {"scores": {f"RUB-{i}": 2 for i in range(11, 21)}, "flags": ["FM-02"]}})
     code, out = sb.kit("next", "--all")
     r.eq("review run exit", code, 0)
-    r.check("review prints scores and flags only", "REVIEW RUB-11 2\n" in out and "REVIEW FLAG FM-05\n" in out)
+    r.check("review prints scores and flags only", "REVIEW RUB-11 2\n" in out and "REVIEW FLAG FM-02\n" in out)
 finally:
     sb.close()
 sb, _ = new(review=True)
@@ -221,6 +294,74 @@ try:
     scenario.write_outputs(sb.agent_dir, "S5-S6-R1", {"review.json": {"scores": {"RUB-11": 2}, "flags": [], "note": CANARY}})
     code, out = sb.kit("next", "--all")
     r.check("review with text refused", code == 4 and "CHECK KT-RV-01 FAIL $" in out and CANARY not in out)
+finally:
+    sb.close()
+
+
+# ------------------------------------------------------------------ 13. cross-family blind audit
+def bundle_for(sb):
+    case = json.loads((sb.ws / "case.json").read_text(encoding="utf-8"))
+    path = sb.tmp / "player_bundle.json"
+    path.write_text(json.dumps({"questions": case["questions"], "clues": case["clues"]}), encoding="utf-8")
+    return path
+
+
+def answers(bible, mode, right=True, cite=True, confidence=0.9):
+    plan_gold = {"Q01": ["CLUE-02", "CLUE-04"], "Q02": ["CLUE-02", "CLUE-07"]}
+    v = {}
+    for q in bible["questions"]:
+        good = next(o["id"] for o in q["options"] if o["correct"])
+        bad = next(o["id"] for o in q["options"] if not o["correct"])
+        v[q["id"]] = {"selected_opt": good if right else bad, "confidence": confidence,
+                      "cited": (plan_gold[q["id"]] if cite else ["CLUE-01"]) if mode == "SOLVE" else []}
+    return {"mode": mode, "verdict": v, "stage_1_extracted_clues": [{"note": CANARY}]}
+
+
+sb, _ = new()
+try:
+    sb.kit("next", "--all")
+    r.eq("audit before finish refused", sb.kit("audit", "--bundle", "x.json"), (3, "The audit runs only after finish passes.\n"))
+    sb.kit("finish")
+    bible = json.loads((sb.ws / "checkpoints" / "bible.json").read_text(encoding="utf-8"))
+    scenario.write_outputs(sb.agent_dir, "S7-SOLVE", {"answers.json": answers(bible, "SOLVE")})
+    scenario.write_outputs(sb.agent_dir, "S7-SHORTCUT", {"answers.json": answers(bible, "SHORTCUT", right=False, confidence=0.4)})
+    code, out = sb.kit("audit", "--bundle", str(bundle_for(sb)))
+    r.eq("audit pass exit", code, 0)
+    r.check("audit lines", "AUDIT Q01 AU-01 PASS\nAUDIT Q01 cite precision 1.00 coverage 1.00 jaccard 0.50\nAUDIT Q01 AU-02 PASS\nAUDIT Q01 AU-03 PASS\n" in out and out.endswith("AUDIT PASS\n"))
+    r.check("audit never prints the solver's text", CANARY not in out)
+    report = json.loads((sb.ws / "checkpoints" / "audit" / "report.json").read_text(encoding="utf-8"))
+    r.check("audit report holds numbers and IDs only", CANARY not in json.dumps(report) and report["pass"] is True)
+    calls = [c["unit"] for c in sb.calls()]
+    r.check("both audit modes ran", "S7-SHORTCUT" in calls and "S7-SOLVE" in calls)
+    shortcut_inputs = json.loads((sb.ws / "checkpoints" / "audit" / "SHORTCUT.json").read_text())
+    r.eq("shortcut answers stored sealed", shortcut_inputs["mode"], "SHORTCUT")
+finally:
+    sb.close()
+sb, _ = new()
+try:
+    sb.kit("next", "--all")
+    sb.kit("finish")
+    bible = json.loads((sb.ws / "checkpoints" / "bible.json").read_text(encoding="utf-8"))
+    scenario.write_outputs(sb.agent_dir, "S7-SOLVE", {"answers.json": answers(bible, "SOLVE", cite=False)})
+    scenario.write_outputs(sb.agent_dir, "S7-SHORTCUT", {"answers.json": answers(bible, "SHORTCUT", right=True, confidence=0.9)})
+    code, out = sb.kit("audit", "--bundle", str(bundle_for(sb)))
+    r.check("audit catches bad citations and a giveaway", code == 1 and "AUDIT Q01 AU-02 FAIL" in out and "AUDIT Q01 AU-03 FAIL" in out and out.endswith("AUDIT FAIL\n"))
+    cfg = copy.deepcopy(K.data("kit_config"))
+    cfg["audit_agent"]["family"] = cfg["agent"]["family"]
+    override_data("kit_config", cfg)
+    r.eq("same family refused", sb.kit("audit", "--bundle", str(bundle_for(sb)))[0], 2)
+    sr = Path(state(sb)["stage_root"])
+    shortcut_dir_inputs = [p.name for p in (sr / "S7-SHORTCUT" / "inputs").iterdir()] if (sr / "S7-SHORTCUT").exists() else []
+    r.check("shortcut probe never sees records", "player_bundle.json" not in shortcut_dir_inputs)
+finally:
+    sb.close()
+
+# ------------------------------------------------------------------ 14. estimate
+sb = Sandbox()
+try:
+    r.eq("estimate 10 documents", sb.run("estimate", "--documents", "10"),
+         (0, "ESTIMATE documents 10 invocations 14 turns at cap 64 of 80\nESTIMATE S3 turns at cap 30 of 36\nESTIMATE fits the caps\n"))
+    r.eq("estimate 15 documents", sb.run("estimate", "--documents", "15")[1].splitlines()[-1], "ESTIMATE exceeds a cap")
 finally:
     sb.close()
 

@@ -313,9 +313,10 @@ def resolve_python(cfg: dict) -> str:
     return cfg.get("python") or sys.executable
 
 
-def child_env(cfg: dict) -> dict:
+def child_env(cfg: dict, agent_key: str = "agent") -> dict:
     env = dict(os.environ)
-    suffixes = tuple(cfg.get("agent", {}).get("env_strip_suffixes", []))
+    default = cfg.get("agent", {}).get("env_strip_suffixes", [])
+    suffixes = tuple(cfg.get(agent_key, {}).get("env_strip_suffixes", default))
     for k in list(env):
         if suffixes and k.upper().endswith(suffixes):
             del env[k]

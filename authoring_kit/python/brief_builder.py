@@ -16,6 +16,18 @@ import kitlib as K  # noqa: E402
 
 TOKEN_RX = re.compile(r"\{\{([A-Z0-9_]+)\}\}")
 
+MARKER = ".mm_kit_stage_root"
+
+
+def _fresh_dir(sdir: Path) -> None:
+    """Empty a stage folder, refusing to delete anything outside a marked stage root."""
+    if sdir.exists():
+        if not (sdir.parent / MARKER).is_file():
+            raise K.KitError("ERR_STAGE_ROOT_IN_WS", code=2)
+        shutil.rmtree(sdir)
+    (sdir / "inputs").mkdir(parents=True)
+
+
 
 def render(template: str, ctx: dict[str, str]) -> str:
     missing = sorted({m for m in TOKEN_RX.findall(template) if m not in ctx})
@@ -89,7 +101,7 @@ def seeds_table(seeds: dict) -> str:
         f"Irony {seeds['irony']}: {pick('ironies', seeds['irony'])}",
         f"Setting texture {seeds['setting_texture']} (used only where the brief is silent): {pick('setting_textures', seeds['setting_texture'])}",
         f"Suspects: {seeds['suspect_count']}. Named people in total: {seeds['cast_total']}. Locations: about {seeds['location_count']}.",
-        "Cast names (assign each to one person; spell exactly): " + "; ".join(f"{n['given']} {n['family']}" for n in seeds["cast_names"]),
+        "Cast names (assign each to one person and spell exactly; replace a name only if the brief's setting needs another naming culture, keeping every initial and sound distinct): " + "; ".join(f"{n['given']} {n['family']}" for n in seeds["cast_names"]),
         "Critical strings (use exactly; give each a meaning): " + "; ".join(f"{c['id']} = {c['value']}" for c in seeds["critical_strings"]),
     ]
     return _bullets(lines)
@@ -213,10 +225,8 @@ def prepare(unit: dict, ws: Path, root: Path, state: dict) -> Path:
     cfg = K.data("kit_config")
     cp = ws / "checkpoints"
     stage = unit["stage"]
-    sdir = ws / "stages" / unit["unit"]
-    if sdir.exists():
-        shutil.rmtree(sdir)
-    (sdir / "inputs").mkdir(parents=True)
+    sdir = Path(state["stage_root"]) / unit["unit"]
+    _fresh_dir(sdir)
     seeds = K.load_json(cp / "seeds.json")
     compat = K.load_json(cp / "compat.json")
     eng = cfg["engine"]
@@ -334,6 +344,9 @@ def _s3_context(clue: dict, plan: dict, bible: dict, phs: list[dict]) -> dict[st
         author_brief = (f"{a['name']['given']} {a['name']['family']} ({author}). "
                         f"What they notice: {a['attention']} How they write: {a['voice_notes']}")
         voice = f"Write as this person. {a['voice_notes']}"
+        if a.get("voice_sample"):
+            voice += ("\n\nHow this person writes when nothing is at stake (match the voice, never the content):\n> "
+                      + a["voice_sample"])
     else:
         author_brief = f"department {author}"
         voice = "Findings are plain and measured in every department."
@@ -345,7 +358,26 @@ def _s3_context(clue: dict, plan: dict, bible: dict, phs: list[dict]) -> dict[st
     return {"FORM_BRIEF": "\n".join(form_lines), "AUTHOR_BRIEF": author_brief,
             "READER": clue["intended_reader"], "REASON": clue["in_world_reason"],
             "DATE": clue.get("date") or "as the form requires", "VOICE_BRIEF": voice,
-            "REQUIRED_STRINGS": required_strings(phs, bible)}
+            "REQUIRED_STRINGS": required_strings(phs, bible),
+            "NEIGHBOURS": neighbours(clue["id"], plan, bible)}
+
+
+def neighbours(owner: str, plan: dict, bible: dict) -> str:
+    """A facts-free index of the other documents, so papers can refer to each other.
+
+    It lists form, date and author only: no facts, roles, tiers or reasons.
+    """
+    forms = _by_id(K.data("document_forms")["forms"])
+    cast = _by_id(bible["cast"])
+    rows = []
+    for c in sorted(plan["clues"], key=lambda x: (x.get("date") or "", x["id"])):
+        if c["id"] == owner:
+            continue
+        form = forms.get(c["form_id"], {"name": c["form_id"]})["name"]
+        who = c["author"]
+        who = f"{cast[who]['name']['given']} {cast[who]['name']['family']}" if who in cast else f"department {who}"
+        rows.append(f"{form}, dated {c.get('date') or 'undated'}, by {who}")
+    return _bullets(rows)
 
 
 def _s4_context(bible: dict, lim: dict) -> dict[str, str]:
@@ -361,7 +393,12 @@ def _s4_context(bible: dict, lim: dict) -> dict[str, str]:
 def _prepare_repair(unit: dict, ws: Path, root: Path, state: dict, sdir: Path) -> Path:
     from repair_builder import failures_table
     target = unit["target"]
-    tdir = ws / "stages" / target
+    tdir = Path(state["stage_root"]) / target
+    if not (tdir / "unit.json").is_file():
+        # the target was accepted and its folder closed; rebuild its original brief
+        tstage = "S3" if target.startswith("S3-") else target
+        towner = target[3:] if target.startswith("S3-") else (K.data("stage_plan")["s4_owner"] if target == "S4" else None)
+        prepare({"unit": target, "stage": tstage, "owner": towner}, ws, root, state)
     tinfo = K.load_json(tdir / "unit.json")
     inputs, outputs = [], []
     if (tdir / "inputs").is_dir():
@@ -391,3 +428,46 @@ def _prepare_repair(unit: dict, ws: Path, root: Path, state: dict, sdir: Path) -
     K.dump_json({"unit": unit["unit"], "stage": "S5", "target": target, "target_stage": tinfo["stage"],
                  "owner": tinfo.get("owner"), "outputs": tinfo["outputs"]}, sdir / "unit.json")
     return prompt
+
+
+# ---------------------------------------------------------------- blind audit (S7)
+
+def prepare_audit(mode: str, ws: Path, bundle: dict, state: dict) -> Path:
+    """Prepare one blind-audit unit. mode is SOLVE (full player bundle) or SHORTCUT (questions only)."""
+    cfg = K.data("kit_config")
+    unit_id = f"S7-{mode}"
+    sdir = Path(state["stage_root"]) / unit_id
+    _fresh_dir(sdir)
+    if mode == "SOLVE":
+        K.dump_json(bundle, sdir / "inputs" / "player_bundle.json")
+        inputs = [("inputs/player_bundle.json", "the player-facing case, exactly as the player will see it")]
+    else:
+        K.dump_json(questions_only(bundle, cfg["audit"]), sdir / "inputs" / "questions_only.json")
+        inputs = [("inputs/questions_only.json", "the questions and options only, with no records")]
+    K.copy_file(K.SCHEMA_DIR / "answers.schema.json", sdir / "inputs" / "answers.schema.json")
+    inputs.append(("inputs/answers.schema.json", "the shape of your output"))
+    ctx = {"MODE": mode, "STAGE_ID": "S7"}
+    ctx["INPUT_FILES"], ctx["OUTPUT_FILES"] = _io(inputs, [("answers.json", "your answers")])
+    tmpl = K.data("stage_plan")["audit_prompts"][mode]
+    text = render((K.PROMPTS_DIR / tmpl).read_text(encoding="utf-8"), ctx)
+    prompt = sdir / "prompt.md"
+    prompt.write_text(text, encoding="utf-8", newline="\n")
+    K.dump_json({"unit": unit_id, "stage": "S7", "owner": None, "outputs": ["answers.json"]}, sdir / "unit.json")
+    return prompt
+
+
+def _get_path(obj, path: str):
+    cur = obj
+    for part in re.findall(r"\.([A-Za-z_][A-Za-z0-9_]*)|\[([0-9]+)\]", path):
+        key, idx = part
+        cur = cur[key] if key else cur[int(idx)]
+    return cur
+
+
+def questions_only(bundle: dict, acfg: dict) -> dict:
+    """The questions and options from the bundle, with nothing else."""
+    try:
+        qs = _get_path(bundle, acfg["questions_path"])
+    except (KeyError, IndexError, TypeError):
+        raise K.KitError("ERR_BAD_BUNDLE", code=2)
+    return {"questions": qs}

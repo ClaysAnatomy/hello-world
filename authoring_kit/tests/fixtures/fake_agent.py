@@ -22,6 +22,11 @@ log = src_root / "_calls.json"
 calls = json.loads(log.read_text(encoding="utf-8")) if log.is_file() else []
 calls.append({"unit": unit, "secret_vars": leaked, "stdin_chars": len(stdin_text), "argv": sys.argv[1:]})
 log.write_text(json.dumps(calls), encoding="utf-8")
+pause_flag = src_root / f"_pause_{unit}"
+if pause_flag.is_file():
+    pause_flag.unlink()
+    print("Claude AI usage limit reached|1767225600")
+    sys.exit(1)
 src = src_root / unit
 if src.is_dir():
     for p in src.iterdir():

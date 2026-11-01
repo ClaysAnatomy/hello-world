@@ -4,113 +4,523 @@
   "title": "Kit story and truth bible",
   "description": "Written by S1 into the sealed workspace. Kit-owned format; the engine never reads it. IDs should already follow the engine ID grammar so S2 can reuse them unchanged.",
   "type": "object",
-  "required": ["kit_version", "premise", "cast", "locations", "critical_strings", "facts", "questions", "truth", "cover", "red_herring", "aha", "mechanism_id"],
+  "required": [
+    "kit_version",
+    "premise",
+    "cast",
+    "locations",
+    "critical_strings",
+    "facts",
+    "questions",
+    "truth",
+    "cover",
+    "red_herring",
+    "aha",
+    "mechanism_id"
+  ],
   "additionalProperties": false,
   "$defs": {
-    "id": {"type": "string", "minLength": 2, "maxLength": 24},
-    "text": {"type": "string", "minLength": 1, "maxLength": 1200},
-    "idlist": {"type": "array", "items": {"$ref": "#/$defs/id"}}
+    "id": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 24
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1200
+    },
+    "idlist": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    }
   },
   "properties": {
-    "kit_version": {"type": "string"},
+    "kit_version": {
+      "type": "string"
+    },
     "premise": {
       "type": "object",
-      "required": ["hook", "human_question", "central_irony", "stakes_id", "setting", "ending_note", "anchors_honoured"],
+      "required": [
+        "hook",
+        "human_question",
+        "central_irony",
+        "stakes_id",
+        "setting",
+        "ending_note",
+        "anchors_honoured"
+      ],
       "additionalProperties": false,
       "properties": {
-        "hook": {"$ref": "#/$defs/text"},
-        "human_question": {"$ref": "#/$defs/text"},
-        "central_irony": {"$ref": "#/$defs/text"},
-        "stakes_id": {"$ref": "#/$defs/id"},
-        "ending_note": {"$ref": "#/$defs/text"},
-        "anchors_honoured": {"type": "array", "items": {"$ref": "#/$defs/text"}},
+        "hook": {
+          "$ref": "#/$defs/text"
+        },
+        "human_question": {
+          "$ref": "#/$defs/text"
+        },
+        "central_irony": {
+          "$ref": "#/$defs/text"
+        },
+        "stakes_id": {
+          "$ref": "#/$defs/id"
+        },
+        "ending_note": {
+          "$ref": "#/$defs/text"
+        },
+        "anchors_honoured": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/text"
+          }
+        },
         "setting": {
           "type": "object",
-          "required": ["place", "institution", "era", "before_problem", "texture", "internal_terms", "rhythms"],
+          "required": [
+            "place",
+            "institution",
+            "era",
+            "before_problem",
+            "texture",
+            "internal_terms",
+            "rhythms"
+          ],
           "additionalProperties": false,
           "properties": {
-            "place": {"$ref": "#/$defs/text"},
-            "institution": {"$ref": "#/$defs/text"},
-            "era": {"$ref": "#/$defs/text"},
-            "before_problem": {"$ref": "#/$defs/text"},
-            "texture": {"type": "array", "items": {"$ref": "#/$defs/text"}},
-            "internal_terms": {"type": "array", "items": {"type": "object", "required": ["term", "meaning"], "additionalProperties": false, "properties": {"term": {"$ref": "#/$defs/text"}, "meaning": {"$ref": "#/$defs/text"}}}},
-            "rhythms": {"type": "array", "items": {"$ref": "#/$defs/text"}}
+            "place": {
+              "$ref": "#/$defs/text"
+            },
+            "institution": {
+              "$ref": "#/$defs/text"
+            },
+            "era": {
+              "$ref": "#/$defs/text"
+            },
+            "before_problem": {
+              "$ref": "#/$defs/text"
+            },
+            "texture": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/text"
+              }
+            },
+            "internal_terms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "term",
+                  "meaning"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "term": {
+                    "$ref": "#/$defs/text"
+                  },
+                  "meaning": {
+                    "$ref": "#/$defs/text"
+                  }
+                }
+              }
+            },
+            "rhythms": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/text"
+              }
+            }
           }
         }
       }
     },
     "cast": {
-      "type": "array", "minItems": 1,
+      "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "name", "role", "is_culprit", "want", "obligation", "attention", "pressure", "would_lie_about", "lie_reason", "life_outside", "voice_notes", "relationships"],
+        "required": [
+          "id",
+          "name",
+          "role",
+          "is_culprit",
+          "want",
+          "obligation",
+          "attention",
+          "pressure",
+          "would_lie_about",
+          "lie_reason",
+          "life_outside",
+          "voice_notes",
+          "relationships",
+          "voice_sample"
+        ],
         "additionalProperties": false,
         "properties": {
-          "id": {"$ref": "#/$defs/id"},
-          "name": {"type": "object", "required": ["given", "family"], "additionalProperties": false, "properties": {"given": {"type": "string"}, "family": {"type": "string"}}},
-          "role": {"enum": ["suspect", "subject", "witness", "staff", "other"]},
-          "is_culprit": {"type": "boolean"},
-          "want": {"$ref": "#/$defs/text"},
-          "obligation": {"$ref": "#/$defs/text"},
-          "attention": {"$ref": "#/$defs/text"},
-          "pressure": {"$ref": "#/$defs/text"},
-          "would_lie_about": {"$ref": "#/$defs/text"},
-          "lie_reason": {"$ref": "#/$defs/text"},
-          "life_outside": {"$ref": "#/$defs/text"},
-          "voice_notes": {"$ref": "#/$defs/text"},
-          "secret": {"type": ["string", "null"]},
-          "relationships": {"type": "array", "items": {"type": "object", "required": ["to", "nature"], "additionalProperties": false, "properties": {"to": {"$ref": "#/$defs/id"}, "nature": {"$ref": "#/$defs/text"}}}}
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "name": {
+            "type": "object",
+            "required": [
+              "given",
+              "family"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "given": {
+                "type": "string"
+              },
+              "family": {
+                "type": "string"
+              }
+            }
+          },
+          "role": {
+            "enum": [
+              "suspect",
+              "subject",
+              "witness",
+              "staff",
+              "other"
+            ]
+          },
+          "is_culprit": {
+            "type": "boolean"
+          },
+          "want": {
+            "$ref": "#/$defs/text"
+          },
+          "obligation": {
+            "$ref": "#/$defs/text"
+          },
+          "attention": {
+            "$ref": "#/$defs/text"
+          },
+          "pressure": {
+            "$ref": "#/$defs/text"
+          },
+          "would_lie_about": {
+            "$ref": "#/$defs/text"
+          },
+          "lie_reason": {
+            "$ref": "#/$defs/text"
+          },
+          "life_outside": {
+            "$ref": "#/$defs/text"
+          },
+          "voice_notes": {
+            "$ref": "#/$defs/text"
+          },
+          "secret": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "to",
+                "nature"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "to": {
+                  "$ref": "#/$defs/id"
+                },
+                "nature": {
+                  "$ref": "#/$defs/text"
+                }
+              }
+            }
+          },
+          "voice_sample": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1200,
+            "description": "A short sample of how this person writes for work, about an ordinary matter that asserts no case fact. Sealed; handed to every document they author."
+          }
         }
       }
     },
-    "locations": {"type": "array", "items": {"type": "object", "required": ["id", "name", "note"], "additionalProperties": false, "properties": {"id": {"$ref": "#/$defs/id"}, "name": {"type": "string", "minLength": 1}, "note": {"$ref": "#/$defs/text"}}}},
-    "critical_strings": {"type": "array", "items": {"type": "object", "required": ["id", "value", "meaning"], "additionalProperties": false, "properties": {"id": {"$ref": "#/$defs/id"}, "value": {"type": "string"}, "meaning": {"$ref": "#/$defs/text"}}}},
-    "facts": {
-      "type": "array", "minItems": 1,
+    "locations": {
+      "type": "array",
       "items": {
-        "type": "object", "required": ["id", "statement", "kind", "solution_critical"], "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "note"
+        ],
+        "additionalProperties": false,
         "properties": {
-          "id": {"$ref": "#/$defs/id"},
-          "statement": {"$ref": "#/$defs/text"},
-          "kind": {"enum": ["base", "derived", "secondary", "herring", "world"]},
-          "solution_critical": {"type": "boolean"},
-          "from": {"$ref": "#/$defs/idlist"}
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "note": {
+            "$ref": "#/$defs/text"
+          }
+        }
+      }
+    },
+    "critical_strings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "value",
+          "meaning"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "value": {
+            "type": "string"
+          },
+          "meaning": {
+            "$ref": "#/$defs/text"
+          }
+        }
+      }
+    },
+    "facts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "statement",
+          "kind",
+          "solution_critical"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "statement": {
+            "$ref": "#/$defs/text"
+          },
+          "kind": {
+            "enum": [
+              "base",
+              "derived",
+              "secondary",
+              "herring",
+              "world"
+            ]
+          },
+          "solution_critical": {
+            "type": "boolean"
+          },
+          "from": {
+            "$ref": "#/$defs/idlist"
+          }
         }
       }
     },
     "questions": {
-      "type": "array", "minItems": 1,
+      "type": "array",
+      "minItems": 1,
       "items": {
-        "type": "object", "required": ["id", "stem_gist", "options"], "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "stem_gist",
+          "options"
+        ],
+        "additionalProperties": false,
         "properties": {
-          "id": {"$ref": "#/$defs/id"},
-          "stem_gist": {"$ref": "#/$defs/text"},
-          "options": {"type": "array", "minItems": 2, "items": {"type": "object", "required": ["id", "gist", "correct", "support"], "additionalProperties": false, "properties": {"id": {"$ref": "#/$defs/id"}, "gist": {"$ref": "#/$defs/text"}, "correct": {"type": "boolean"}, "support": {"$ref": "#/$defs/idlist"}, "entity": {"$ref": "#/$defs/id"}}}}
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "stem_gist": {
+            "$ref": "#/$defs/text"
+          },
+          "options": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "gist",
+                "correct",
+                "support"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "$ref": "#/$defs/id"
+                },
+                "gist": {
+                  "$ref": "#/$defs/text"
+                },
+                "correct": {
+                  "type": "boolean"
+                },
+                "support": {
+                  "$ref": "#/$defs/idlist"
+                },
+                "entity": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            }
+          }
         }
       }
     },
     "truth": {
-      "type": "object", "required": ["what_happened", "timeline", "culprit", "method_fact", "motive_fact", "why_it_matters"], "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "what_happened",
+        "timeline",
+        "culprit",
+        "method_fact",
+        "motive_fact",
+        "why_it_matters"
+      ],
+      "additionalProperties": false,
       "properties": {
-        "what_happened": {"type": "string", "minLength": 1, "maxLength": 6000},
-        "timeline": {"type": "array", "items": {"type": "object", "required": ["at", "event"], "additionalProperties": false, "properties": {"at": {"type": "string"}, "event": {"$ref": "#/$defs/text"}, "fact": {"type": ["string", "null"]}}}},
-        "culprit": {"$ref": "#/$defs/id"},
-        "method_fact": {"$ref": "#/$defs/id"},
-        "motive_fact": {"$ref": "#/$defs/id"},
-        "why_it_matters": {"$ref": "#/$defs/text"}
+        "what_happened": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 6000
+        },
+        "timeline": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "at",
+              "event"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "at": {
+                "type": "string"
+              },
+              "event": {
+                "$ref": "#/$defs/text"
+              },
+              "fact": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "culprit": {
+          "$ref": "#/$defs/id"
+        },
+        "method_fact": {
+          "$ref": "#/$defs/id"
+        },
+        "motive_fact": {
+          "$ref": "#/$defs/id"
+        },
+        "why_it_matters": {
+          "$ref": "#/$defs/text"
+        }
       }
     },
-    "cover": {"type": "object", "required": ["official_story", "maintained_by"], "additionalProperties": false, "properties": {"official_story": {"$ref": "#/$defs/text"}, "maintained_by": {"$ref": "#/$defs/idlist"}}},
+    "cover": {
+      "type": "object",
+      "required": [
+        "official_story",
+        "maintained_by"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "official_story": {
+          "$ref": "#/$defs/text"
+        },
+        "maintained_by": {
+          "$ref": "#/$defs/idlist"
+        }
+      }
+    },
     "red_herring": {
-      "type": "object", "required": ["type_id", "target_option", "suspect", "secondary_secret_fact", "why_it_misleads", "refuted_by_facts"], "additionalProperties": false,
-      "properties": {"type_id": {"$ref": "#/$defs/id"}, "target_option": {"$ref": "#/$defs/id"}, "suspect": {"$ref": "#/$defs/id"}, "secondary_secret_fact": {"$ref": "#/$defs/id"}, "why_it_misleads": {"$ref": "#/$defs/text"}, "refuted_by_facts": {"$ref": "#/$defs/idlist"}}
+      "type": "object",
+      "required": [
+        "type_id",
+        "target_option",
+        "suspect",
+        "secondary_secret_fact",
+        "why_it_misleads",
+        "refuted_by_facts"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type_id": {
+          "$ref": "#/$defs/id"
+        },
+        "target_option": {
+          "$ref": "#/$defs/id"
+        },
+        "suspect": {
+          "$ref": "#/$defs/id"
+        },
+        "secondary_secret_fact": {
+          "$ref": "#/$defs/id"
+        },
+        "why_it_misleads": {
+          "$ref": "#/$defs/text"
+        },
+        "refuted_by_facts": {
+          "$ref": "#/$defs/idlist"
+        }
+      }
     },
     "aha": {
-      "type": "array", "minItems": 1,
-      "items": {"type": "object", "required": ["pattern_id", "mask_fact", "reframe_fact", "leads_to_fact", "how_it_reframes"], "additionalProperties": false,
-        "properties": {"pattern_id": {"$ref": "#/$defs/id"}, "mask_fact": {"$ref": "#/$defs/id"}, "reframe_fact": {"$ref": "#/$defs/id"}, "leads_to_fact": {"$ref": "#/$defs/id"}, "how_it_reframes": {"$ref": "#/$defs/text"}}}
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "pattern_id",
+          "mask_fact",
+          "reframe_fact",
+          "leads_to_fact",
+          "how_it_reframes"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "pattern_id": {
+            "$ref": "#/$defs/id"
+          },
+          "mask_fact": {
+            "$ref": "#/$defs/id"
+          },
+          "reframe_fact": {
+            "$ref": "#/$defs/id"
+          },
+          "leads_to_fact": {
+            "$ref": "#/$defs/id"
+          },
+          "how_it_reframes": {
+            "$ref": "#/$defs/text"
+          }
+        }
+      }
     },
-    "mechanism_id": {"$ref": "#/$defs/id"}
+    "mechanism_id": {
+      "$ref": "#/$defs/id"
+    }
   }
 }

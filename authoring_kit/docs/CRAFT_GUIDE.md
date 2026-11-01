@@ -46,6 +46,14 @@ Pull comes from a human question the player wants answered regardless of the puz
 
 The ban lists (`data/ban_lists.json`) are not a style guide. They catch the specific phrases that make a document read as generated: signposting ("a chill ran down"), machine tics ("a testament to"), puzzle words inside the world ("red herring"), confessions, and stock names. One finding worth knowing: the research report's own examples of "specific, grounded names" (Elias Vance, Aris Thorne) are among the most common machine-fiction names, so they are on the list. Names come from Python-seeded pools with distinct initials and sounds instead.
 
+## Where the engineering comes from
+
+The kit's structure follows *Mystery Engine Design Research* (the Neurosymbolic Blueprint in the project Drive):
+
+- **Track 3** gives the 16 aha techniques. Each is a MASKS and REFRAMES turn with a named relation (SHIFTS-WINDOW, PRESUPPOSES, INVERTS-POLARITY and so on); `patterns.json` restates them without story.
+- **Track 5** gives the double-blind audit. A model from a different family solves the case cold, and a shortcut probe tries to guess from the options alone. S7 builds Gates 3 and 4 of that protocol.
+- **Track 6** gives the four-axis voice and bias matrix (signature, worldview, lens, tell), the three micro-acts of pacing, archival humanity, honest short flavor items, and the eight LLM failure modes the kit's checks are mapped to.
+
 ## Where this guide's sources are weaker
 
 Most principles above are long-settled craft (fair play, plotting backward, polyphony, restraint). Three are informed opinion rather than research: "paper has a reason to exist" (CP-08), "no quirk without cost" (CP-11) and the specific thresholds in `limits.json` (form share, world share, overlap n-grams). Treat those numbers as starting points to tune after real cases, not findings.

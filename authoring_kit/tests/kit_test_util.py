@@ -45,7 +45,14 @@ class Sandbox:
         cfg["mode"] = "A" if mode_a else "B"
         cfg["agent"]["argv"] = [sys.executable, str(FAKE_AGENT), "{max_turns}"]
         cfg["agent"]["usage_from_stdout_json"] = usage_json
+        cfg["agent"]["family"] = "fake-family-a"
+        cfg["audit_agent"]["argv"] = [sys.executable, str(FAKE_AGENT), "{max_turns}"]
+        cfg["audit_agent"]["family"] = "fake-family-b"
         override_data("kit_config", cfg)
+        lim = copy.deepcopy(K.data("limits"))
+        # what the local builder sets after running placeholder_probe (FP-03 needs real prose)
+        lim["tolerated_engine_rules"]["S2"] = ["FP-03"]
+        override_data("limits", lim)
         self._env = dict(os.environ)
         os.environ["FAKE_AGENT_DIR"] = str(self.agent_dir)
         os.environ["KITTEST_API_KEY"] = "do-not-pass-me"

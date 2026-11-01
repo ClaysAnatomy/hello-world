@@ -10,9 +10,17 @@
         "Write premise.hook as one sentence that makes a stranger ask what happened next. It must be interesting without the solution.",
         "Name the human question the case is really about and the cost the truth carries."
       ],
-      "stage": ["S1"],
-      "check": ["RUB-11", "RUB-19"],
-      "sources": ["Raymond Chandler, Casual Notes on the Mystery Novel (1949): the story must be an interesting story apart from the mystery.", "P. D. James, Talking About Detective Fiction (2009)."],
+      "stage": [
+        "S1"
+      ],
+      "check": [
+        "RUB-11",
+        "RUB-19"
+      ],
+      "sources": [
+        "Raymond Chandler, Casual Notes on the Mystery Novel (1949): the story must be an interesting story apart from the mystery.",
+        "P. D. James, Talking About Detective Fiction (2009)."
+      ],
       "confidence": "well-established craft"
     },
     {
@@ -23,9 +31,19 @@
         "List at least five concrete textures (objects, routines, sounds, smells, forms) and at least three internal terms staff use without explaining them.",
         "Name two rhythms (a shift change, a quarter end, a delivery day) that documents will be stamped by."
       ],
-      "stage": ["S1", "S2"],
-      "check": ["KT-BI-12", "RUB-16", "RUB-24"],
-      "sources": ["Raymond Chandler, The Simple Art of Murder (1944): murder put back among the people who commit it, in a recognisable world.", "Sam Barlow on Her Story (GDC 2016): the database must read as a real archive, not a puzzle box."],
+      "stage": [
+        "S1",
+        "S2"
+      ],
+      "check": [
+        "KT-BI-12",
+        "RUB-16",
+        "RUB-24"
+      ],
+      "sources": [
+        "Raymond Chandler, The Simple Art of Murder (1944): murder put back among the people who commit it, in a recognisable world.",
+        "Sam Barlow on Her Story (GDC 2016): the database must read as a real archive, not a puzzle box."
+      ],
       "confidence": "well-established craft"
     },
     {
@@ -36,9 +54,19 @@
         "Fill the person sheet (see character_method.json) for every named person, including the ones who are not suspects.",
         "Give every suspect at least one appearance on paper that has nothing to do with the crime."
       ],
-      "stage": ["S1", "S2"],
-      "check": ["KT-BI-08", "KT-PL-06", "RUB-12"],
-      "sources": ["Robert McKee, Story (1997): true character is revealed in choices made under pressure.", "E. M. Forster, Aspects of the Novel (1927): round characters are capable of surprising in a convincing way."],
+      "stage": [
+        "S1",
+        "S2"
+      ],
+      "check": [
+        "KT-BI-08",
+        "KT-PL-06",
+        "RUB-12"
+      ],
+      "sources": [
+        "Robert McKee, Story (1997): true character is revealed in choices made under pressure.",
+        "E. M. Forster, Aspects of the Novel (1927): round characters are capable of surprising in a convincing way."
+      ],
       "confidence": "well-established craft"
     },
     {
@@ -49,9 +77,17 @@
         "Write truth.why_it_matters: what the act protected or obtained for the person who did it, in plain words.",
         "Prefer motives rooted in the seeded stakes over greed or madness."
       ],
-      "stage": ["S1"],
-      "check": ["RUB-19"],
-      "sources": ["Jean Renoir, The Rules of the Game (1939): everyone has their reasons.", "Patricia Highsmith, Plotting and Writing Suspense Fiction (1966).", "Chandler (1949): credible motivation."],
+      "stage": [
+        "S1"
+      ],
+      "check": [
+        "RUB-19"
+      ],
+      "sources": [
+        "Jean Renoir, The Rules of the Game (1939): everyone has their reasons.",
+        "Patricia Highsmith, Plotting and Writing Suspense Fiction (1966).",
+        "Chandler (1949): credible motivation."
+      ],
       "confidence": "well-established craft"
     },
     {
@@ -62,9 +98,19 @@
         "Give every solution fact two independent routes; at least one route works by reading and following references only.",
         "Never rely on knowledge from outside the archive."
       ],
-      "stage": ["S2"],
-      "check": ["KT-PL-02", "RUB-02", "RUB-01"],
-      "sources": ["Ronald Knox, Decalogue (1929).", "S. S. Van Dine, Twenty Rules for Writing Detective Stories (1928).", "Graham Nelson, The Player's Bill of Rights (1995)."],
+      "stage": [
+        "S2"
+      ],
+      "check": [
+        "KT-PL-02",
+        "RUB-02",
+        "RUB-01"
+      ],
+      "sources": [
+        "Ronald Knox, Decalogue (1929).",
+        "S. S. Van Dine, Twenty Rules for Writing Detective Stories (1928).",
+        "Graham Nelson, The Player's Bill of Rights (1995)."
+      ],
       "confidence": "well-established craft"
     },
     {
@@ -75,9 +121,19 @@
         "Place the masking document at an earlier tier than the reframing document.",
         "Never write the conclusion of the turn in any single document; the player assembles it."
       ],
-      "stage": ["S1", "S2"],
-      "check": ["KT-PL-05", "RUB-14"],
-      "sources": ["John Curran, Agatha Christie's Secret Notebooks (2009): plotting backward from the solution.", "Stellan Ohlsson, representational change theory of insight (1992): insight comes from re-encoding a problem, not from new data.", "Kounios and Beeman, The Eureka Factor (2015)."],
+      "stage": [
+        "S1",
+        "S2"
+      ],
+      "check": [
+        "KT-PL-05",
+        "RUB-14"
+      ],
+      "sources": [
+        "John Curran, Agatha Christie's Secret Notebooks (2009): plotting backward from the solution.",
+        "Stellan Ohlsson, representational change theory of insight (1992): insight comes from re-encoding a problem, not from new data.",
+        "Kounios and Beeman, The Eureka Factor (2015)."
+      ],
       "confidence": "scholarly support"
     },
     {
@@ -88,9 +144,19 @@
         "Tie the herring to one suspect's secondary secret fact and to a wrong option.",
         "Place the inducing document early and the refuting documents later."
       ],
-      "stage": ["S1", "S2"],
-      "check": ["KT-BI-06", "KT-PL-04", "RUB-15"],
-      "sources": ["Curran (2009) on Christie's double bluff.", "Craft report in this project: The Double Bluff Re-imagined, The Lure."],
+      "stage": [
+        "S1",
+        "S2"
+      ],
+      "check": [
+        "KT-BI-06",
+        "KT-PL-04",
+        "RUB-15"
+      ],
+      "sources": [
+        "Curran (2009) on Christie's double bluff.",
+        "Craft report in this project: The Double Bluff Re-imagined, The Lure."
+      ],
       "confidence": "well-established craft"
     },
     {
@@ -101,9 +167,18 @@
         "For each document name its author, its intended reader and its in-world reason.",
         "Ask: would this paper exist if nobody ever investigated? If not, it is a clue wearing a costume; re-cut it."
       ],
-      "stage": ["S2", "S3"],
-      "check": ["KT-PL-08", "RUB-16"],
-      "sources": ["Project craft report, section 3: the epistolary gap between what a document states and what it reveals.", "Lucas Pope, Return of the Obra Dinn (2018) and The Case of the Golden Idol (2022) as practice references."],
+      "stage": [
+        "S2",
+        "S3"
+      ],
+      "check": [
+        "KT-PL-08",
+        "RUB-16"
+      ],
+      "sources": [
+        "Project craft report, section 3: the epistolary gap between what a document states and what it reveals.",
+        "Lucas Pope, Return of the Obra Dinn (2018) and The Case of the Golden Idol (2022) as practice references."
+      ],
       "confidence": "informed opinion"
     },
     {
@@ -114,9 +189,20 @@
         "Assign each department one voice profile from voice_matrix.json and honour its markers.",
         "Let personal documents carry the author's habit of attention: what they notice is how the reader meets them."
       ],
-      "stage": ["S2", "S3"],
-      "check": ["VL-07", "VL-08", "VL-09", "RUB-13"],
-      "sources": ["Mikhail Bakhtin, Problems of Dostoevsky's Poetics (1929/1963): polyphony.", "Bram Stoker, Dracula (1897) as epistolary practice."],
+      "stage": [
+        "S2",
+        "S3"
+      ],
+      "check": [
+        "VL-07",
+        "VL-08",
+        "VL-09",
+        "RUB-13"
+      ],
+      "sources": [
+        "Mikhail Bakhtin, Problems of Dostoevsky's Poetics (1929/1963): polyphony.",
+        "Bram Stoker, Dracula (1897) as epistolary practice."
+      ],
       "confidence": "scholarly support"
     },
     {
@@ -127,9 +213,19 @@
         "Prefer a measured, dated, named detail to an adjective.",
         "Cut any sentence that explains the significance of another sentence."
       ],
-      "stage": ["S3", "S4"],
-      "check": ["VL-01", "VL-03", "RUB-20"],
-      "sources": ["Anton Chekhov, letters to Alexander Chekhov (1886): show the glint of light on broken glass.", "Ursula K. Le Guin, Steering the Craft (1998/2015)."],
+      "stage": [
+        "S3",
+        "S4"
+      ],
+      "check": [
+        "VL-01",
+        "VL-03",
+        "RUB-20"
+      ],
+      "sources": [
+        "Anton Chekhov, letters to Alexander Chekhov (1886): show the glint of light on broken glass.",
+        "Ursula K. Le Guin, Steering the Craft (1998/2015)."
+      ],
       "confidence": "well-established craft"
     },
     {
@@ -140,9 +236,19 @@
         "For each distinguishing trait ask: if deleted, would any document or choice change? If not, delete it.",
         "Distinguish people by pressure and attention, not by props."
       ],
-      "stage": ["S1", "S3"],
-      "check": ["KT-BI-09", "VL-14", "RUB-18"],
-      "sources": ["McKee (1997): characterisation versus true character.", "Forster (1927): flat characters built round a single idea."],
+      "stage": [
+        "S1",
+        "S3"
+      ],
+      "check": [
+        "KT-BI-09",
+        "VL-14",
+        "RUB-18"
+      ],
+      "sources": [
+        "McKee (1997): characterisation versus true character.",
+        "Forster (1927): flat characters built round a single idea."
+      ],
       "confidence": "informed opinion"
     },
     {
@@ -153,19 +259,37 @@
         "List the fact IDs each text asserts in the claims file.",
         "Write titles the way the institution files things: by form, number, date and subject, not by meaning."
       ],
-      "stage": ["S3", "S4"],
-      "check": ["VL-11", "RUB-17"],
-      "sources": ["Project dev log, Entry 022: titles, subjects and findings are the main leak surface."],
+      "stage": [
+        "S3",
+        "S4"
+      ],
+      "check": [
+        "VL-11",
+        "RUB-17"
+      ],
+      "sources": [
+        "Project dev log, Entry 022: titles, subjects and findings are the main leak surface."
+      ],
       "confidence": "project decision"
     },
     {
       "id": "CP-13",
       "name": "Cognitive budget",
       "rule": "At most five suspects, four locations and two critical times or codes. Depth comes from people and paper, not from count.",
-      "do": ["Merge minor roles; cut any location that holds no decisive fact."],
-      "stage": ["S1"],
-      "check": ["KT-BI-03", "RUB-03"],
-      "sources": ["George A. Miller (1956) and Nelson Cowan (2001) on working memory limits.", "Peter Pirolli and Stuart Card, sensemaking loop (2005)."],
+      "do": [
+        "Merge minor roles; cut any location that holds no decisive fact."
+      ],
+      "stage": [
+        "S1"
+      ],
+      "check": [
+        "KT-BI-03",
+        "RUB-03"
+      ],
+      "sources": [
+        "George A. Miller (1956) and Nelson Cowan (2001) on working memory limits.",
+        "Peter Pirolli and Stuart Card, sensemaking loop (2005)."
+      ],
       "confidence": "scholarly support"
     },
     {
@@ -176,30 +300,136 @@
         "Let the institution's routine carry the weight: what it records, what it fails to record, what it files late.",
         "Anchor feeling in a minor, recognisable person."
       ],
-      "stage": ["S1", "S3"],
-      "check": ["RUB-20"],
-      "sources": ["Shirley Jackson, The Haunting of Hill House (1959).", "M. R. James, ghost-story practice of reticence (1904 onward).", "Project craft report, sections 5 and 1.11."],
+      "stage": [
+        "S1",
+        "S3"
+      ],
+      "check": [
+        "RUB-20"
+      ],
+      "sources": [
+        "Shirley Jackson, The Haunting of Hill House (1959).",
+        "M. R. James, ghost-story practice of reticence (1904 onward).",
+        "Project craft report, sections 5 and 1.11."
+      ],
       "confidence": "well-established craft"
     },
     {
       "id": "CP-15",
       "name": "The truth changes the story",
       "rule": "Solving the case changes what the human question means. The answer is also the story's last move.",
-      "do": ["Write premise.ending_note: the image or fact the player keeps once the truth is known."],
-      "stage": ["S1"],
-      "check": ["RUB-19", "RUB-25"],
-      "sources": ["P. D. James (2009).", "Dorothy L. Sayers, Aristotle on Detective Fiction (1935): the solution as reversal and recognition."],
+      "do": [
+        "Write premise.ending_note: the image or fact the player keeps once the truth is known."
+      ],
+      "stage": [
+        "S1"
+      ],
+      "check": [
+        "RUB-19",
+        "RUB-25"
+      ],
+      "sources": [
+        "P. D. James (2009).",
+        "Dorothy L. Sayers, Aristotle on Detective Fiction (1935): the solution as reversal and recognition."
+      ],
       "confidence": "well-established craft"
     },
     {
       "id": "CP-16",
       "name": "The world never announces",
       "rule": "No document, title or mail tells the player they are close, clever or wrong. The aha happens in the player alone.",
-      "do": ["Never use the vocabulary of puzzles inside the world."],
-      "stage": ["S3", "S4"],
-      "check": ["VL-01"],
-      "sources": ["Project dev log, Entries 015 and 024: no confirmation at an aha; an aha is just a moment that happens."],
+      "do": [
+        "Never use the vocabulary of puzzles inside the world."
+      ],
+      "stage": [
+        "S3",
+        "S4"
+      ],
+      "check": [
+        "VL-01"
+      ],
+      "sources": [
+        "Project dev log, Entries 015 and 024: no confirmation at an aha; an aha is just a moment that happens."
+      ],
       "confidence": "project decision"
+    },
+    {
+      "id": "CP-17",
+      "name": "Three micro-acts",
+      "rule": "Even a single sitting has a shape: intake and initial fixation, then impasse and anomaly, then restructuring and citation. Tiers carry it: early documents build the default reading and the world, middle documents expose the anomaly, late documents reframe.",
+      "do": [
+        "Use at least three tiers.",
+        "Put the false lead and the world's texture early, the contradiction in the middle, and the reframing document late."
+      ],
+      "stage": [
+        "S2"
+      ],
+      "check": [
+        "KT-PL-17",
+        "RUB-14"
+      ],
+      "sources": [
+        "Mystery Engine Design Research, Track 6, 'Pacing, Emotional Stakes, Serialized Canon, and Flavor Media'."
+      ],
+      "confidence": "informed opinion"
+    },
+    {
+      "id": "CP-18",
+      "name": "Archival humanity",
+      "rule": "Investment comes from quietly reconstructing human frailty, institutional hubris, uncredited labour or protective loyalty from fragments, not from peril.",
+      "do": [
+        "Choose stakes from that family and let the truth cost someone something recognisable."
+      ],
+      "stage": [
+        "S1"
+      ],
+      "check": [
+        "RUB-19",
+        "RUB-25"
+      ],
+      "sources": [
+        "Mystery Engine Design Research, Track 6."
+      ],
+      "confidence": "informed opinion"
+    },
+    {
+      "id": "CP-19",
+      "name": "Flavor is honest and short",
+      "rule": "World documents are badged as archive context by the Desk, carry no solution fact, and stay short so they never cause padding fatigue or false-clue paranoia.",
+      "do": [
+        "Keep each world document under the flavor word cap.",
+        "Give no world document a solution-critical fact."
+      ],
+      "stage": [
+        "S2"
+      ],
+      "check": [
+        "KT-PL-11"
+      ],
+      "sources": [
+        "Mystery Engine Design Research, Track 6 (150 to 250 words); project dev log section 2.2."
+      ],
+      "confidence": "project decision"
+    },
+    {
+      "id": "CP-20",
+      "name": "A different family checks the work",
+      "rule": "The model that wrote the case never grades it. A model from a different family solves it cold from the player-facing material only, and the kit scores the answers against the sealed key, printing only verdicts and IDs.",
+      "do": [
+        "Run the shortcut probe and the blind solve after finish, on an agent of a different model family."
+      ],
+      "stage": [
+        "S7"
+      ],
+      "check": [
+        "AU-01",
+        "AU-02",
+        "AU-03"
+      ],
+      "sources": [
+        "Mystery Engine Design Research, Track 5, Gates 3 and 4, and Strict Cross-Family Separation."
+      ],
+      "confidence": "scholarly support"
     }
   ]
 }

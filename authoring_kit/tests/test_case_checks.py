@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from kit_test_util import FIXTURE_ROOT, Report, reset_data  # noqa: E402
+from kit_test_util import FIXTURE_ROOT, K, Report, override_data, reset_data  # noqa: E402
 import scenario  # noqa: E402
 import case_checks as CC  # noqa: E402
 from compat_check import run_compat  # noqa: E402
@@ -91,6 +91,33 @@ r.eq("bible IDs not reused", plan_mut(lambda p: None, lambda c: c["characters"].
 r.eq("critical string unassigned", plan_mut(lambda p: [ph.update({"required_strings": []}) for ph in p["placeholders"]]), ["KT-PL-13"])
 r.eq("clue not in case", plan_mut(lambda p: None, lambda c: c["clues"][4].update({"clue_id": "CLUE-55"})), ["KT-PL-14"])
 r.eq("unknown fact", plan_mut(lambda p: clue(p, "CLUE-05")["facts"].append("FACT-77")), ["KT-PL-15"])
+
+# names: rule-passing replacements are allowed; broken ones are not
+def names_mut(pairs):
+    b = copy.deepcopy(bible)
+    for i, (g, f) in pairs.items():
+        b["cast"][i]["name"] = {"given": g, "family": f}
+    return ids(CC.check_bible(b, seeds), "ERROR")
+
+
+r.eq("replacement name passing the rules", names_mut({0: ("Yusuf", "Zeller")}), [])
+r.eq("replacement name that is banned", names_mut({0: ("Elias", "Zeller")}), ["KT-BI-02"])
+r.eq("replacement repeating an initial", names_mut({0: (bible["cast"][1]["name"]["given"][0] + "lfred", "Zeller")}), ["KT-BI-02"])
+r.eq("replacement not ASCII", names_mut({0: ("Zo\u00eb", "Zeller")}), ["KT-BI-02"])
+r.eq("cast size must match seeds", bible_mut(lambda b: b["cast"].pop()), ["KT-BI-02", "KT-BI-08"])
+
+r.eq("voice sample too short", bible_mut(lambda b: b["cast"][0].update({"voice_sample": "Too short."})), ["KT-BI-15"])
+r.eq("voice sample with signposting", bible_mut(lambda b: b["cast"][0].update({"voice_sample": b["cast"][0]["voice_sample"] + " A chill ran down the hall."})), ["KT-BI-15"])
+
+r.eq("world document carries a critical fact", plan_mut(lambda p: clue(p, "CLUE-03")["facts"].append("FACT-01")
+                                                       or p["routes"]["FACT-01"].append({"clues": ["CLUE-03"], "search_free": True})), ["KT-PL-11"])
+r.eq("world document over the flavor cap", plan_mut(lambda p: [ph.update({"max_words": 400}) for ph in p["placeholders"] if ph["owner"] == "CLUE-03"]), ["KT-PL-11"])
+r.eq("too few tiers", plan_mut(lambda p: [c.update({"tier": min(c["tier"], 1)}) for c in p["clues"]]), ["KT-PL-17"])
+lim = copy.deepcopy(K.data("limits"))
+lim["world"]["max_documents"] = 8
+override_data("limits", lim)
+r.eq("too many documents for this build", plan_mut(lambda p: None), ["KT-PL-16"])
+reset_data()
 
 r.eq("s3 owner order", CC.s3_owners(plan),
      ["CLUE-01", "CLUE-02", "CLUE-03", "CLUE-04", "CLUE-05", "CLUE-08", "CLUE-10", "CLUE-06", "CLUE-07", "CLUE-09"])

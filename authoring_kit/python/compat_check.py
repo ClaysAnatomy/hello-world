@@ -123,8 +123,17 @@ def run_compat(root: Path, cfg: dict | None = None, capmap: dict | None = None,
 
     pat_report: dict[str, dict] = {}
     for pat in patterns["patterns"]:
-        missing = [c for c in pat["requires"] if not resolved.get(c)]
-        pat_report[pat["id"]] = {"available": not missing, "missing": missing}
+        missing: list[str] = []
+        generic = False
+        for item in pat["requires"]:
+            alts = item if isinstance(item, list) else [item]
+            hit = next((a for a in alts if resolved.get(a)), None)
+            if hit is None:
+                missing.append(alts[0])
+            elif hit != alts[0]:
+                generic = True
+        pat_report[pat["id"]] = {"available": not missing, "missing": missing,
+                                 "mode": "GENERIC" if generic else "NATIVE"}
 
     suffixes = tuple(capmap.get("prose_field_hints", {}).get("suffixes", []))
     prose_count = sum(1 for p in property_names if suffixes and p.endswith(suffixes))
@@ -156,10 +165,10 @@ def print_report(report: dict, out: K.Out, capmap: dict | None = None) -> int:
         return 2
     for w in report.get("warnings", []):
         out.say("COMPAT_WARN", w)
-    out.trust(terms=[c for cap in capmap["capabilities"] for c in cap["candidates"]])
+    out.trust(terms=[c for cap in capmap["capabilities"] for c in cap["candidates"]] + ["NATIVE", "GENERIC"])
     for pid, info in report["patterns"].items():
         if info["available"]:
-            out.say("COMPAT_AVAILABLE", pid)
+            out.say("COMPAT_AVAILABLE", pid, info.get("mode", "NATIVE"))
         else:
             out.say("COMPAT_UNAVAILABLE", pid, first_candidate(capmap, info["missing"][0]))
     total = len(report["patterns"])

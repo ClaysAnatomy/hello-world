@@ -98,9 +98,13 @@ def _voice_rules(text: str, token: str, profile: dict) -> list[dict]:
         out.append(F("VL-08", token))
     if rules["hedges"] == "required" and not hedged:
         out.append(F("VL-08", token))
-    need = rules.get("required_in_assessment_any", [])
-    if need and not any(K.phrase_in(low, t) for t in need):
+    if rules.get("digits_required") and not re.search(r"[0-9]", text):
         out.append(F("VL-08", token))
+    if any(K.phrase_in(low, t) for t in rules.get("forbidden_any", [])):
+        out.append(F("VL-08", token))
+    need = rules.get("required_in_assessment_any", [])
+    if need and not any(t in low if not t[0].isalnum() else K.phrase_in(low, t) for t in need):
+        out.append(F("VL-17", token, WARN))
     return out
 
 

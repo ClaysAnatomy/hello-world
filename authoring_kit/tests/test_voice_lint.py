@@ -49,7 +49,8 @@ r.eq("stock name", lint("CLUE-04", {T: "Signed for by Elias at the desk."}), [("
 r.eq("finding with assessment", lint("CLUE-04", {T: "The seal was probably broken by hand."}), [("VL-07", T, "ERROR")])
 r.eq("required string kept", lint("CLUE-02"), [])
 r.eq("required string lost", lint("CLUE-02", {B: "FIXTURE text 02 with no time at all."}), [("VL-06", B, "ERROR")])
-r.eq("required string altered", lint("CLUE-02", {B: f"FIXTURE text 02 at {cs1[:-1]}9 marmalade."}), [("VL-06", B, "ERROR")])
+altered = cs1[:-1] + str((int(cs1[-1]) + 1) % 10)
+r.eq("required string altered", lint("CLUE-02", {B: f"FIXTURE text 02 at {altered} marmalade."}), [("VL-06", B, "ERROR")])
 r.eq("too long", lint("CLUE-04", {T: "word " * 121}), [("VL-12", T, "ERROR")])
 r.eq("claims beyond assignment", lint("CLUE-04", mutate=lambda f: f["claims"].update({T: ["FACT-01", "FACT-02"]})), [("VL-11", T, "ERROR")])
 r.eq("claims short of assignment", lint("CLUE-04", mutate=lambda f: f["claims"].pop(T)), [("VL-11", T, "WARN")])
@@ -67,7 +68,12 @@ r.eq("token missing", lint("CLUE-04", mutate=lambda f: f["fills"].pop(A)), [("KT
 v = next(d["voice_id"] for d in plan["departments"] if d["id"] == "DEPT-D2")
 prof = next(p for p in K.data("voice_matrix")["profiles"] if p["id"] == v)
 bad_voice = "Fine."
-r.eq("assessment off voice", [x[0] for x in lint("CLUE-04", {A: bad_voice})], ["VL-08"])
+r.eq("assessment off voice", [x[0] for x in lint("CLUE-04", {A: bad_voice})], ["VL-08", "VL-17"])
+p1 = next(p for p in K.data("voice_matrix")["profiles"] if p["id"] == "V1")
+p3 = next(p for p in K.data("voice_matrix")["profiles"] if p["id"] == "V3")
+r.eq("digits required", [f["id"] for f in VL._voice_rules("Seal replaced at the store. Replacement assessed deliberate.", "X", p1)], ["VL-08"])
+r.eq("emotional adjective forbidden", [f["id"] for f in VL._voice_rules("Foreground: 2 cups, a sad cloth, 30 mm left.", "X", p3)], ["VL-08"])
+r.eq("signature words soft", [(f["id"], f["sev"]) for f in VL._voice_rules("Seal 4 replaced. Entry 2 rewritten.", "X", p1)], [("VL-17", "WARN")])
 
 # options
 desk = [ph for ph in plan["placeholders"] if ph["owner"] == "DESK-01" and ph["kind"] == "option"]

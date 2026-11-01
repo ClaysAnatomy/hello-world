@@ -20,6 +20,7 @@ def _person(i, cid, role, name, culprit, ids):
         "attention": f"FIXTURE attention {i:02d}", "pressure": f"FIXTURE pressure {i:02d}",
         "would_lie_about": f"FIXTURE lie {i:02d}", "lie_reason": f"FIXTURE reason {i:02d}",
         "life_outside": f"FIXTURE life {i:02d}", "voice_notes": f"FIXTURE voice {i:02d}", "secret": None,
+        "voice_sample": " ".join(["FIXTURE sample sentence", f"{i:02d}", "about stores and shifts."] * 8),
         "relationships": [{"to": nxt, "nature": f"FIXTURE tie {i:02d}a"}, {"to": prv, "nature": f"FIXTURE tie {i:02d}b"}],
     }
 
