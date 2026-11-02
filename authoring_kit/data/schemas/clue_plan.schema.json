@@ -31,7 +31,19 @@
           "dept": {"type": ["string", "null"]},
           "search_free": {"type": "boolean"},
           "role": {"enum": ["solution", "support", "herring_induce", "herring_refute", "mask", "reframe", "world"]},
-          "technique_ids": {"$ref": "#/$defs/idlist"}
+          "technique_ids": {"$ref": "#/$defs/idlist"},
+          "purpose": {"type": "object", "required": ["kind", "note"], "additionalProperties": false,
+            "description": "Required for world documents: why this non-clue paper earns its place.",
+            "properties": {"kind": {"enum": ["teaches_rule", "character_dynamic", "setting_mechanic"]},
+                           "term": {"type": "string", "maxLength": 60}, "people": {"$ref": "#/$defs/idlist"}, "note": {"$ref": "#/$defs/text"}}},
+          "media": {"type": "object", "required": ["kind"], "additionalProperties": false,
+            "description": "Dress this document as a physical artifact. See media_forms.json and docs/MEDIA.md.",
+            "properties": {"kind": {"$ref": "#/$defs/id"}, "depicts": {"$ref": "#/$defs/idlist"},
+                           "camera": {"type": "string", "maxLength": 24}, "publication": {"type": "string", "maxLength": 24},
+                           "taken_at": {"type": "string", "maxLength": 5}, "handling": {"type": "integer", "minimum": 0, "maximum": 10},
+                           "storage": {"type": "string", "maxLength": 16}, "regions": {"type": "object", "additionalProperties": {"type": "string"}},
+                           "anomaly": {"type": "object", "required": ["value_key", "value", "fact"], "additionalProperties": false,
+                                       "properties": {"value_key": {"type": "string"}, "value": {"type": "string"}, "fact": {"$ref": "#/$defs/id"}}}}}
         }
       }
     },
@@ -40,6 +52,18 @@
       "additionalProperties": {"type": "array", "items": {"type": "object", "required": ["clues", "search_free"], "additionalProperties": false, "properties": {"clues": {"$ref": "#/$defs/idlist"}, "search_free": {"type": "boolean"}}}}
     },
     "departments": {"type": "array", "items": {"type": "object", "required": ["id", "voice_id"], "additionalProperties": false, "properties": {"id": {"$ref": "#/$defs/id"}, "voice_id": {"$ref": "#/$defs/id"}}}},
+    "media_environment": {
+      "type": "object", "additionalProperties": false,
+      "description": "Where and when the artifacts live. Required when any document has media.",
+      "properties": {
+        "climate": {"type": "string"}, "hemisphere": {"enum": ["north", "south"]}, "archive_date": {"type": "string"},
+        "institution_code": {"type": "string", "maxLength": 4},
+        "cameras": {"type": "array", "items": {"type": "object", "required": ["id", "kind"], "additionalProperties": false,
+                    "properties": {"id": {"type": "string"}, "kind": {"type": "string"}, "owner": {"type": "string"}}}},
+        "publications": {"type": "array", "items": {"type": "object", "required": ["id", "name", "founded"], "additionalProperties": false,
+                         "properties": {"id": {"type": "string"}, "name": {"type": "string"}, "founded": {"type": "string"}, "cadence_days": {"type": "integer"}}}}
+      }
+    },
     "placeholders": {
       "type": "array", "minItems": 1,
       "items": {
@@ -51,7 +75,7 @@
           "owner": {"$ref": "#/$defs/id"},
           "stage": {"enum": ["S3", "S4"]},
           "slot": {"$ref": "#/$defs/text"},
-          "kind": {"enum": ["finding", "assessment", "title", "body", "transcript", "overlay", "subject", "option", "stem", "mail", "other"]},
+          "kind": {"enum": ["finding", "assessment", "title", "body", "transcript", "overlay", "subject", "option", "stem", "mail", "depiction", "other"]},
           "facts": {"$ref": "#/$defs/idlist"},
           "required_strings": {"$ref": "#/$defs/idlist"},
           "max_words": {"type": "integer", "minimum": 1, "maximum": 2000},

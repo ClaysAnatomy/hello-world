@@ -340,6 +340,21 @@ def check_plan(plan: dict, bible: dict, case_obj: dict, seeds: dict, s4_owner: s
         if (not c["mentions"] and c["author"] not in cast) or set(c["facts"]) & crit_ids:
             out.append(F("KT-PL-11", "$.clues"))
             break
+    # world documents are never padding: each declares what it does for the fiction
+    terms = {t["term"].lower() for t in bible["premise"]["setting"].get("internal_terms", [])}
+    for i, c in enumerate(plan["clues"]):
+        if c["role"] != "world":
+            continue
+        pur = c.get("purpose")
+        bad = not pur or not pur.get("note", "").strip()
+        if not bad and pur["kind"] == "teaches_rule":
+            bad = str(pur.get("term", "")).lower() not in terms
+        elif not bad and pur["kind"] == "character_dynamic":
+            people = pur.get("people", [])
+            present = set(c["mentions"]) | {c["author"]}
+            bad = len(set(people)) < 2 or any(x not in cast or x not in present for x in people)
+        if bad:
+            out.append(F("KT-PL-18", f"$.clues[{i}].purpose"))
     cap = w.get("flavor_max_words")
     if cap:
         dflt = lim["prose"]["default_max_words"]
@@ -370,8 +385,13 @@ def check_plan(plan: dict, bible: dict, case_obj: dict, seeds: dict, s4_owner: s
             out.append(F("KT-PL-10", f"$.placeholders[{i}]"))
         listed[ph["token"]] = ph
     occurrences = K.token_paths(case_obj, rx)
-    for tok in listed:
-        if len(occurrences.get(tok, [])) != 1:
+    for tok, ph in listed.items():
+        # a depiction drives an image and its alt text; it never sits in the engine case
+        expected = 0 if ph["kind"] == "depiction" else 1
+        if ph["kind"] == "depiction" and ph["stage"] != "S3":
+            out.append(F("KT-PL-10", "$.placeholders"))
+            break
+        if len(occurrences.get(tok, [])) != expected:
             out.append(F("KT-PL-10", "$.placeholders"))
             break
     for parts, value in K.walk_leaves(case_obj):

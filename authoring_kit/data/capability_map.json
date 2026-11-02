@@ -20,14 +20,18 @@
       "id": "CAP-03",
       "label": "a masking relation for the aha",
       "candidates": [
-        "MASKS"
+        "MASKS",
+        "masks_option_ids"
       ]
     },
     {
       "id": "CAP-04",
       "label": "a reframing relation for the aha",
       "candidates": [
-        "REFRAMES"
+        "REFRAMES",
+        "aha_moments",
+        "aha_patterns",
+        "aha_id"
       ]
     },
     {
@@ -151,7 +155,9 @@
       "candidates": [
         "INVERTS-POLARITY",
         "INVERTS_POLARITY",
-        "inverts_polarity"
+        "inverts_polarity",
+        "AHA_ALIBI_INVERSION",
+        "AHA_MOTIVE_INVERSION"
       ]
     },
     {
@@ -160,7 +166,8 @@
       "candidates": [
         "COLLAPSES-IDENTITY",
         "COLLAPSES_IDENTITY",
-        "collapses_identity"
+        "collapses_identity",
+        "AHA_IDENTITY_COLLAPSE"
       ]
     },
     {
@@ -169,7 +176,8 @@
       "candidates": [
         "SPLITS-ROLE",
         "SPLITS_ROLE",
-        "splits_role"
+        "splits_role",
+        "AHA_IDENTITY_FISSION"
       ]
     },
     {
@@ -178,7 +186,8 @@
       "candidates": [
         "SHIFTS-WINDOW",
         "SHIFTS_WINDOW",
-        "shifts_window"
+        "shifts_window",
+        "AHA_TEMPORAL_SHIFT"
       ]
     },
     {
@@ -187,7 +196,8 @@
       "candidates": [
         "SHIFTS-LOCATION",
         "SHIFTS_LOCATION",
-        "shifts_location"
+        "shifts_location",
+        "AHA_SPATIAL_SHIFT"
       ]
     },
     {
@@ -196,7 +206,8 @@
       "candidates": [
         "EXPOSES-ABSENCE",
         "EXPOSES_ABSENCE",
-        "exposes_absence"
+        "exposes_absence",
+        "AHA_NEGATIVE_CLUE"
       ]
     },
     {
@@ -204,7 +215,8 @@
       "label": "a presupposition (guilty knowledge) relation",
       "candidates": [
         "PRESUPPOSES",
-        "presupposes"
+        "presupposes",
+        "AHA_EPISTEMIC_TRAP"
       ]
     },
     {
@@ -213,7 +225,8 @@
       "candidates": [
         "REDIRECTS-TARGET",
         "REDIRECTS_TARGET",
-        "redirects_target"
+        "redirects_target",
+        "AHA_TARGET_SWAP"
       ]
     },
     {
@@ -221,7 +234,8 @@
       "label": "a relation by which a document teaches a domain rule",
       "candidates": [
         "TEACHES",
-        "teaches"
+        "teaches",
+        "teaches_rule_ids"
       ]
     },
     {
@@ -239,7 +253,9 @@
       "candidates": [
         "FRAGMENT-OF",
         "FRAGMENT_OF",
-        "fragment_of"
+        "fragment_of",
+        "fragment_quarters",
+        "fragment"
       ]
     }
   ],

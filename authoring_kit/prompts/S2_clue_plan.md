@@ -35,12 +35,35 @@ For every solution-critical fact, list routes in `routes`: each route is a set o
 ### 5. Give people a life on paper
 Each suspect appears in at least {{MIN_DOCS_PER_SUSPECT}} documents written by at least {{MIN_AUTHORS_PER_SUSPECT}} different authors, and at least once in a document with no solution-critical fact: a rota swap, a complaint about the heating, a birthday collection. World documents make up between {{WORLD_MIN}} and {{WORLD_MAX}} of the archive, and each involves a named person.
 
+Every world document also declares a `purpose`, because non-clue paper is never padding. Choose one `kind`:
+- `teaches_rule`: it shows the player how this world works, by naming one of the setting's internal terms in `term`;
+- `character_dynamic`: it shows how two or more named people stand with each other (list them in `people`; each appears in the document or wrote it);
+- `setting_mechanic`: it establishes a routine, a constraint or a piece of equipment the case relies on.
+Write one line in `note` saying how.
+
 ### 6. Departments and voices
 The kit assigned these voice profiles to department slots, in order:
 {{VOICE_SLOTS}}
 Map the case's departments onto the slots in that order and record it in `departments`. Department-processed documents keep raw findings and assessment in separate fields. The finding is plain; the assessment carries the department's bias.
 
-### 7. Write the engine files with placeholders
+### 7. Decide which papers reach the player as objects
+Some documents are better met as physical artifacts: a photograph pinned to a board, a scanned badge, a page torn from the station newsletter, a stamped report form, a handwritten note. Dress a document as one by adding `media` to its plan entry, with a `kind` from the media forms below. The kit then calculates every number, date, imprint and surface the artifact shows (report numbers in filing order, badge numbers in hiring order, frame counts in shooting order, the right weekday on a dateline, how the paper has aged in this climate), so nothing on any artifact can contradict anything else. You decide what the artifact is; you never write those values.
+
+For a media document:
+- `kind`; `depicts`: the people (cast IDs) or places (location IDs) an image shows; `camera`: a camera ID for photographs and video; `publication`: a publication ID for newspaper pages; `taken_at` (HH:MM) where the artifact prints a time; optional `handling` (0 to 5: how many hands it passed through) and `storage` (filed, boxed, pinned, pocket or framed).
+- `regions`: map each of the form's text regions (prose, handwriting or depiction) to one of this document's placeholders. A depiction region gets its own placeholder with `kind: depiction`: in S3 the writer describes plainly what the image shows, and that text drives the image and its alt text. Depiction placeholders never appear in `case.json`.
+- Optionally `anomaly`: one shown value deliberately differs from what the kit would calculate (a report number out of sequence, a backdated stamp), because the difference is evidence. Give `value_key`, the `value` shown, and the `fact` it carries. Never use an anomaly for anything else.
+
+Then add `media_environment` to the plan: `climate` and `hemisphere`; `cameras` (each with an `id` such as CAM-1, a `kind` and an optional `owner`); `publications` (each with an `id` such as PUB-1, a short `name`, a `founded` date and `cadence_days`); and optionally `institution_code` (two to four capitals) or `archive_date`.
+
+Use media where the object itself matters to the experience, not everywhere. Everyone an image shows needs a fixed `appearance` in the bible.
+
+Media forms:
+{{MEDIA_FORMS_TABLE}}
+
+Media limits: {{MEDIA_LIMITS}}
+
+### 8. Write the engine files with placeholders
 Write `case.json` and `skin.json` exactly as the authoring contract {{AUTHORING_README}} requires. Use the fixture files as the format example; they are nonsense and teach shape only. Reuse the bible's IDs for people, solution-critical facts, questions and options unchanged.
 
 In every player-facing prose field, write a placeholder instead of prose: the whole string is a token in the format `{{PLACEHOLDER_FORMAT}}`, where `owner` is the document ID for document prose (filled in stage S3) or `{{S4_OWNER}}` for desk fields such as option wording, question stems, mail and subjects that do not belong to one document (filled in stage S4), and `n` counts from 1 within each owner. List every placeholder in `placeholders`, with:

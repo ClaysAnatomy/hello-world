@@ -93,6 +93,17 @@ try:
     r.check("claims are paths and IDs", all(c["path"].startswith("$.") and all(f.startswith("FACT-") for f in c["facts"]) for c in claims))
     case = json.loads((sb.ws / "case.json").read_text(encoding="utf-8"))
     r.check("no placeholder left", not any(s.startswith("PP-") for s in K.string_leaves(case)))
+    man_path = sb.ws / "media_manifest.json"
+    r.check("media manifest written", man_path.is_file())
+    man = json.loads(man_path.read_text(encoding="utf-8"))
+    r.check("manifest holds no answer key or facts", not file_contains(man_path, KEY_CANARY) and "FACT-" not in man_path.read_text(encoding="utf-8"))
+    r.check("media registry stays sealed in checkpoints", (sb.ws / "checkpoints" / "media_registry.json").is_file())
+    rep = next(i for i in man["items"] if i["id"] == "CLUE-01")
+    body = case["clues"][0]["raw_observation_text"]
+    r.check("every value on the report form is in its text", all(x["text"] in body for x in rep["regions"] if x["role"] == "registry"))
+    s3m = (units / "S3-CLUE-01" / "prompt.md").read_text(encoding="utf-8")
+    r.check("S3 brief lists the printed values", all(x["text"] in s3m for x in rep["regions"] if x["role"] == "registry"))
+    r.check("plain S3 brief says plain text", "plain text" in (units / "S3-CLUE-04" / "prompt.md").read_text(encoding="utf-8"))
 finally:
     sb.close()
 

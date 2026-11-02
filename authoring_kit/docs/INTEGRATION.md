@@ -14,12 +14,13 @@ The kit was written without access to the project. Everything below is where it 
 8. **Usage-limit pause.** `agent.pause` lists exit codes and output patterns that mean "stopped by a plan or rate limit". They are UNVERIFIED: confirm the real signals from the agent's documentation. A matched stop with missing outputs pauses the run (exit 5); `next` restarts the same unit without using a repair round.
 9. **Blind audit.** Set `agent.family` and `audit_agent.family` to two different model families, and `audit_agent.argv` for Mode A. `audit.questions_path` says where the questions sit in the player bundle. If the exporter re-keys clue IDs to record references, provide `audit.cite_map` (a JSON map from reference to clue ID, stored in the sealed workspace). The audit agent keeps its own keys: only `_AUTH_TOKEN` variables are stripped for it by default.
 10. **Taste.** Entry 024 says to extend `store.py` and `learn.py` rather than add `feedback_ingest.py`. `taste_bridge.apply(profile, answers, seeds)` is the pure function for `learn.py` to call.
-11. **State files.** `authoring_kit\state\ledger.json` (salted hashes only) and `taste_profile.json`. `authoring_kit\.gitignore` already ignores `state/`.
-12. **The existing runner.** `taste\tools\author_run.py` keeps its own route. Behind `--kit`, it calls `kit_run.py` with the same workspace, then runs its own checks, pack and export as the only writer to the vault.
+11. **Media.** When a plan dresses documents as artifacts, `finish` writes `media_manifest.json` (player-safe) next to the case, and `checkpoints/media_registry.json` stays sealed. `author_run.py` should carry `media_manifest.json` into the vault and the player bundle alongside the case. The Desk renders artifacts from it; the image pipeline reads its `plates`. See `docs/MEDIA.md`.
+12. **State files.** `authoring_kit\state\ledger.json` (salted hashes only) and `taste_profile.json`. `authoring_kit\.gitignore` already ignores `state/`.
+13. **The existing runner.** `taste\tools\author_run.py` keeps its own route. Behind `--kit`, it calls `kit_run.py` with the same workspace, then runs its own checks, pack and export as the only writer to the vault.
 
 ## Task list for the local builder
 
-1. `python -m pip install jsonschema`, then run `python authoring_kit\tests\run_kit_tests.py` on Windows (expect 9 of 9, 502 checks).
+1. `python -m pip install jsonschema`, then run `python authoring_kit\tests\run_kit_tests.py` on Windows (expect 10 of 10, 597 checks).
 2. Run `compat_check.py --root .`; fix any wrong candidate names in `capability_map.json`.
 3. Run `placeholder_probe.py` on CASE-FIX-01 and CASE-FIX-03 with `--write`.
 4. Confirm the `engine` paths, and that the ID grammar in the authoring contract fits `limits.json` → `ids`.

@@ -18,6 +18,9 @@ Write one document. You know only what its author knew and what this document mu
 - Why it exists: {{REASON}}
 - Dated: {{DATE}}
 
+## The object
+{{MEDIA_BRIEF}}
+
 ## The world it was written in
 {{WORLD_BRIEF}}
 

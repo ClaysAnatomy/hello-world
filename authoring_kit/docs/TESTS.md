@@ -12,16 +12,17 @@ Expected output (the counts from the kit author's own run, in a Linux container 
 PASS test_kitlib: 30 of 30 checks passed
 PASS test_compat_check: 16 of 16 checks passed
 PASS test_seed_sampler: 214 of 214 checks passed
-PASS test_case_checks: 57 of 57 checks passed
+PASS test_case_checks: 63 of 63 checks passed
 PASS test_voice_lint: 50 of 50 checks passed
 PASS test_repair_budget_taste: 27 of 27 checks passed
 PASS test_brief_builder: 18 of 18 checks passed
 PASS test_probe: 7 of 7 checks passed
-PASS test_kit_run: 83 of 83 checks passed
-KIT TESTS 9 of 9 scripts passed
+PASS test_kit_run: 89 of 89 checks passed
+PASS test_media: 83 of 83 checks passed
+KIT TESTS 10 of 10 scripts passed
 ```
 
-That is 502 checks in total.
+That is 597 checks in total. On Windows, the project's install ran 9 scripts and 502 checks before the media layer.
 
 ## Fixtures (all nonsense)
 
@@ -37,9 +38,10 @@ That is 502 checks in total.
 | test_kitlib | The printer passes IDs, paths, trusted terms and numbers, and prints `WITHHELD` for anything else. Placeholder parsing, case rebuild, secret-variable stripping, and every message the code uses exists. |
 | test_compat_check | Exact output on the fixture engine: 15 of 16 patterns available (3 NATIVE, 12 GENERIC), PAT-12 missing `accepted_fragment_orders`. A missing schema prints `COMPAT FAIL KT-CP-01` and exits 2; removing MASKS makes PAT-01 unavailable. |
 | test_seed_sampler | Seed 7 gives PAT-05, MECH-09, RH-05, NP-3 and six named people. Over 200 seeds: distinct initials and sounds, no stock names, no unavailable pattern, one pattern (the MVP limit), valid critical strings. The ledger pushes recent seeds away, taste weights pull, and the ledger file holds no plain IDs or names. |
-| test_case_checks | The scenario passes clean. Each bible and plan mutation fails exactly its intended check, including rule-passing name replacements (allowed), banned or colliding replacements (refused), declared tropes (exempt from the trope warning) and malformed trope declarations (refused), voice samples, the flavor cap, the document count and the tier count. |
+| test_case_checks | The scenario passes clean. Each bible and plan mutation fails exactly its intended check, including rule-passing name replacements (allowed), banned or colliding replacements (refused), declared tropes (exempt from the trope warning) and malformed trope declarations (refused), world documents without a purpose (KT-PL-18), depiction placeholders kept out of the case, voice samples, the flavor cap, the document count and the tier count. |
 | test_voice_lint | Every clean fill passes; all eight voice exemplars pass their own profile's rules; each prose check fires on its trigger and stays quiet on near-misses. |
 | test_repair_budget_taste | Engine output parsing (IDs and paths only, tolerated rules, crashes), the repair decision table, turn and cost caps, answer validation and taste updates. |
 | test_brief_builder | Template filling, a missing token raises, every token in every prompt is supplied, check lists are stage-specific. |
 | test_probe | The probe finds FP-03 as the only placeholder-caused rule, separates a fixture's own failures from placeholder effects, and prints IDs only. |
-| test_kit_run | The golden Mode A transcript. Stage folders: outside the workspace, closed after acceptance, only the current unit on disk, the stage root removed at finish, a stage root inside the workspace refused. Canaries never on screen, in logs, in the ledger or in the project tree; the answer key never in S3 or S4 briefs; S3 briefs carry the neighbour index without facts. Mode B flow, repair, abort on repeat, abort at the cap, budget stop, pause and resume, tolerance (FP-03 fails S2 without it), engine-rule repair, gate failure re-opening a closed unit, drift abort, setup errors, the review, the blind audit (pass, bad citations, giveaway options, same family refused, the shortcut probe never seeing records) and the estimate. |
+| test_kit_run | The golden Mode A transcript. Stage folders: outside the workspace, closed after acceptance, only the current unit on disk, the stage root removed at finish, a stage root inside the workspace refused. Canaries never on screen, in logs, in the ledger or in the project tree; the answer key never in S3 or S4 briefs; S3 briefs carry the neighbour index without facts. The media manifest is written, player-safe and consistent with the case text, and the S3 brief lists the printed values. Mode B flow, repair, abort on repeat, abort at the cap, budget stop, pause and resume, tolerance (FP-03 fails S2 without it), engine-rule repair, gate failure re-opening a closed unit, drift abort, setup errors, the review, the blind audit (pass, bad citations, giveaway options, same family refused, the shortcut probe never seeing records) and the estimate. |
+| test_media | The registry is deterministic and seed-dependent; report numbers rise with filing date; badge numbers follow hiring order and expiry follows issue; newspaper issue numbers and weekdays are calculated; frames rise per camera; imprints and light follow the camera, climate and month. Wear never takes an artifact below the legibility floor. Each bad media declaration fails its own check (KT-MD-01 to 09), anomalies must be real and fact-bearing, missing or invented values and wrong weekdays are caught, the manifest holds no facts, roles, tiers or anomaly flags, and plates carry the same likeness for the same person. |

@@ -1,0 +1,157 @@
+{
+  "version": "1.0.0",
+  "purpose": "The physical artifacts a document can be. A plan gives a document a media form when it should reach the player as an object (a photograph, a badge scan, a newspaper page) rather than plain text. Each form lists its regions. A region is printed by the institution (role printed), calculated by the kit (role registry), written by the document's author in S3 (role prose or handwriting), or an image (role image). Every registry value a form shows must also appear verbatim in the document's text, so everything visible on the artifact is anchored in the transcript. See docs/MEDIA.md.",
+  "region_roles": {
+    "registry": "A value the kit calculates from the case (numbers, dates, names, imprints). Shown on the artifact and required verbatim in the document's text.",
+    "prose": "Typed text written by the author in S3, mapped to one of the document's placeholders.",
+    "handwriting": "Handwritten text written by the author in S3, mapped to one of the document's placeholders.",
+    "depiction": "What an image shows, written plainly in S3 as an archivist's caption. Not printed: it drives the image and is the image's alt text.",
+    "image": "A picture region. Its content comes from the depiction and the likeness of each person shown."
+  },
+  "forms": [
+    {
+      "id": "MF-01", "name": "photograph print", "family": "photo", "dresses": ["DF-17"],
+      "aspect": "3:2", "stock": "photo_gloss", "fold": "none", "scanned": true, "handling_default": 2,
+      "camera_kinds": ["film_35mm", "digital"], "depicts": ["person", "place", "object"],
+      "plate": "photo",
+      "regions": [
+        {"id": "image", "role": "image"},
+        {"id": "depiction", "role": "depiction", "required": true},
+        {"id": "imprint", "role": "registry", "value": "imprint"},
+        {"id": "frame", "role": "registry", "value": "frame"},
+        {"id": "caption", "role": "handwriting", "required": false}
+      ]
+    },
+    {
+      "id": "MF-02", "name": "instant photograph", "family": "photo", "dresses": ["DF-17", "DF-06"],
+      "aspect": "1:1", "stock": "photo_instant", "fold": "none", "scanned": true, "handling_default": 3,
+      "camera_kinds": ["instant"], "depicts": ["person", "place", "object"],
+      "plate": "photo",
+      "regions": [
+        {"id": "image", "role": "image"},
+        {"id": "depiction", "role": "depiction", "required": true},
+        {"id": "margin_note", "role": "handwriting", "required": false}
+      ]
+    },
+    {
+      "id": "MF-03", "name": "identity badge scan", "family": "scan", "dresses": ["DF-19", "DF-10"],
+      "aspect": "54:86", "stock": "card_laminated", "fold": "none", "scanned": true, "handling_default": 3,
+      "camera_kinds": [], "depicts": ["person"], "depicts_exactly": 1,
+      "plate": "portrait",
+      "regions": [
+        {"id": "institution", "role": "registry", "value": "institution"},
+        {"id": "portrait", "role": "image"},
+        {"id": "name", "role": "registry", "value": "name"},
+        {"id": "badge_no", "role": "registry", "value": "badge_no"},
+        {"id": "clearance", "role": "registry", "value": "clearance"},
+        {"id": "issued", "role": "registry", "value": "issued"},
+        {"id": "expires", "role": "registry", "value": "expires"},
+        {"id": "notes", "role": "prose", "required": false}
+      ]
+    },
+    {
+      "id": "MF-04", "name": "newspaper page or clipping", "family": "print", "dresses": ["DF-18"],
+      "aspect": "2:3", "stock": "newsprint", "fold": "half", "scanned": true, "handling_default": 2,
+      "camera_kinds": [], "depicts": [], "needs_publication": true,
+      "plate": null,
+      "regions": [
+        {"id": "masthead", "role": "registry", "value": "masthead"},
+        {"id": "dateline", "role": "registry", "value": "dateline"},
+        {"id": "issue_line", "role": "registry", "value": "issue_line"},
+        {"id": "headline", "role": "prose", "required": true},
+        {"id": "body", "role": "prose", "required": true}
+      ]
+    },
+    {
+      "id": "MF-05", "name": "incident or arrest report form", "family": "scan", "dresses": ["DF-01", "DF-19", "DF-13"],
+      "aspect": "210:297", "stock": "bond", "fold": "none", "scanned": true, "handling_default": 2,
+      "camera_kinds": [], "depicts": [],
+      "plate": null,
+      "regions": [
+        {"id": "institution", "role": "registry", "value": "institution"},
+        {"id": "report_no", "role": "registry", "value": "report_no"},
+        {"id": "filed", "role": "registry", "value": "filed"},
+        {"id": "officer", "role": "registry", "value": "officer", "when": "author_is_person"},
+        {"id": "received", "role": "registry", "value": "received"},
+        {"id": "body", "role": "prose", "required": true}
+      ]
+    },
+    {
+      "id": "MF-06", "name": "handwritten letter or note, scanned", "family": "scan", "dresses": ["DF-06", "DF-12", "DF-15", "DF-16"],
+      "aspect": "210:297", "stock": "bond", "fold": "tri", "scanned": true, "handling_default": 3,
+      "camera_kinds": [], "depicts": [],
+      "plate": "handwriting",
+      "regions": [
+        {"id": "body", "role": "handwriting", "required": true}
+      ]
+    },
+    {
+      "id": "MF-07", "name": "teleprinter or fax printout", "family": "print", "dresses": ["DF-07", "DF-09", "DF-20", "DF-15"],
+      "aspect": "210:280", "stock": "thermal", "fold": "quarter", "scanned": true, "handling_default": 2,
+      "camera_kinds": [], "depicts": [],
+      "plate": null,
+      "regions": [
+        {"id": "message_no", "role": "registry", "value": "message_no"},
+        {"id": "time_group", "role": "registry", "value": "time_group"},
+        {"id": "body", "role": "prose", "required": true}
+      ]
+    },
+    {
+      "id": "MF-08", "name": "instrument chart or strip record", "family": "print", "dresses": ["DF-04", "DF-14"],
+      "aspect": "3:1", "stock": "chart_paper", "fold": "none", "scanned": true, "handling_default": 1,
+      "camera_kinds": [], "depicts": [],
+      "plate": null,
+      "regions": [
+        {"id": "chart_no", "role": "registry", "value": "chart_no"},
+        {"id": "chart_date", "role": "registry", "value": "printed_date"},
+        {"id": "trace", "role": "image"},
+        {"id": "annotation", "role": "handwriting", "required": true}
+      ]
+    },
+    {
+      "id": "MF-09", "name": "annotated plan or map", "family": "print", "dresses": ["DF-18", "DF-04"],
+      "aspect": "4:3", "stock": "bond", "fold": "quarter", "scanned": true, "handling_default": 2,
+      "camera_kinds": [], "depicts": ["place"],
+      "plate": null,
+      "regions": [
+        {"id": "drawing_no", "role": "registry", "value": "drawing_no"},
+        {"id": "plan", "role": "image"},
+        {"id": "annotation", "role": "handwriting", "required": true}
+      ]
+    },
+    {
+      "id": "MF-10", "name": "terminal screen capture", "family": "screen", "dresses": ["DF-10", "DF-11", "DF-04"],
+      "aspect": "4:3", "stock": "screen", "fold": "none", "scanned": false, "handling_default": 0,
+      "camera_kinds": [], "depicts": [],
+      "plate": null,
+      "regions": [
+        {"id": "terminal", "role": "registry", "value": "terminal"},
+        {"id": "captured", "role": "registry", "value": "captured"},
+        {"id": "body", "role": "prose", "required": true}
+      ]
+    },
+    {
+      "id": "MF-11", "name": "label, tag or specimen card", "family": "scan", "dresses": ["DF-11", "DF-20"],
+      "aspect": "5:3", "stock": "label_tag", "fold": "none", "scanned": true, "handling_default": 3,
+      "camera_kinds": [], "depicts": ["place", "object"],
+      "plate": null,
+      "regions": [
+        {"id": "specimen_no", "role": "registry", "value": "specimen_no"},
+        {"id": "label_date", "role": "registry", "value": "printed_date"},
+        {"id": "body", "role": "handwriting", "required": true}
+      ]
+    },
+    {
+      "id": "MF-12", "name": "video log", "family": "video", "dresses": ["DF-09", "DF-16", "DF-12"],
+      "aspect": "4:3", "stock": "video", "fold": "none", "scanned": false, "handling_default": 0,
+      "camera_kinds": ["digital", "cctv"], "depicts": ["person", "place", "object"],
+      "plate": "video",
+      "regions": [
+        {"id": "tape_no", "role": "registry", "value": "tape_no"},
+        {"id": "timecode", "role": "registry", "value": "timecode"},
+        {"id": "depiction", "role": "depiction", "required": true},
+        {"id": "transcript", "role": "prose", "required": true}
+      ]
+    }
+  ]
+}

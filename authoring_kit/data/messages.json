@@ -54,6 +54,7 @@
     "FINISH_PASS": "FINISH PASS",
     "FINISH_FAIL": "FINISH FAIL",
     "FINISH_COUNTS": "FINISH documents {0} texts {1} claims {2} warnings {3}",
+    "MEDIA_COUNTS": "MEDIA artifacts {0} plates {1} video {2}",
     "STATUS_LINE": "STATUS units done {0} of {1}",
     "STATUS_ACTIVE": "STATUS active",
     "STATUS_ABORTED": "STATUS aborted",

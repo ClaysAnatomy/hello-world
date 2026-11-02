@@ -10,7 +10,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 SCRIPTS = ["test_kitlib.py", "test_compat_check.py", "test_seed_sampler.py", "test_case_checks.py",
            "test_voice_lint.py", "test_repair_budget_taste.py", "test_brief_builder.py", "test_probe.py",
-           "test_kit_run.py"]
+           "test_kit_run.py", "test_media.py"]
 
 failed = 0
 for name in SCRIPTS:

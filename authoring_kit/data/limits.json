@@ -107,6 +107,7 @@
       "AU",
       "BC",
       "BL",
+      "CAM",
       "CAP",
       "CHAR",
       "CHK",
@@ -130,12 +131,14 @@
       "LOC",
       "MAIL",
       "MECH",
+      "MF",
       "NP",
       "OPT",
       "P",
       "PAT",
       "PP",
       "PROBE",
+      "PUB",
       "Q",
       "R",
       "REC",
@@ -174,5 +177,16 @@
   "tropes": {
     "max_embraced": 3,
     "note": "How many tropes a case may embrace on purpose. Each needs a lens from trope_lenses.json."
+  },
+  "media": {
+    "max_items": 8,
+    "max_plates": 4,
+    "max_handling": 5,
+    "video": {
+      "max": 1,
+      "min": 1,
+      "min_enforced": false
+    },
+    "note": "Video: the design calls for exactly one prestige video log per case. min_enforced stays false until the video pipeline exists; until then a case may have none, and never more than one. Plates are artifacts that need a generated image (photographs, badges, handwritten scans); the cap keeps image cost bounded."
   }
 }

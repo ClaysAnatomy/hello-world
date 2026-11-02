@@ -37,6 +37,8 @@ The cast names are fixed by the seeds. Assign each seeded name to one person. Fo
 Then put each person through these tests and revise until they pass:
 {{PERSON_TESTS}}
 
+Give each person an `appearance`: a few fixed physical details another artist could draw the same way every time (build and height, hair, one distinguishing mark, what they usually wear on shift). Plain and concrete, no adjectives about character. Photographs, badges and video draw on it, so it must stay true across the whole case.
+
 Give each person at least {{MIN_RELATIONSHIPS}} relationships to other named people, each with history and a current temperature. Between {{MIN_SUSPECTS}} and {{MAX_SUSPECTS}} people are suspects. The person at the centre of the case (`role: subject`) had a want and an obligation too.
 
 ### 3. What actually happened

@@ -104,6 +104,7 @@ CHECK S4 PASS
 All stages passed. Run finish.
 --- finish
 CHECK errors 0 warnings 0
+MEDIA artifacts 2 plates 1 video 0
 FINISH documents 10 texts 31 claims 17 warnings 0
 BUDGET run turns 26 of 80
 FINISH PASS

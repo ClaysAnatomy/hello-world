@@ -87,6 +87,12 @@ def make_bible(seeds: dict) -> dict:
     }
 
 
+# two documents reach the player as artifacts: a stamped report form and a handwritten note
+MEDIA = {
+    "CLUE-01": {"kind": "MF-05", "regions": {"body": "PP-CLUE-01-2"}, "handling": 2, "storage": "filed"},
+    "CLUE-07": {"kind": "MF-06", "regions": {"body": "PP-CLUE-07-2"}, "handling": 3, "storage": "pocket"},
+}
+
 CLUES = [
     # id, tier, form, author key, role, facts, dept
     ("CLUE-01", 0, "DF-01", "DEPT-D1", "herring_induce", ["FACT-05"], "DEPT-D1"),
@@ -113,6 +119,12 @@ def make_s2(bible: dict, seeds: dict) -> tuple[dict, dict, dict]:
         clues.append({"id": cid, "form_id": form, "author": author, "intended_reader": "FIXTURE reader",
                       "in_world_reason": "FIXTURE reason", "date": "2026-03-04", "tier": tier, "facts": list(facts),
                       "mentions": mentions, "dept": dept, "search_free": True, "role": role})
+        if cid == "CLUE-03":
+            clues[-1]["purpose"] = {"kind": "teaches_rule", "term": "FX1", "note": "FIXTURE purpose 01"}
+        if cid == "CLUE-10":
+            clues[-1]["purpose"] = {"kind": "character_dynamic", "people": suspects[:2], "note": "FIXTURE purpose 02"}
+        if cid in MEDIA:
+            clues[-1]["media"] = json.loads(json.dumps(MEDIA[cid]))
         n = 1
         rec = {"clue_id": cid, "record_date": "2026-03-04", "relations": [{"type": "ESTABLISHES", "fact_id": f} for f in facts]}
         tok = f"PP-{cid}-{n}"
@@ -157,7 +169,7 @@ def make_s2(bible: dict, seeds: dict) -> tuple[dict, dict, dict]:
         "FACT-03": [{"clues": ["CLUE-02"], "search_free": True}, {"clues": ["CLUE-08"], "search_free": True}],
         "FACT-09": [{"clues": ["CLUE-02", "CLUE-07"], "search_free": True}, {"clues": ["CLUE-08", "CLUE-09"], "search_free": True}],
     }
-    plan = {"clues": clues, "routes": routes,
+    plan = {"clues": clues, "routes": routes, "media_environment": {"climate": "polar", "hemisphere": "north"},
             "departments": [{"id": "DEPT-D1", "voice_id": seeds["dept_mix"][0]}, {"id": "DEPT-D2", "voice_id": seeds["dept_mix"][1]}],
             "placeholders": placeholders}
     case = {"case_id": "CASE-T-01",
@@ -178,8 +190,18 @@ def _voice_text(plan: dict, owner: str) -> str:
     return profiles[voice]["exemplars"][same_dept.index(owner) % len(profiles[voice]["exemplars"])]
 
 
-def make_fill(owner: str, plan: dict, bible: dict, override: dict | None = None) -> dict:
+def media_values(owner: str, plan: dict, bible: dict, seeds: dict | None) -> str:
+    """The registry values a media document must print, as the fake writer would copy them."""
+    if not seeds or not any(c.get("media") for c in plan["clues"]):
+        return ""
+    import media as MD
+    reg = MD.build_registry(plan, bible, seeds)
+    return " ".join(v for _, v in sorted(MD.required_values(owner, reg).items()))
+
+
+def make_fill(owner: str, plan: dict, bible: dict, override: dict | None = None, seeds: dict | None = None) -> dict:
     crit = {c["id"]: c["value"] for c in bible["critical_strings"]}
+    printed = media_values(owner, plan, bible, seeds)
     fills, claims = {}, {}
     num = owner.split("-")[-1]
     for ph in plan["placeholders"]:
@@ -193,6 +215,8 @@ def make_fill(owner: str, plan: dict, bible: dict, override: dict | None = None)
         elif ph["kind"] in ("finding", "body"):
             req = " ".join(crit[c] for c in ph["required_strings"])
             text = f"FIXTURE text {num} for record {owner} item noted {req} {CANARY}.".replace("  ", " ")
+            if printed and ph["kind"] in ("finding", "body"):
+                text = f"{printed}. {text}"
         elif ph["kind"] == "stem":
             text = f"FIXTURE stem for {ph['question']}"
         else:
@@ -234,6 +258,6 @@ def stage_all(agent_dir: Path, seeds: dict, overrides: dict | None = None) -> tu
     write_outputs(agent_dir, "S2", {"clue_plan.json": plan, "case.json": case, "skin.json": skin})
     owners = sorted({ph["owner"] for ph in plan["placeholders"] if ph["stage"] == "S3"})
     for o in owners:
-        write_outputs(agent_dir, f"S3-{o}", {"fill.json": make_fill(o, plan, bible, overrides.get(o))})
+        write_outputs(agent_dir, f"S3-{o}", {"fill.json": make_fill(o, plan, bible, overrides.get(o), seeds)})
     write_outputs(agent_dir, "S4", {"fill.json": make_fill("DESK-01", plan, bible, overrides.get("DESK-01"))})
     return bible, plan, case, skin

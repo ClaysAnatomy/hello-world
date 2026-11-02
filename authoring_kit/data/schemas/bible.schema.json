@@ -274,6 +274,12 @@
             "minLength": 1,
             "maxLength": 1200,
             "description": "A short sample of how this person writes for work, about an ordinary matter that asserts no case fact. Sealed; handed to every document they author."
+          },
+          "appearance": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 300,
+            "description": "Fixed physical details an artist could draw the same way every time: build, hair, one distinguishing mark, usual clothing. Needed for anyone shown in a photograph, badge or video."
           }
         }
       }

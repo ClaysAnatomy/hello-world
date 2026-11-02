@@ -13,6 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import kitlib as K  # noqa: E402
+import media as MD  # noqa: E402
 
 TOKEN_RX = re.compile(r"\{\{([A-Z0-9_]+)\}\}")
 
@@ -64,7 +65,10 @@ def check_list(stage: str) -> str:
     prefixes = {"S1": ("KT-BI-",), "S2": ("KT-PL-",), "S3": ("KT-FL-", "VL-"), "S4": ("KT-FL-", "VL-"),
                 "S6": ("KT-RV-",)}.get(stage, ())
     skip = {"S3": {"VL-04", "VL-05"}, "S4": {"VL-07", "VL-08", "VL-09"}}.get(stage, set())
-    return _bullets([f"{cid}: {txt}" for cid, txt in cat.items() if cid.startswith(prefixes) and cid not in skip])
+    extra = {"S2": {"KT-MD-01", "KT-MD-02", "KT-MD-03", "KT-MD-07", "KT-MD-08", "KT-MD-09"},
+             "S3": {"KT-MD-04", "KT-MD-05", "KT-MD-06"}, "S4": {"KT-MD-05", "KT-MD-06"}}.get(stage, set())
+    return _bullets([f"{cid}: {txt}" for cid, txt in cat.items()
+                     if (cid.startswith(prefixes) and cid not in skip) or cid in extra])
 
 
 def limits_text() -> str:
@@ -120,6 +124,8 @@ def pattern_briefs(seeds: dict) -> str:
         blocks.append("\n".join([
             f"### {pid} {p['name']}",
             f"Mechanism: {p['mechanism']}",
+            *([f"Engine name for this pattern: {p['engine_aha']} (use it wherever the engine records the aha pattern)."]
+              if p.get("engine_aha") else []),
             "Plant early:",
             _bullets(p["presignal"]),
             f"How it fails: {p['failure_mode']}",
@@ -292,6 +298,7 @@ def prepare(unit: dict, ws: Path, root: Path, state: dict) -> Path:
         p = lim["people"]
         w = lim["world"]
         ctx.update({"VOICE_SLOTS": voice_slots(seeds), "FORMS_TABLE": forms_table(),
+                    "MEDIA_FORMS_TABLE": MD.forms_table(), "MEDIA_LIMITS": MD.limits_text(),
                     "TECHNIQUES_TABLE": techniques_table(),
                     "PLACEHOLDER_FORMAT": lim["ids"]["placeholder_format"],
                     "S4_OWNER": K.data("stage_plan")["s4_owner"],
@@ -317,6 +324,8 @@ def prepare(unit: dict, ws: Path, root: Path, state: dict) -> Path:
         if stage == "S3":
             clue = next(c for c in plan["clues"] if c["id"] == owner)
             ctx.update(_s3_context(clue, plan, bible, phs))
+            reg = cp / "media_registry.json"
+            ctx["MEDIA_BRIEF"] = MD.brief_for(owner, plan, bible, K.load_json(reg) if reg.is_file() else None)
         else:
             ctx.update(_s4_context(bible, lim))
         outputs.append(("fill.json", "the texts and claims for the tokens in the table below"))

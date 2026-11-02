@@ -4,7 +4,7 @@
   "source": "Mystery Engine Design Research, Track 3, 'Catalog of 16 Named Aha Techniques'; relation names from Appendix B.2.",
   "patterns": [
     {
-      "id": "PAT-01", "name": "Innocent Cover-Up (Secondary Secret)",
+      "id": "PAT-01", "engine_aha": "AHA_INNOCENT_COVERUP", "name": "Innocent Cover-Up (Secondary Secret)",
       "mechanism": "An innocent suspect lies or tampers with a record to hide an unrelated, minor, human infraction. The lie earns early fixation. A later document reveals the secret, which both clears them and makes them an unwitting witness to a timeline fact the solution needs.",
       "requires": ["CAP-03", "CAP-04"],
       "presignal": ["The suspicious act appears early on routine paper.", "The document that reveals the secret also fixes a time or place the main solution uses."],
@@ -14,7 +14,7 @@
       "combines_with": ["PAT-05", "PAT-08", "PAT-16"], "conflicts_with": []
     },
     {
-      "id": "PAT-02", "name": "Background-as-Foreground",
+      "id": "PAT-02", "engine_aha": "AHA_PHOTO_BOMB", "name": "Background-as-Foreground",
       "mechanism": "A department presents a document for an explicit foreground purpose. An unhighlighted background detail in that same document becomes decisive when a later document of a different form explains what that detail means.",
       "requires": ["CAP-01", "CAP-04"],
       "presignal": ["The background detail is written into the document's text layer, never only in an image.", "The explaining document comes from a different form or department."],
@@ -24,7 +24,7 @@
       "combines_with": ["PAT-08", "PAT-09", "PAT-13"], "conflicts_with": []
     },
     {
-      "id": "PAT-03", "name": "Bidirectional Alibi Inversion (The Frame That Proves Guilt)",
+      "id": "PAT-03", "engine_aha": "AHA_ALIBI_INVERSION", "name": "Bidirectional Alibi Inversion (The Frame That Proves Guilt)",
       "mechanism": "The culprit tries to frame someone or shore up their own alibi, but the attempt presupposes knowledge that only the person present could have had at that time. A later record fixes when that knowledge became available to anyone else.",
       "requires": [["CAP-24", "CAP-04"], ["CAP-18", "CAP-04"], "CAP-08"],
       "presignal": ["The accusing statement is timestamped.", "When the presupposed fact became known is fixed by an independent record."],
@@ -34,7 +34,7 @@
       "combines_with": ["PAT-08", "PAT-15"], "conflicts_with": []
     },
     {
-      "id": "PAT-04", "name": "The Negative Clue (Conspicuous Absence)",
+      "id": "PAT-04", "engine_aha": "AHA_NEGATIVE_CLUE", "name": "The Negative Clue (Conspicuous Absence)",
       "mechanism": "A log, protocol or routine that always fires under normal conditions fails to fire in the critical window, proving staging or a different time.",
       "requires": [["CAP-23", "CAP-26", "CAP-01"], "CAP-08"],
       "presignal": ["The invariant is taught early in absolute terms, in a document whose main business is routine.", "The normal pattern is visible in at least two records."],
@@ -44,7 +44,7 @@
       "combines_with": ["PAT-02", "PAT-08"], "conflicts_with": []
     },
     {
-      "id": "PAT-05", "name": "Department Lens Reversal (Detectable Ideological Blindspot)",
+      "id": "PAT-05", "engine_aha": "AHA_DEPT_LENS_REVERSAL", "name": "Department Lens Reversal (Detectable Ideological Blindspot)",
       "mechanism": "A department analyst's biased assessment dismisses the meaning of their own raw finding. Cross-referencing another department's plain record collapses the excuse and points the other way.",
       "requires": ["CAP-06", "CAP-07", "CAP-02", ["CAP-18", "CAP-04"]],
       "presignal": ["The department's bias is visible in at least one earlier, unrelated assessment.", "The finding itself is plain and correct; only the assessment is bent."],
@@ -54,7 +54,7 @@
       "combines_with": ["PAT-01", "PAT-10", "PAT-11"], "conflicts_with": []
     },
     {
-      "id": "PAT-06", "name": "Identity Collapse (Two Aliases, One Actor)",
+      "id": "PAT-06", "engine_aha": "AHA_IDENTITY_COLLAPSE", "name": "Identity Collapse (Two Aliases, One Actor)",
       "mechanism": "Two institutional handles (a callsign, badge number, account or initials) referenced in separate documents denote the same person, uniting an isolated opportunity profile with an isolated motive profile.",
       "requires": [["CAP-19", "CAP-04"]],
       "presignal": ["The two handles never appear together.", "The mapping between them is established by at least two independent documents of different forms (Knox X; research Appendix A, FP-04)."],
@@ -64,7 +64,7 @@
       "combines_with": ["PAT-03", "PAT-09"], "conflicts_with": ["PAT-07"]
     },
     {
-      "id": "PAT-07", "name": "Identity Fission (One Alias, Two Actors)",
+      "id": "PAT-07", "engine_aha": "AHA_IDENTITY_FISSION", "name": "Identity Fission (One Alias, Two Actors)",
       "mechanism": "A seemingly ironclad alibi rests on one credential or role recorded in two places at once, until a document reveals two people were sharing it.",
       "requires": [["CAP-20", "CAP-04"]],
       "presignal": ["The practice of sharing the credential is signalled early in an ordinary institutional memo or rota."],
@@ -74,7 +74,7 @@
       "combines_with": ["PAT-03", "PAT-15"], "conflicts_with": ["PAT-06"]
     },
     {
-      "id": "PAT-08", "name": "Temporal Window Shift",
+      "id": "PAT-08", "engine_aha": "AHA_TEMPORAL_SHIFT", "name": "Temporal Window Shift",
       "mechanism": "Everyone has an alibi for the apparent time. A document proves the act happened at a different time through a delayed effect or a pre-recorded signal, isolating the one person unaccounted for at the true time.",
       "requires": [["CAP-21", "CAP-04"], "CAP-08"],
       "presignal": ["The apparent time is recorded early by several hands.", "The delay mechanism is taught in-world before or alongside the shift."],
@@ -84,7 +84,7 @@
       "combines_with": ["PAT-01", "PAT-03", "PAT-04", "PAT-16"], "conflicts_with": []
     },
     {
-      "id": "PAT-09", "name": "Spatial Relocation",
+      "id": "PAT-09", "engine_aha": "AHA_SPATIAL_SHIFT", "name": "Spatial Relocation",
       "mechanism": "Evidence found in one place is internally contradictory until the player realises the event happened elsewhere and something was moved.",
       "requires": [["CAP-22", "CAP-04"], "CAP-09"],
       "presignal": ["A physical property of the true place is taught by an unrelated record."],
@@ -94,7 +94,7 @@
       "combines_with": ["PAT-02", "PAT-06"], "conflicts_with": []
     },
     {
-      "id": "PAT-10", "name": "Motive Polarity Inversion (Target Swap)",
+      "id": "PAT-10", "engine_aha": "AHA_MOTIVE_INVERSION", "name": "Motive Polarity Inversion (Target Swap)",
       "mechanism": "A destructive act seems aimed against its owner. Later documents show the owner arranged it to conceal something worse.",
       "requires": [["CAP-18", "CAP-04"]],
       "presignal": ["The pressure the owner faced (an inspection, a shortfall, a deadline) is on paper early, about something else."],
@@ -104,7 +104,7 @@
       "combines_with": ["PAT-05", "PAT-13"], "conflicts_with": []
     },
     {
-      "id": "PAT-11", "name": "Cross-Modal Sensory Mismatch",
+      "id": "PAT-11", "engine_aha": "AHA_SENSORY_MISMATCH", "name": "Cross-Modal Sensory Mismatch",
       "mechanism": "A non-verbal cue bracketed inside a transcript or photo annotation contradicts what the speaker claims in words.",
       "requires": ["CAP-02", "CAP-12"],
       "presignal": ["Every non-verbal cue is written in brackets in the text, never left to audio or pixels."],
@@ -114,7 +114,7 @@
       "combines_with": ["PAT-05", "PAT-08"], "conflicts_with": []
     },
     {
-      "id": "PAT-12", "name": "Fragment Assembly Gestalt (The Torn Negation)",
+      "id": "PAT-12", "engine_aha": "AHA_FRAGMENT_GESTALT", "name": "Fragment Assembly Gestalt (The Torn Negation)",
       "mechanism": "Part of a torn document reads as a plausible phrase implicating someone. The full assembly supplies a negation, condition or recipient that reverses the meaning.",
       "requires": [["CAP-11", "CAP-28"], "CAP-03", "CAP-04"],
       "presignal": ["Each fragment has its own reason to exist; the partial reading is grammatical."],
@@ -124,7 +124,7 @@
       "combines_with": ["PAT-02", "PAT-10"], "conflicts_with": []
     },
     {
-      "id": "PAT-13", "name": "The Unintended Consequence (Target Redirection)",
+      "id": "PAT-13", "engine_aha": "AHA_TARGET_SWAP", "name": "The Unintended Consequence (Target Redirection)",
       "mechanism": "The method makes no sense against the actual victim until a document shows the act was aimed at someone else and a routine last-minute swap redirected it.",
       "requires": [["CAP-25", "CAP-04"]],
       "presignal": ["The swap is recorded as an ordinary, kind or routine act in a document about something else."],
@@ -134,7 +134,7 @@
       "combines_with": ["PAT-02", "PAT-10"], "conflicts_with": []
     },
     {
-      "id": "PAT-14", "name": "Physical Constraint Inversion (Deficit as Signature)",
+      "id": "PAT-14", "engine_aha": "AHA_DEFICIT_SIGNATURE", "name": "Physical Constraint Inversion (Deficit as Signature)",
       "mechanism": "A trait or limitation first offered as proof someone could not have acted turns out to explain an error signature at the scene.",
       "requires": ["CAP-04", ["CAP-27", "CAP-05"]],
       "presignal": ["The trait is on paper early as an exonerating fact.", "Any specialist knowledge needed is taught in-world (Knox IV)."],
@@ -144,7 +144,7 @@
       "combines_with": ["PAT-05", "PAT-09"], "conflicts_with": []
     },
     {
-      "id": "PAT-15", "name": "The Epistemic Trap (Public Story versus Private Knowledge)",
+      "id": "PAT-15", "engine_aha": "AHA_EPISTEMIC_TRAP", "name": "The Epistemic Trap (Public Story versus Private Knowledge)",
       "mechanism": "An official bulletin publishes a sanitised account that alters or omits a detail. Someone who claims to know only the bulletin reacts to the unredacted reality.",
       "requires": [["CAP-24", "CAP-04"], "CAP-01"],
       "presignal": ["The bulletin and the restricted record both exist early; neither looks suspicious alone."],
@@ -154,7 +154,7 @@
       "combines_with": ["PAT-03", "PAT-07"], "conflicts_with": []
     },
     {
-      "id": "PAT-16", "name": "Symmetrical Alibi Collapse (Mutual Perjury)",
+      "id": "PAT-16", "engine_aha": "AHA_MUTUAL_PERJURY", "name": "Symmetrical Alibi Collapse (Mutual Perjury)",
       "mechanism": "Two people vouch for each other. One record collapses both accounts at once; each needed cover for a different reason, one guilty and one an innocent secret, and the other questions separate them.",
       "requires": ["CAP-02", "CAP-08", ["CAP-27", "CAP-05"]],
       "presignal": ["Both accounts are recorded separately and early.", "The innocent partner's secret is resolved by its own document."],

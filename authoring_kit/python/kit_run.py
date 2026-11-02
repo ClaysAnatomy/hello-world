@@ -32,6 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import kitlib as K  # noqa: E402
 import brief_builder as BB  # noqa: E402
 import case_checks as CC  # noqa: E402
+import media as MD  # noqa: E402
 import repair_builder as RB  # noqa: E402
 import voice_lint as VL  # noqa: E402
 from budget_guard import Budget  # noqa: E402
@@ -355,6 +356,9 @@ class Run:
             f = CC.check_plan(plan, bible, case, seeds, self.plan_cfg["s4_owner"])
             if CC.has_errors(f):
                 return f
+            f += MD.check_plan_media(plan, bible, seeds)
+            if CC.has_errors(f):
+                return f
             return f + self._engine("S2", sdir / "case.json", sdir / "skin.json")
         if stage in ("S3", "S4"):
             fill = self._read(sdir / "fill.json")
@@ -364,6 +368,7 @@ class Run:
             plan = K.load_json(self.cp / "clue_plan.json")
             bible = K.load_json(self.cp / "bible.json")
             f = VL.lint_fill(fill, owner, plan, bible)
+            f += MD.lint_fill(fill, owner, plan, self._registry())
             if stage == "S4" and not CC.has_errors(f):
                 fills = self._fills()
                 fills[owner] = fill
@@ -380,6 +385,10 @@ class Run:
                 return [CC.F("KT-RV-01")]
             return []
         return []
+
+    def _registry(self) -> dict | None:
+        p = self.cp / "media_registry.json"
+        return K.load_json(p) if p.is_file() else None
 
     @staticmethod
     def _read(p: Path):
@@ -437,6 +446,12 @@ class Run:
             K.copy_file(sdir / "skin.json", self.cp / "skin.json")
             K.copy_file(sdir / "clue_plan.json", self.cp / "clue_plan.json")
             plan = K.load_json(self.cp / "clue_plan.json")
+            reg = self.cp / "media_registry.json"
+            if MD.media_clues(plan):
+                K.dump_json(MD.build_registry(plan, K.load_json(self.cp / "bible.json"),
+                                              K.load_json(self.cp / "seeds.json")), reg)
+            elif reg.is_file():
+                reg.unlink()
             owners = CC.s3_owners(plan)
             self.state["s3_owners"] = owners
             self.state["has_s4"] = any(ph["stage"] == "S4" for ph in plan["placeholders"])
@@ -475,6 +490,7 @@ class Run:
         owners = self.state["s3_owners"]
         s3fills = {o: fills[o] for o in owners if o in fills}
         findings = VL.lint_overlap(s3fills, owners)
+        findings += MD.lint_consistency(s3fills, self._registry())
         case_path, skin_path = self._write_case(fills)
         eng = self._engine("S3_GATE", case_path, skin_path)
         placed = self.state.get("placed", {})
@@ -574,6 +590,12 @@ class Run:
                 n_claims += len(facts)
                 claims.append({"path": placed.get(tok, "$"), "owner": owner, "facts": facts})
         K.dump_json({"version": 1, "claims": claims}, self.ws / "claims.json")
+        registry = self._registry()
+        if registry:
+            manifest = MD.build_manifest(K.load_json(self.cp / "clue_plan.json"), K.load_json(self.cp / "bible.json"),
+                                         fills, registry, placed)
+            K.dump_json(manifest, self.ws / self.cfg["workspace"].get("media_file", "media_manifest.json"))
+            self.out.say("MEDIA_COUNTS", *MD.summary(manifest))
         seeds = K.load_json(self.cp / "seeds.json")
         ledger = Ledger.load(self.root / self.cfg["state"]["ledger"])
         ledger.append(self.state["run_ref"], seed_items(seeds))
