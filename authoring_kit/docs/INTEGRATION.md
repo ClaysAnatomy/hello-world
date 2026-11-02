@@ -19,7 +19,7 @@ The kit was written without access to the project. Everything below is where it 
 
 ## Task list for the local builder
 
-1. `python -m pip install jsonschema`, then run `python authoring_kit\tests\run_kit_tests.py` on Windows (expect 9 of 9).
+1. `python -m pip install jsonschema`, then run `python authoring_kit\tests\run_kit_tests.py` on Windows (expect 9 of 9, 502 checks).
 2. Run `compat_check.py --root .`; fix any wrong candidate names in `capability_map.json`.
 3. Run `placeholder_probe.py` on CASE-FIX-01 and CASE-FIX-03 with `--write`.
 4. Confirm the `engine` paths, and that the ID grammar in the authoring contract fits `limits.json` → `ids`.

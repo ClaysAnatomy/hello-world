@@ -430,6 +430,32 @@
         "Mystery Engine Design Research, Track 5, Gates 3 and 4, and Strict Cross-Family Separation."
       ],
       "confidence": "scholarly support"
+    },
+    {
+      "id": "CP-21",
+      "name": "Familiar made new",
+      "rule": "A well-worn trope is welcome when it is chosen: recognisable enough to raise the genre's expectation, and renewed by a lens that makes it seen again. The mystery form is ideal for this, because the trope can be the default reading the turn reframes.",
+      "do": [
+        "Declare every trope you use on purpose, with its lens, in premise.tropes_embraced.",
+        "Keep the trope in the structure; never borrow its stock phrasing."
+      ],
+      "stage": [
+        "S1",
+        "S2"
+      ],
+      "check": [
+        "KT-BI-10",
+        "KT-BI-16",
+        "RUB-29",
+        "RUB-30"
+      ],
+      "sources": [
+        "Viktor Shklovsky, 'Art as Technique' (1917).",
+        "Steve Neale, Genre (1980).",
+        "Umberto Eco, 'Casablanca: Cult Movies and Intertextual Collage' (1984).",
+        "Project craft report, principle 6 (the double bluff)."
+      ],
+      "confidence": "well-established craft"
     }
   ]
 }

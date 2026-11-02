@@ -282,7 +282,7 @@ finally:
 # ------------------------------------------------------------------ 12. optional craft review (S6)
 sb, _ = new(review=True)
 try:
-    scenario.write_outputs(sb.agent_dir, "S6", {"review.json": {"scores": {f"RUB-{i}": 2 for i in range(11, 21)}, "flags": ["FM-02"]}})
+    scenario.write_outputs(sb.agent_dir, "S6", {"review.json": {"scores": {**{f"RUB-{i}": 2 for i in range(11, 21)}, "RUB-29": 2}, "flags": ["FM-02"]}})
     code, out = sb.kit("next", "--all")
     r.eq("review run exit", code, 0)
     r.check("review prints scores and flags only", "REVIEW RUB-11 2\n" in out and "REVIEW FLAG FM-02\n" in out)

@@ -144,9 +144,17 @@ def check_bible(bible: dict, seeds: dict) -> list[dict]:
         if any(K.phrase_in(blob, t) for _, _, t in quirk):
             out.append(F("KT-BI-09", f"$.cast[{i}]", WARN))
     trope = _ban_terms({"BL-TROPE"})
+    embraced = bible["premise"].get("tropes_embraced", [])
+    declared = " ".join(e["trope"] for e in embraced).lower()
     blob = " ".join([bible["premise"]["hook"], bible["truth"]["what_happened"], bible["cover"]["official_story"]]).lower()
-    if any(K.phrase_in(blob, t) for _, _, t in trope):
+    if any(K.phrase_in(blob, t) and not K.phrase_in(declared, t) for _, _, t in trope):
         out.append(F("KT-BI-10", "$.truth", WARN))
+    lenses = {ln["id"] for ln in K.data("trope_lenses")["lenses"]}
+    if len(embraced) > lim.get("tropes", {}).get("max_embraced", 3):
+        out.append(F("KT-BI-16", "$.premise.tropes_embraced"))
+    for i, e in enumerate(embraced):
+        if e["lens_id"] not in lenses or not e["how"].strip() or not e["trope"].strip():
+            out.append(F("KT-BI-16", f"$.premise.tropes_embraced[{i}]"))
 
     # voice samples
     lo, hi = lim["people"].get("voice_sample_words", [30, 120])

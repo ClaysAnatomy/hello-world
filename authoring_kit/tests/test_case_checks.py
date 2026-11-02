@@ -119,6 +119,17 @@ override_data("limits", lim)
 r.eq("too many documents for this build", plan_mut(lambda p: None), ["KT-PL-16"])
 reset_data()
 
+# tropes: chosen ones are welcome, accidental ones warn, malformed declarations fail
+b = copy.deepcopy(bible)
+b["truth"]["what_happened"] = "FIXTURE truth with an identical twin"
+r.eq("undeclared trope warns", ids(CC.check_bible(b, seeds), "WARN"), ["KT-BI-10"])
+b["premise"]["tropes_embraced"] = [{"trope": "identical twin", "lens_id": "LN-01", "how": "FIXTURE how 01"}]
+r.eq("declared trope is exempt", ids(CC.check_bible(b, seeds)), [])
+b["premise"]["tropes_embraced"] = [{"trope": "identical twin", "lens_id": "LN-99", "how": "FIXTURE how 01"}]
+r.eq("unknown lens fails", ids(CC.check_bible(b, seeds), "ERROR"), ["KT-BI-16"])
+b["premise"]["tropes_embraced"] = [{"trope": f"FIXTURE trope {i}", "lens_id": "LN-02", "how": "FIXTURE how"} for i in range(4)]
+r.eq("too many embraced tropes", ids(CC.check_bible(b, seeds), "ERROR"), ["KT-BI-16"])
+
 r.eq("s3 owner order", CC.s3_owners(plan),
      ["CLUE-01", "CLUE-02", "CLUE-03", "CLUE-04", "CLUE-05", "CLUE-08", "CLUE-10", "CLUE-06", "CLUE-07", "CLUE-09"])
 

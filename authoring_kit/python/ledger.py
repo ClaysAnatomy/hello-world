@@ -53,7 +53,7 @@ def seed_items(seeds: dict) -> list[tuple[str, str]]:
     items: list[tuple[str, str]] = []
     for p in seeds.get("patterns", []):
         items.append(("pattern", p))
-    for kind in ("mechanism", "red_herring", "stakes", "human_question", "irony", "setting_texture", "name_pool"):
+    for kind in ("mechanism", "red_herring", "stakes", "human_question", "irony", "setting_texture", "name_pool", "lens_hint"):
         if seeds.get(kind):
             items.append((kind, seeds[kind]))
     for person in seeds.get("cast_names", []):

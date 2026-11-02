@@ -104,6 +104,10 @@ def seeds_table(seeds: dict) -> str:
         "Cast names (assign each to one person and spell exactly; replace a name only if the brief's setting needs another naming culture, keeping every initial and sound distinct): " + "; ".join(f"{n['given']} {n['family']}" for n in seeds["cast_names"]),
         "Critical strings (use exactly; give each a meaning): " + "; ".join(f"{c['id']} = {c['value']}" for c in seeds["critical_strings"]),
     ]
+    if seeds.get("lens_hint"):
+        ln = _by_id(K.data("trope_lenses")["lenses"]).get(seeds["lens_hint"])
+        if ln:
+            lines.append(f"Lens to try first if the story embraces a familiar trope, {ln['id']}: {ln['name']}")
     return _bullets(lines)
 
 
@@ -122,6 +126,13 @@ def pattern_briefs(seeds: dict) -> str:
             "Forms that host it well: " + ", ".join(f"{f} {forms[f]['name']}" for f in p["good_forms"]),
         ]))
     return "\n\n".join(blocks)
+
+
+def trope_lenses() -> str:
+    rows = ["| ID | Lens | The move | Watch for |", "|---|---|---|---|"]
+    for ln in K.data("trope_lenses")["lenses"]:
+        rows.append(f"| {ln['id']} | {ln['name']} | {ln['move']} | {ln['risk']} |")
+    return "\n".join(rows)
 
 
 def person_sheet() -> str:
@@ -257,6 +268,8 @@ def prepare(unit: dict, ws: Path, root: Path, state: dict) -> Path:
         put("README_AUTHORING.md", _engine_path(root, eng["authoring_readme"]), desc="the authoring contract")
         put("bible.schema.json", K.SCHEMA_DIR / "bible.schema.json", desc="the shape of your output")
         ctx.update({"SEEDS_TABLE": seeds_table(seeds), "PATTERN_BRIEFS": pattern_briefs(seeds),
+                    "TROPE_LENSES": trope_lenses(),
+                    "MAX_TROPES": str(lim.get("tropes", {}).get("max_embraced", 3)),
                     "PERSON_SHEET": person_sheet(), "PERSON_TESTS": person_tests(),
                     "MIN_TEXTURE": str(lim["world"]["min_setting_texture"]),
                     "MIN_TERMS": str(lim["world"]["min_internal_terms"]),

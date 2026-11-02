@@ -132,6 +132,37 @@
               }
             }
           }
+        },
+        "tropes_embraced": {
+          "type": "array",
+          "maxItems": 6,
+          "description": "Well-worn tropes the case uses on purpose, each with the lens that renews it. Exempt from the trope warning.",
+          "items": {
+            "type": "object",
+            "required": [
+              "trope",
+              "lens_id",
+              "how"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "trope": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "lens_id": {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 12
+              },
+              "how": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1200
+              }
+            }
+          }
         }
       }
     },

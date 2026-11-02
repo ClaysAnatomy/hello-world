@@ -56,6 +56,15 @@ Write `cover`: the official story the institution, or the culprit, put on paper 
 - For each seeded pattern, fill one `aha` entry. `mask_fact` is the ordinary-looking fact planted early, `reframe_fact` is the later fact that changes its meaning, and `leads_to_fact` is the conclusion the player must reach alone. Three different facts. Follow the pattern brief's pre-signalling list.
 - `red_herring`: use the seeded type. It belongs to a suspect who is not the culprit and rests on a true secondary secret (a fact of kind `secondary`). It points to a wrong option. `refuted_by_facts` lists the facts that dismantle it cleanly. The false lead must deserve real suspicion; a reader should feel foolish for dropping it too early, not for believing it.
 
+### 5a. Familiar things, made new
+Well-worn tropes are welcome when they are chosen. If the brief asks for one, or the story reaches for one, embrace it on purpose: keep it recognisable enough to raise the genre's expectation, then renew it with a lens so the player sees it again. The mystery form suits this well: a trope can be the default reading that your aha pattern masks and later reframes.
+
+For each trope you use on purpose, add an entry to `premise.tropes_embraced` with the trope in a few words, a `lens_id` from the table below, and `how` the lens renews it here. At most {{MAX_TROPES}}. Start with the lens the seeds suggest, unless another clearly serves the story better.
+
+The trope lives in the structure. Its stock phrasing never appears in any document.
+
+{{TROPE_LENSES}}
+
 ### 6. The facts
 Break the truth into atomic facts, one checkable statement each. Kinds: `base` (observed), `derived` (follows from other facts; list them in `from`), `secondary` (the herring's true secret), `herring` (what the false lead seems to show), `world` (texture that asserts nothing about the case). Mark `solution_critical: true` on every fact the correct answers depend on. The method and motive facts named in `truth` are solution-critical.
 

@@ -11,7 +11,7 @@
     "KT-BI-07": "The aha list must use exactly the seeded patterns; mask, reframe and conclusion facts must exist and be three different facts.",
     "KT-BI-08": "Every named person needs a complete person sheet and at least the minimum number of relationships to other named people.",
     "KT-BI-09": "A person sheet uses quirk vocabulary. Replace decoration with pressure, attention or habit that changes behaviour.",
-    "KT-BI-10": "The bible uses stock trope vocabulary. Rework the device so it grows from this world and these people.",
+    "KT-BI-10": "The bible uses a stock trope it has not declared. Either rework it so it grows from this world, or embrace it on purpose: list it in premise.tropes_embraced with a lens. Soft warning.",
     "KT-BI-11": "Exactly one culprit, who is a suspect; the method and motive facts must be solution-critical.",
     "KT-BI-12": "The setting needs at least the minimum textures, internal terms and rhythms.",
     "KT-BI-13": "Critical strings must equal the seeded values exactly and each must have a meaning.",
@@ -58,6 +58,7 @@
     "KT-AU-02": "The audit answer file is missing or does not match its schema.",
     "AU-01": "The blind solver must pick the correct option for every question.",
     "AU-02": "Every document the blind solver cites for a question must be valid for that answer, and together they must cover every fact the answer rests on.",
-    "AU-03": "With only the questions and options, the shortcut probe must not find the correct answer above chance plus the margin."
+    "AU-03": "With only the questions and options, the shortcut probe must not find the correct answer above chance plus the margin.",
+    "KT-BI-16": "Each embraced trope needs a known lens ID and a plain account of how the lens renews it, within the limit on embraced tropes."
   }
 }

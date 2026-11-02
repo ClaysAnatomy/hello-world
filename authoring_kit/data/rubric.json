@@ -194,6 +194,16 @@
       "checks": [
         "AU-03"
       ]
+    },
+    {
+      "id": "RUB-29",
+      "tag": "SECOND-MODEL",
+      "text": "Familiar made new: each embraced trope is recognisable, and its lens makes it feel seen again rather than borrowed."
+    },
+    {
+      "id": "RUB-30",
+      "tag": "HUMAN",
+      "text": "The familiar parts felt new."
     }
   ]
 }

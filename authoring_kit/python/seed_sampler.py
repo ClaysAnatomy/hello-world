@@ -151,7 +151,7 @@ def sample(rng_seed: int, compat: dict, ledger: Ledger | None = None, taste: dic
     mix = [v["id"] for v in voices]
     rng.shuffle(mix)
 
-    return {
+    seeds = {
         "seed": rng_seed,
         "patterns": chosen,
         "mechanism": _pick(rng, "mechanism", seeds_data["mechanisms"], taste, ledger, lim)["id"],
@@ -168,3 +168,6 @@ def sample(rng_seed: int, compat: dict, ledger: Ledger | None = None, taste: dic
         "critical_strings": crit,
         "dept_mix": mix[: b["max_departments"]],
     }
+    # picked last so adding it left every earlier choice for a given seed unchanged
+    seeds["lens_hint"] = _pick(rng, "lens_hint", K.data("trope_lenses")["lenses"], taste, ledger, lim)["id"]
+    return seeds

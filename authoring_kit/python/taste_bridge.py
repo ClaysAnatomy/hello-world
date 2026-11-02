@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import kitlib as K  # noqa: E402
 
 TARGET_KEYS = {"patterns", "mechanism", "red_herring", "stakes", "human_question", "irony",
-               "setting_texture", "name_pool"}
+               "setting_texture", "name_pool", "lens_hint"}
 
 
 def validate_answers(answers: dict, form: dict) -> list[str]:

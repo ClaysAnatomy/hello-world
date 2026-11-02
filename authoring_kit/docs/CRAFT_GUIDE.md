@@ -42,6 +42,20 @@ Immersion comes from the archive being plausible as an archive:
 
 Pull comes from a human question the player wants answered regardless of the puzzle (RUB-11): a person in trouble, an absence, an injustice in small print. The puzzle then makes the player earn the answer, and the answer changes what the question meant (CP-15). The S6 review scores this; the player's after-play ratings teach the seed sampler which shapes landed.
 
+## Familiar made new
+
+Well-worn tropes are not the enemy; unexamined ones are. Genre pleasure is repetition with a difference (Neale, 1980), and the oldest artistic move is making the familiar strange enough to be seen again (Shklovsky, 1917). So the kit lets a case **embrace** a trope on purpose. It is declared in the sealed bible with one of eight lenses from `data/trope_lenses.json`:
+- the trope as the default reading the turn reframes;
+- met only through procedure;
+- seen by someone looking elsewhere;
+- the aftermath the genre skips;
+- true but beside the point;
+- the metaphor made literal;
+- the threat as the one being protected;
+- cosmic stakes made personal.
+
+A declared trope never trips the trope warning. An undeclared one does, because that is the accidental kind. Stock phrasing stays banned either way: the familiar thing lives in the structure, never in borrowed sentences. The seeds suggest a lens each run, and the after-play question "the familiar parts felt new" teaches the sampler which lenses land for you.
+
 ## Slop, named precisely
 
 The ban lists (`data/ban_lists.json`) are not a style guide. They catch the specific phrases that make a document read as generated: signposting ("a chill ran down"), machine tics ("a testament to"), puzzle words inside the world ("red herring"), confessions, and stock names. One finding worth knowing: the research report's own examples of "specific, grounded names" (Elias Vance, Aris Thorne) are among the most common machine-fiction names, so they are on the list. Names come from Python-seeded pools with distinct initials and sounds instead.

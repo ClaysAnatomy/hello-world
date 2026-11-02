@@ -170,7 +170,7 @@
       "check": "KT-BI-10",
       "severity": "WARN",
       "applies_to": "bible",
-      "why": "Stock plot devices that make a case feel generated (FM-07, Knox).",
+      "why": "Stock plot devices used without thought make a case feel generated. A trope declared in premise.tropes_embraced with a lens is a choice, not an accident, and is exempt.",
       "terms": [
         "evil twin",
         "identical twin",
