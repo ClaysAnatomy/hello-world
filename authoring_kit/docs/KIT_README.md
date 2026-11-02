@@ -62,12 +62,12 @@ python authoring_kit\python\kit_run.py audit-score --ws <case folder>
 
 | Stage | Writes | Sees | Checked by |
 |---|---|---|---|
-| S1 story and truth bible | `bible.json` | brief, seeds, pattern brief, authoring contract | KT-BI-01..15, VL-02 |
+| S1 story and truth bible | five parts in `bible_parts\`, joined by the kit into `checkpoints\bible.json` | brief, seeds, pattern brief, authoring contract | KT-IO-01..03, KT-BI-01..15, VL-02 |
 | S2 document cut | `case.json`, `skin.json`, `clue_plan.json` with a placeholder in every prose field | bible, forms, voices, contract, fixtures, engine schemas | KT-PL-01..17, engine checks (with tolerated rules) |
 | S3 one document at a time | `fill.json` | that document's facts, author sheet and voice sample, reader, voice profile, world texture, a facts-free index of the other papers | KT-FL-01, VL-01..17 |
 | S3 gate | nothing | all documents | VL-09 overlap, engine checks (with tolerated rules) |
 | S4 desk fields | `fill.json` | option gists without correctness, entities, desk facts | KT-FL-01, VL checks, full engine checks |
-| S5 repair | the target's outputs | failing IDs, paths and requirements only | the target's checks |
+| S5 repair | the target's outputs, starting from the previous ones already in place | failing IDs, files, lines, paths and requirements only | the target's checks; turns capped by the target stage (`limits.json` → `turns.repair_unit_caps`) |
 | S6 craft review (optional) | `review.json` | everything | KT-RV-01; prints scores |
 | S7 blind audit (after finish) | `answers.json`, twice | SHORTCUT: questions and options only. SOLVE: the player bundle only | AU-01 solve, AU-02 citations, AU-03 shortcut |
 

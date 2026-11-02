@@ -76,5 +76,9 @@ def failures_table(findings: list[dict], rule_texts: dict[str, str]) -> str:
         if f["sev"] != ERROR:
             continue
         req = catalog.get(f["id"]) or rule_texts.get(f["id"]) or "Engine rule; see the authoring contract for this rule ID."
-        rows.append(f"| {f['id']} | {f['path']} | {req} |")
+        where = f["path"]
+        if f.get("file"):
+            where = f["file"] + (f", line {f['line']} of {f.get('lines', '?')}" if f.get("line") else "") \
+                + (f" ({f['path']})" if f["path"] != "$" else "")
+        rows.append(f"| {f['id']} | {where} | {req} |")
     return "\n".join(rows)

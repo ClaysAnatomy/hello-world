@@ -68,7 +68,20 @@ def check_list(stage: str) -> str:
     extra = {"S2": {"KT-MD-01", "KT-MD-02", "KT-MD-03", "KT-MD-07", "KT-MD-08", "KT-MD-09"},
              "S3": {"KT-MD-04", "KT-MD-05", "KT-MD-06"}, "S4": {"KT-MD-05", "KT-MD-06"}}.get(stage, set())
     return _bullets([f"{cid}: {txt}" for cid, txt in cat.items()
-                     if (cid.startswith(prefixes) and cid not in skip) or cid in extra])
+                     if (cid.startswith(prefixes) and cid not in skip) or cid in extra
+                     or (cid.startswith("KT-IO-") and (stage == "S1" or cid != "KT-IO-03"))])
+
+
+def turn_budget(stage: str, target_stage: str | None = None) -> str:
+    """One sentence telling the agent how many turns it has. Every tool call is a turn."""
+    t = K.data("limits")["turns"]
+    if stage == "S5" and target_stage in t.get("repair_unit_caps", {}):
+        n = t["repair_unit_caps"][target_stage]
+    else:
+        n = t["unit_caps"][stage]
+    return (f"You have at most {n} turns, and every tool call (each read and each write) uses one. "
+            "When the turns run out you are stopped mid-task and nothing unfinished counts, "
+            "so plan before you write and never spend a turn re-reading what you already have.")
 
 
 def limits_text() -> str:
@@ -284,7 +297,9 @@ def prepare(unit: dict, ws: Path, root: Path, state: dict) -> Path:
                     "MIN_SUSPECTS": str(lim["budget"]["min_suspects"]),
                     "MAX_SUSPECTS": str(lim["budget"]["max_suspects"]),
                     "AUTHORING_README": "`inputs/README_AUTHORING.md`"})
-        outputs.append(("bible.json", "the story and truth bible"))
+        for part in K.data("stage_plan")["bible_parts"]:
+            outputs.append((part["file"], part["desc"]))
+        ctx["TURN_BUDGET"] = turn_budget("S1")
 
     elif stage == "S2":
         put("bible.json", cp / "bible.json", desc="the sealed story and truth bible")
@@ -431,18 +446,24 @@ def _prepare_repair(unit: dict, ws: Path, root: Path, state: dict, sdir: Path) -
     K.copy_file(tdir / "prompt.md", sdir / "inputs" / "original_brief.md")
     inputs.append(("inputs/original_brief.md", "the original stage brief"))
     prev_src = Path(state["failure"]["outputs_dir"])
+    flagged = {f.get("file") for f in state["failure"]["findings"] if f.get("file")}
     for name in tinfo["outputs"]:
         src = prev_src / name
         if src.is_file():
-            K.copy_file(src, sdir / "inputs" / "previous" / name)
-            inputs.append((f"inputs/previous/{name}", "your previous output"))
-        outputs.append((name, "the repaired file"))
+            # Already in place under its output name, so an untouched file costs no turns.
+            K.copy_file(src, sdir / name)
+            note = "your previous output, already in place; it is broken, write it again whole" if name in flagged \
+                else "your previous output, already in place; edit only if a failure needs it"
+        else:
+            note = "missing last time; write it"
+        outputs.append((name, note))
     compat = K.load_json(ws / "checkpoints" / "compat.json")
     lim = K.data("limits")["repair"]
     ctx = {"HEADER": header(), "STAGE_ID": "S5", "TARGET_UNIT": target, "ROUND": str(unit["round"]),
            "MAX_ROUNDS": str(lim["max_repair_rounds"]),
            "FAILURES_TABLE": failures_table(state["failure"]["findings"], compat.get("rule_texts", {})),
-           "TARGET_BRIEF_FILE": "inputs/original_brief.md"}
+           "TARGET_BRIEF_FILE": "inputs/original_brief.md",
+           "TURN_BUDGET": turn_budget("S5", tinfo["stage"])}
     ctx["INPUT_FILES"], ctx["OUTPUT_FILES"] = _io(inputs, outputs)
     text = render((K.PROMPTS_DIR / K.data("stage_plan")["repair"]["prompt"]).read_text(encoding="utf-8"), ctx)
     prompt = sdir / "prompt.md"

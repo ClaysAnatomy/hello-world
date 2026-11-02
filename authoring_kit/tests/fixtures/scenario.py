@@ -246,7 +246,31 @@ def write_outputs(agent_dir: Path, unit: str, files: dict[str, dict]) -> None:
     d = agent_dir / unit
     d.mkdir(parents=True, exist_ok=True)
     for name, obj in files.items():
+        (d / name).parent.mkdir(parents=True, exist_ok=True)
         (d / name).write_text(json.dumps(obj, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def bible_parts(bible: dict) -> dict[str, dict]:
+    """Split a bible into the part files S1 writes."""
+    import kitlib as K
+    parts = K.data("stage_plan")["bible_parts"]
+    return {p["file"]: {k: bible[k] for k in p["keys"] if k in bible} for p in parts}
+
+
+def load_bible(agent_dir: Path) -> dict:
+    out: dict = {}
+    for p in sorted((agent_dir / "S1" / "bible_parts").glob("*.json")):
+        out.update(json.loads(p.read_text(encoding="utf-8")))
+    return out
+
+
+def place_s1(agent_dir: Path, stage_dir: Path) -> None:
+    """Copy the canned S1 parts into a stage folder, as a Mode B agent would."""
+    src = agent_dir / "S1"
+    for p in src.rglob("*.json"):
+        dst = stage_dir / p.relative_to(src)
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_bytes(p.read_bytes())
 
 
 def stage_all(agent_dir: Path, seeds: dict, overrides: dict | None = None) -> tuple[dict, dict, dict, dict]:
@@ -254,7 +278,7 @@ def stage_all(agent_dir: Path, seeds: dict, overrides: dict | None = None) -> tu
     overrides = overrides or {}
     bible = make_bible(seeds)
     plan, case, skin = make_s2(bible, seeds)
-    write_outputs(agent_dir, "S1", {"bible.json": bible})
+    write_outputs(agent_dir, "S1", bible_parts(bible))
     write_outputs(agent_dir, "S2", {"clue_plan.json": plan, "case.json": case, "skin.json": skin})
     owners = sorted({ph["owner"] for ph in plan["placeholders"] if ph["stage"] == "S3"})
     for o in owners:

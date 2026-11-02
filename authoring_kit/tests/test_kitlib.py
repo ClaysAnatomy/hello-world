@@ -72,4 +72,26 @@ for p in (K.KIT_DIR / "python").glob("*.py"):
     used.update(re.findall(r'"((?:STATUS|BUDGET_STOP|CHECK_FINDING|ABORT)_[A-Z_]+)"', src))
 r.eq("all used messages defined", sorted(used - msgs), [])
 
+# ---- read_output: missing, cut off, broken, BOM; never returns file text
+import tempfile  # noqa: E402
+tmp = Path(tempfile.mkdtemp(prefix="kit_read_"))
+r.eq("missing file", K.read_output(tmp / "nope.json"), (None, {"kind": "missing"}))
+(tmp / "cut.json").write_text('{\n  "a": 1,\n  "b": [1, 2],\n', encoding="utf-8")
+obj, prob = K.read_output(tmp / "cut.json")
+r.eq("cut-off file", (obj, prob["kind"], prob["cut_off"], prob["line"]), (None, "invalid", True, 4))
+r.check("problem holds no text", set(prob) == {"kind", "line", "lines", "cut_off"})
+(tmp / "mid.json").write_text('{"a": 1 "b": 2}', encoding="utf-8")
+r.eq("broken but closed", K.read_output(tmp / "mid.json")[1]["cut_off"], False)
+(tmp / "bom.json").write_bytes(b'\xef\xbb\xbf{"a": 1}')
+r.eq("BOM read", K.read_output(tmp / "bom.json"), ({"a": 1}, None))
+r.eq("load_json reads BOM", K.load_json(tmp / "bom.json"), {"a": 1})
+
+# ---- schema_errors names missing and unexpected fields
+sch = {"type": "object", "required": ["a", "b"], "additionalProperties": False,
+       "properties": {"a": {"type": "integer"}, "b": {"type": "object", "required": ["c"], "properties": {"c": {}}}}}
+r.eq("missing field named", K.schema_errors({"a": 1}, sch), ["$.b"])
+r.eq("extra field named", K.schema_errors({"a": 1, "b": {"c": 1}, "zz": 0}, sch), ["$.zz"])
+r.eq("nested missing", K.schema_errors({"a": 1, "b": {}}, sch), ["$.b.c"])
+r.eq("type error keeps its path", K.schema_errors({"a": "x", "b": {"c": 1}}, sch), ["$.a"])
+
 sys.exit(r.finish())

@@ -44,11 +44,11 @@ state = {}
 b = Budget(state)
 r.eq("can start", b.can_start("S1"), (True, ""))
 b.record("S1", None)
-r.eq("unreported turns charge the cap", b.stage_turns("S1"), 6)
+r.eq("unreported turns charge the cap", b.stage_turns("S1"), 12)
 r.eq("stage cap hit", b.can_start("S1"), (False, "STAGE"))
 b.record("S3", 2, 0.05)
 r.eq("reported turns", b.stage_turns("S3"), 2)
-r.eq("run turns", b.run_turns(), 8)
+r.eq("run turns", b.run_turns(), 14)
 lim = copy.deepcopy(K.data("limits"))
 lim["turns"]["run_cap"] = 10
 override_data("limits", lim)
@@ -61,7 +61,7 @@ r.eq("cost cap hit when costs are reported", Budget(state).can_start("S3"), (Fal
 reset_data()
 buf = io.StringIO()
 Budget(state).report(K.Out(stream=buf), "S3")
-r.eq("budget prints turns only", buf.getvalue(), "BUDGET S3 turns 2 of 36\nBUDGET run turns 8 of 80\n")
+r.eq("budget prints turns only", buf.getvalue(), "BUDGET S3 turns 2 of 36\nBUDGET run turns 14 of 80\n")
 
 # ---- taste
 form = K.data("feedback_form")
@@ -79,5 +79,33 @@ p3 = p1
 for _ in range(40):
     p3 = TB.apply(p3, {"answers": {"FB-02": 5}}, seeds)
 r.eq("weights capped", p3["weights"]["PAT-05"], K.data("limits")["taste"]["max_weight"])
+
+# ---- repairs are capped by the stage they repair
+reset_data()
+b2 = Budget({})
+r.eq("S1 repair cap", b2.unit_cap("S5", "S1"), 8)
+r.eq("prose repair cap", b2.unit_cap("S5", "S3"), 4)
+r.eq("repair fallback cap", b2.unit_cap("S5"), K.data("limits")["turns"]["unit_caps"]["S5"])
+b2.record("S5", None, None, "S1")
+r.eq("unreported repair charged its own cap", b2.stage_turns("S5"), 8)
+r.eq("unknown cost counted", b2.cost_unknown(), 1)
+
+# ---- failures table names the file and line
+row = RB.failures_table([{"id": "KT-IO-02", "path": "$", "sev": "ERROR", "file": "bible_parts/4_facts.json",
+                          "line": 261, "lines": 261}], {})
+r.check("table gives file and line", "| KT-IO-02 | bible_parts/4_facts.json, line 261 of 261 |" in row)
+
+# ---- usage from the agent's JSON: numbers, one word, list lengths; no text
+import runners as RN  # noqa: E402
+keys = K.data("kit_config")["agent"]["usage_keys"]
+u = RN.usage_from_json('{"num_turns": 7, "total_cost_usd": 0.5, "subtype": "error_max_turns", '
+                       '"permission_denials": [{"tool_name": "Write"}], "result": "story text"}', keys)
+r.eq("usage parsed", u, {"turns": 7, "cost_usd": 0.5, "result": "error_max_turns", "denials": 1})
+r.eq("free text result word dropped", RN.usage_from_json('{"subtype": "The butler did it"}', keys), {})
+r.eq("not JSON", RN.usage_from_json("hello", keys), {})
+old = {"turns": "num_turns", "cost_usd": "total_cost_usd"}
+r.eq("installed config without new keys still gets the result word",
+     RN.usage_from_json('{"num_turns": 3, "subtype": "success"}', {**RN.DEFAULT_USAGE_KEYS, **old}),
+     {"turns": 3, "result": "success"})
 
 sys.exit(r.finish())

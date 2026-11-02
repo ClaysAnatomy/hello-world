@@ -16,7 +16,11 @@
         "bible_schema"
       ],
       "outputs": [
-        "bible.json"
+        "bible_parts/1_premise.json",
+        "bible_parts/2_people.json",
+        "bible_parts/3_truth.json",
+        "bible_parts/4_facts.json",
+        "bible_parts/5_reveal.json"
       ],
       "check": "bible",
       "needs_answer_key": true,
@@ -129,6 +133,51 @@
       "agent": "audit_agent"
     }
   ],
+  "bible_parts": [
+    {
+      "file": "bible_parts/1_premise.json",
+      "keys": [
+        "kit_version",
+        "mechanism_id",
+        "premise",
+        "critical_strings"
+      ],
+      "desc": "part 1 of 5: `kit_version`, `mechanism_id`, `premise` and `critical_strings`"
+    },
+    {
+      "file": "bible_parts/2_people.json",
+      "keys": [
+        "cast",
+        "locations"
+      ],
+      "desc": "part 2 of 5: `cast` and `locations`"
+    },
+    {
+      "file": "bible_parts/3_truth.json",
+      "keys": [
+        "truth",
+        "cover"
+      ],
+      "desc": "part 3 of 5: `truth` and `cover`"
+    },
+    {
+      "file": "bible_parts/4_facts.json",
+      "keys": [
+        "facts"
+      ],
+      "desc": "part 4 of 5: `facts`"
+    },
+    {
+      "file": "bible_parts/5_reveal.json",
+      "keys": [
+        "aha",
+        "red_herring",
+        "questions"
+      ],
+      "desc": "part 5 of 5: `aha`, `red_herring` and `questions`"
+    }
+  ],
+  "bible_parts_note": "S1 writes the bible as five small files, one complete write each, and the kit joins them into checkpoints/bible.json. One long write can hit the model's output limit and fail without a file; appending in pieces can run out of turns mid-object. Five whole parts keep each write small, make a cut-off part easy to spot, and let a repair rewrite one part. A part may carry a field listed for another part; a field set in two parts fails KT-IO-03. When no part exists, a single bible.json is still accepted.",
   "repair": {
     "id": "S5",
     "prompt": "S5_repair.md",

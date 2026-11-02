@@ -9,7 +9,8 @@
     "max_cast_total": 8,
     "max_departments": 4,
     "max_patterns": 1,
-    "max_patterns_note": "MVP setting. The research allows 1 to 2 patterns per case; raise to 2 after the first cases play well."
+    "max_patterns_note": "MVP setting. The research allows 1 to 2 patterns per case; raise to 2 after the first cases play well.",
+    "documents_note": "Research Track 7 sizes the MVP at about 6 clues; 12 is the most the S3 turn cap covers at 3 turns per document (with one repair inside the 80-turn run cap)."
   },
   "routes": {
     "min_routes_per_solution_fact": 2,
@@ -61,16 +62,16 @@
   "turns": {
     "run_cap": 80,
     "stage_caps": {
-      "S1": 6,
+      "S1": 12,
       "S2": 16,
       "S3": 36,
       "S4": 6,
-      "S5": 12,
+      "S5": 16,
       "S6": 4,
       "S7": 4
     },
     "unit_caps": {
-      "S1": 6,
+      "S1": 12,
       "S2": 16,
       "S3": 3,
       "S4": 6,
@@ -78,6 +79,14 @@
       "S6": 4,
       "S7": 2
     },
+    "repair_unit_caps": {
+      "S1": 8,
+      "S2": 8,
+      "S3": 4,
+      "S4": 4,
+      "S6": 3
+    },
+    "caps_note": "Measured on the first real run (2026-11-02): S1 at 6 turns could not read its three inputs and write a bible; the repair wrote 261 lines and ran out of turns mid-object. S1 now has 12 turns for 3 reads and 5 part writes with room to fix one. A repair's cap depends on the stage it repairs (repair_unit_caps); S5 unit_caps is the fallback. With these caps, 6 documents and 2 repairs come to 68 turns, and 12 documents with 1 repair to 78.",
     "audit_note": "S7 (blind audit) runs on a different agent, after finish; its turns count against the audit agent's own plan, not the 80-turn authoring cap."
   },
   "cost_usd_unverified": {

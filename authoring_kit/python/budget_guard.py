@@ -28,12 +28,16 @@ class Budget:
     def run_cost(self) -> float:
         return sum(float(v) for v in self.state["cost_usd"].values())
 
-    def unit_cap(self, stage: str) -> int:
-        return int(self.lim["turns"]["unit_caps"][stage])
-
-    def can_start(self, stage: str) -> tuple[bool, str]:
+    def unit_cap(self, stage: str, target_stage: str | None = None) -> int:
+        """Turns one invocation may use. A repair (S5) is capped by the stage it repairs."""
         t = self.lim["turns"]
-        need = self.unit_cap(stage)
+        if stage == "S5" and target_stage and target_stage in t.get("repair_unit_caps", {}):
+            return int(t["repair_unit_caps"][target_stage])
+        return int(t["unit_caps"][stage])
+
+    def can_start(self, stage: str, target_stage: str | None = None) -> tuple[bool, str]:
+        t = self.lim["turns"]
+        need = self.unit_cap(stage, target_stage)
         if self.stage_turns(stage) + need > t["stage_caps"][stage]:
             return False, "STAGE"
         if self.run_turns() + need > t["run_cap"]:
@@ -46,12 +50,19 @@ class Budget:
                 return False, "STAGE"
         return True, ""
 
-    def record(self, stage: str, turns: int | None, cost: float | None = None) -> None:
-        charged = int(turns) if isinstance(turns, (int, float)) and turns >= 0 else self.unit_cap(stage)
+    def record(self, stage: str, turns: int | None, cost: float | None = None,
+               target_stage: str | None = None) -> None:
+        charged = (int(turns) if isinstance(turns, (int, float)) and turns >= 0
+                   else self.unit_cap(stage, target_stage))
         self.state["turns"][stage] = self.stage_turns(stage) + charged
         self.state["invocations"] = int(self.state.get("invocations", 0)) + 1
         if isinstance(cost, (int, float)) and cost >= 0:
             self.state["cost_usd"][stage] = float(self.state["cost_usd"].get(stage, 0.0)) + float(cost)
+        else:
+            self.state["cost_unknown"] = int(self.state.get("cost_unknown", 0)) + 1
+
+    def cost_unknown(self) -> int:
+        return int(self.state.get("cost_unknown", 0))
 
     def report(self, out: K.Out, stage: str | None = None) -> None:
         t = self.lim["turns"]

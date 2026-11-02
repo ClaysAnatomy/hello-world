@@ -88,7 +88,7 @@ try:
     calls = sb.calls()
     r.eq("agent saw no secret variables", sorted({v for c in calls for v in c["secret_vars"]}), [])
     r.check("prompt sent on stdin", all(c["stdin_chars"] > 500 for c in calls))
-    r.eq("max turns passed to agent", calls[0]["argv"], ["6"])
+    r.eq("max turns passed to agent", calls[0]["argv"], ["12"])
     claims = json.loads((sb.ws / "claims.json").read_text(encoding="utf-8"))["claims"]
     r.check("claims are paths and IDs", all(c["path"].startswith("$.") and all(f.startswith("FACT-") for f in c["facts"]) for c in claims))
     case = json.loads((sb.ws / "case.json").read_text(encoding="utf-8"))
@@ -115,7 +115,7 @@ try:
     r.eq("mode B next", (code, norm(out, sb)), (3, "NEXT S1 READY\nPROMPT <STAGE_ROOT>/S1/prompt.md\n"))
     code, out = sb.kit("next")
     r.eq("mode B waiting", (code, out), (3, "Stage S1 is waiting for a check. Run check.\n"))
-    (sr / "S1" / "bible.json").write_bytes((sb.agent_dir / "S1" / "bible.json").read_bytes())
+    scenario.place_s1(sb.agent_dir, sr / "S1")
     code, out = sb.kit("check")
     r.eq("mode B check", (code, out), (0, "CHECK errors 0 warnings 0\nCHECK S1 PASS\n"))
     r.eq("S1 folder closed after acceptance", (sr / "S1").exists(), False)
@@ -141,7 +141,7 @@ BAD = {"CLUE-04": {"PP-CLUE-04-2": "A chill ran down the corridor."}}
 sb, _ = new(overrides=BAD)
 try:
     plan = json.loads((sb.agent_dir / "S2" / "clue_plan.json").read_text())
-    bible = json.loads((sb.agent_dir / "S1" / "bible.json").read_text())
+    bible = scenario.load_bible(sb.agent_dir)
     scenario.write_outputs(sb.agent_dir, "S5-S3-CLUE-04-R1", {"fill.json": scenario.make_fill("CLUE-04", plan, bible)})
     code, out = sb.kit("next", "--all")
     r.eq("repair run exit", code, 0)
@@ -157,7 +157,7 @@ finally:
 sb, _ = new(overrides=BAD)
 try:
     plan = json.loads((sb.agent_dir / "S2" / "clue_plan.json").read_text())
-    bible = json.loads((sb.agent_dir / "S1" / "bible.json").read_text())
+    bible = scenario.load_bible(sb.agent_dir)
     scenario.write_outputs(sb.agent_dir, "S5-S3-CLUE-04-R1", {"fill.json": scenario.make_fill("CLUE-04", plan, bible, BAD["CLUE-04"])})
     code, out = sb.kit("next", "--all")
     r.eq("abort repeat exit", code, 4)
@@ -170,7 +170,7 @@ finally:
 sb, _ = new(overrides=BAD)
 try:
     plan = json.loads((sb.agent_dir / "S2" / "clue_plan.json").read_text())
-    bible = json.loads((sb.agent_dir / "S1" / "bible.json").read_text())
+    bible = scenario.load_bible(sb.agent_dir)
     scenario.write_outputs(sb.agent_dir, "S5-S3-CLUE-04-R1", {"fill.json": scenario.make_fill("CLUE-04", plan, bible, {"PP-CLUE-04-2": "I did it."})})
     scenario.write_outputs(sb.agent_dir, "S5-S3-CLUE-04-R2", {"fill.json": scenario.make_fill("CLUE-04", plan, bible, {"PP-CLUE-04-2": "word " * 200})})
     lim = copy.deepcopy(K.data("limits"))
@@ -191,7 +191,7 @@ try:
     override_data("limits", lim)
     code, out = sb.kit("next", "--all")
     r.eq("budget stop exit", code, 4)
-    r.check("budget stop lines", out.endswith("BUDGET STOP S3 stage turn cap reached\nBUDGET S3 turns 3 of 3\nBUDGET run turns 25 of 80\n"))
+    r.check("budget stop lines", out.endswith("BUDGET STOP S3 stage turn cap reached\nBUDGET S3 turns 3 of 3\nBUDGET run turns 31 of 80\n"))
     st = state(sb)
     r.eq("budget stop leaves run resumable", (st["status"], st["current"]), ("active", None))
 finally:
@@ -245,7 +245,7 @@ finally:
 sb, _ = new()
 try:
     plan = json.loads((sb.agent_dir / "S2" / "clue_plan.json").read_text())
-    bible = json.loads((sb.agent_dir / "S1" / "bible.json").read_text())
+    bible = scenario.load_bible(sb.agent_dir)
     shared = "the boiler in the east store was cold again by the second bell and nobody had signed the book"
     for o in ("CLUE-02", "CLUE-03"):
         f = scenario.make_fill(o, plan, bible)
@@ -263,7 +263,7 @@ sb, _ = new(mode_a=False)
 try:
     sb.kit("next")
     sr = Path(state(sb)["stage_root"])
-    (sr / "S1" / "bible.json").write_bytes((sb.agent_dir / "S1" / "bible.json").read_bytes())
+    scenario.place_s1(sb.agent_dir, sr / "S1")
     vocab = sb.root / "engine" / "schemas" / "vocabulary.json"
     vocab.write_text(vocab.read_text() + " ", encoding="utf-8")
     r.eq("drift aborts", sb.kit("check"), (4, "ABORT engine files changed since init\nABORT check KT-RN-02\n"))
@@ -371,8 +371,143 @@ finally:
 sb = Sandbox()
 try:
     r.eq("estimate 10 documents", sb.run("estimate", "--documents", "10"),
-         (0, "ESTIMATE documents 10 invocations 14 turns at cap 64 of 80\nESTIMATE S3 turns at cap 30 of 36\nESTIMATE fits the caps\n"))
+         (0, "ESTIMATE documents 10 invocations 14 turns at cap 72 of 80\nESTIMATE S3 turns at cap 30 of 36\nESTIMATE fits the caps\n"))
     r.eq("estimate 15 documents", sb.run("estimate", "--documents", "15")[1].splitlines()[-1], "ESTIMATE exceeds a cap")
+    r.eq("12 documents and 1 repair fit", sb.run("estimate", "--documents", "12")[1].splitlines()[-1], "ESTIMATE fits the caps")
+    r.eq("12 documents and 2 repairs do not", sb.run("estimate", "--documents", "12", "--repairs", "2")[1].splitlines()[-1],
+         "ESTIMATE exceeds a cap")
+finally:
+    sb.close()
+
+# ------------------------------------------------------------------ 15. the first real run: a bible part cut off mid-write
+FACTS = "bible_parts/4_facts.json"
+sb, _ = new()
+try:
+    bible = scenario.load_bible(sb.agent_dir)
+    full = (sb.agent_dir / "S1" / FACTS).read_text(encoding="utf-8")
+    (sb.agent_dir / "S1" / FACTS).unlink()
+    cut = full[: full.rindex("},") + 2]  # ends with a comma, like the real file did
+    raw = sb.agent_dir / "_raw_S1" / FACTS
+    raw.parent.mkdir(parents=True)
+    raw.write_text(cut + f"  \"note\": \"{CANARY}\",", encoding="utf-8")
+    (sb.agent_dir / "_result_S1").write_text("error_max_turns", encoding="utf-8")
+    scenario.write_outputs(sb.agent_dir, "S5-S1-R1", {FACTS: {"facts": bible["facts"]}})
+    code, out = sb.kit("next", "--all")
+    lines = cut.count("\n") + 1
+    r.eq("cut-off run completes after one repair", code, 0)
+    r.check("cut-off part named with its line", f"CHECK KT-IO-02 FAIL {FACTS} at line " in out)
+    r.check("no bare dollar for a broken file", "CHECK KT-IO-02 FAIL $" not in out and "KT-BI-01" not in out)
+    r.check("agent result word shown", "AGENT S1 exit 1\nAGENT S1 result error_max_turns\nAGENT S1 ran " in out)
+    r.check("cut-off canary never printed", CANARY not in out)
+    calls = sb.calls()
+    rep = next(c for c in calls if c["unit"] == "S5-S1-R1")
+    r.eq("bible repair gets its own turn cap", rep["argv"], ["8"])
+    log = json.loads((sb.ws / "checkpoints" / "agent_log.json").read_text(encoding="utf-8"))
+    r.eq("agent log keeps the result word", [e.get("result") for e in log[:2]], ["error_max_turns", "success"])
+    r.check("agent log holds no text", not file_contains(sb.ws / "checkpoints" / "agent_log.json", CANARY))
+    r.check("agent log keys are numbers and one word",
+            all(set(e) <= {"unit", "exit", "result", "turns", "seconds", "denials", "cost_usd"} for e in log))
+    joined = json.loads((sb.ws / "checkpoints" / "bible.json").read_text(encoding="utf-8"))
+    r.eq("joined bible equals the parts", joined, bible)
+finally:
+    sb.close()
+
+# the repair brief: pre-seeded parts, the broken one marked, the turn budget stated
+sb, _ = new(mode_a=False)
+try:
+    sb.kit("next")
+    sr = Path(state(sb)["stage_root"])
+    scenario.place_s1(sb.agent_dir, sr / "S1")
+    t = (sr / "S1" / FACTS).read_text(encoding="utf-8")
+    (sr / "S1" / FACTS).write_text(t[: t.rindex("},") + 2], encoding="utf-8")
+    code, out = sb.kit("check")
+    r.check("mode B cut-off check", code == 1 and f"CHECK KT-IO-02 FAIL {FACTS} at line" in out)
+    s1p = (sr / "S1" / "prompt.md").read_text(encoding="utf-8")
+    r.check("S1 brief lists five parts and the turn budget",
+            all(pp["file"] in s1p for pp in K.data("stage_plan")["bible_parts"]) and "at most 12 turns" in s1p
+            and "never append" in s1p and "KT-IO-02" in s1p)
+    code, out = sb.kit("repair")
+    rdir = sr / "S5-S1-R1"
+    r.check("other parts already in place for the repair", (rdir / "bible_parts" / "1_premise.json").is_file()
+            and (rdir / "bible_parts" / "5_reveal.json").is_file())
+    rp = (rdir / "prompt.md").read_text(encoding="utf-8")
+    r.check("repair brief marks the broken part", f"`{FACTS}`: your previous output, already in place; it is broken" in rp)
+    r.check("repair brief gives file and line", f"| KT-IO-02 | {FACTS}, line " in rp and "at most 8 turns" in rp)
+    (rdir / FACTS).write_bytes((sb.agent_dir / "S1" / FACTS).read_bytes())
+    r.eq("repair of one part passes", sb.kit("check")[0], 0)
+finally:
+    sb.close()
+
+# missing part, duplicate field, BOM, schema field, single-file fallback
+def s1_check(prepare):
+    sb, _ = new(mode_a=False)
+    try:
+        sb.kit("next")
+        sr = Path(state(sb)["stage_root"])
+        scenario.place_s1(sb.agent_dir, sr / "S1")
+        prepare(sr / "S1", sb)
+        return sb.kit("check")
+    finally:
+        sb.close()
+
+code, out = s1_check(lambda d, sb: (d / "bible_parts" / "3_truth.json").unlink())
+r.eq("missing part", (code, out.splitlines()[0]), (1, "CHECK KT-IO-01 FAIL bible_parts/3_truth.json"))
+
+def dup(d, sb):
+    p = d / "bible_parts" / "5_reveal.json"
+    o = json.loads(p.read_text(encoding="utf-8"))
+    o["facts"] = []
+    p.write_text(json.dumps(o), encoding="utf-8")
+code, out = s1_check(dup)
+r.eq("field in two parts", (code, out.splitlines()[0]), (1, "CHECK KT-IO-03 FAIL bible_parts/5_reveal.json"))
+
+def bom(d, sb):
+    p = d / "bible_parts" / "2_people.json"
+    p.write_bytes(b"\xef\xbb\xbf" + p.read_bytes())
+r.eq("byte-order mark accepted", s1_check(bom)[0], 0)
+
+def drop_cover(d, sb):
+    p = d / "bible_parts" / "3_truth.json"
+    o = json.loads(p.read_text(encoding="utf-8"))
+    o.pop("cover")
+    p.write_text(json.dumps(o), encoding="utf-8")
+code, out = s1_check(drop_cover)
+r.eq("missing field named", (code, out.splitlines()[0]), (1, "CHECK KT-BI-01 FAIL $.cover"))
+
+def single(d, sb):
+    import shutil
+    shutil.rmtree(d / "bible_parts")
+    (d / "bible.json").write_text(json.dumps(scenario.load_bible(sb.agent_dir)), encoding="utf-8")
+r.eq("single bible.json still accepted", s1_check(single)[0], 0)
+
+def extra(d, sb):
+    p = d / "bible_parts" / "1_premise.json"
+    o = json.loads(p.read_text(encoding="utf-8"))
+    o[CANARY.replace(" ", "_")] = 1
+    p.write_text(json.dumps(o), encoding="utf-8")
+code, out = s1_check(extra)
+r.check("extra field withheld, not printed", code == 1 and out.splitlines()[0] == "CHECK KT-BI-01 FAIL WITHHELD" and CANARY.split()[0] not in out)
+
+# ------------------------------------------------------------------ 16. timeout and permission denials
+sb, _ = new()
+try:
+    lim = copy.deepcopy(K.data("limits"))
+    lim["timeouts"]["stage_minutes"] = 0
+    override_data("limits", lim)
+    code, out = sb.kit("next", "--all")
+    r.check("timeout says minutes and unknown cost",
+            "AGENT S1 timed out after 0 minutes\nAGENT S1 reported no turns or cost:" in out)
+    st = sb.kit("status")[1]
+    r.check("status counts the unknown cost", "BUDGET cost not reported for 2 agent run(s)" in st)
+    r.check("aborted status does not offer a repair", "STATUS aborted" in st and "Run repair" not in st)
+finally:
+    sb.close()
+
+sb, _ = new()
+try:
+    (sb.agent_dir / "_result_S1").write_text("denied", encoding="utf-8")
+    code, out = sb.kit("next", "--all")
+    r.check("denials counted, never shown", "AGENT S1 permission denials 1" in out and CANARY not in out)
 finally:
     sb.close()
 
