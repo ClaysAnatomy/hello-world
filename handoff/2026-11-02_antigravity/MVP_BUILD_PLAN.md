@@ -7,7 +7,7 @@ Revision 3 changes from revision 2 are marked **[R3]**. In short: the authoring 
 ## 0. Settings Aetherius fills in before handing this over
 
 ```
-BACKUP_PATH      = <a folder on a physical drive that is neither D: nor H:, e.g. E:\Backups\MysteryMachine>   (blank = STOP at A3)
+BACKUP_PATH      = H:\Recess\bundles      (any folder not on D:; Aetherius approved H: on 2026-11-02)
 REPO_URL         = https://github.com/ClaysAnatomy/hello-world.git
 KIT_BRANCH       = claude/eager-davinci-qgiihc
 KIT_COMMIT       = 1322aa699ce8edc7a82fdf1bf6189adaa5746476
@@ -16,7 +16,7 @@ COMPOUND_QUERY   = YES        (LOCKED, Entry 024: a compound term such as rec-07
 
 **[R3]** KIT_COMMIT is the reviewed kit commit. The branch may carry later commits (this handoff pack, for example); C1 checks out exactly KIT_COMMIT.
 
-The GitHub repository is public. Nothing in it is story or secret; Aetherius decides whether to make it private. The plan does not depend on that choice.
+The GitHub repository is public; Aetherius approved that on 2026-11-02. Nothing in it is story or secret.
 
 Handing over this plan authorizes: commits on the work branches named in `01_ORCHESTRATION.md` at green gates, merges between those branches, and git worktrees under `D:\pmm-worktrees\`. It does not authorize: pushes, amending, rebasing, deleting anything outside the paths in rule 5, any live authoring run, any live agent call, any image run, or applying the look.
 
@@ -53,7 +53,7 @@ Several steps may already be done: Entry 024 reports commits ec09a42, 1e6597e, 4
 
 * A1. Run `python engine\tests\run_dod_checks.py`. Pass means every check passes, whatever the count; Entry 024 reports 10/10 with 153 unit tests. Record the actual counts. Any failure: STOP. **[R3]** Also run `node client\tests\run_tests.js` and the taste readout, and record those counts.
 * A2. If the three groups (a: schema fields, DK-01..05, desk defaults, fixtures and broken variants; b: exporter, round trip, contract bridge; c: authoring README and `--export-desk`) are already committed (Entry 024: ec09a42, 1e6597e, 485ec61), log ALREADY DONE. Otherwise map them by explicit path; expected counts 35, 12, 3.
-* A3. Backup. Confirm the destination drive letter is neither D: nor H: and report it. Run `git bundle create "%BACKUP_PATH%\mysterymachine-<date>.bundle" --all`, then `git bundle verify`, then clone the bundle to a temp folder under `%TEMP%`, run `node client\tests\run_tests.js` and `python engine\tests\run_dod_checks.py` there, report both pass counts, and delete the temp folder. If BACKUP_PATH is blank, D: or H:, STOP. Do not push anywhere.
+* A3. Backup. Confirm the destination drive letter is not D: and report it. Create the BACKUP_PATH folder if it does not exist. Run `git bundle create "%BACKUP_PATH%\mysterymachine-<date>.bundle" --all`, then `git bundle verify`, then clone the bundle to a temp folder under `%TEMP%`, run `node client\tests\run_tests.js` and `python engine\tests\run_dod_checks.py` there, report both pass counts, and delete the temp folder. If BACKUP_PATH is blank or on D:, STOP. Do not push anywhere.
 * A4. Commit anything from A2 that is still uncommitted, one commit per group, by explicit path, with messages that describe only what was checked. **[R3]** Then commit `docs\plans\MVP_BUILD_PLAN.md` and `docs\handoffs\2026-11-02_antigravity\` as one documentation commit.
 * A5. Tag `gate-A`. Create `build/mvp` from here. **[R3]** Create `build/mvp-b` and `build/mvp-c` from `gate-A`, and add the worktrees `D:\pmm-worktrees\b` (on `build/mvp-b`) and `D:\pmm-worktrees\c` (on `build/mvp-c`). The repository may be rooted at `D:\Project Recess` (Entry 004), in which case the project sits at `<worktree>\Project Mystery Machine\`; use `git rev-parse --show-toplevel` and record the project folder for each worktree in STATUS. Run the readout once in each worktree's project folder to prove it is complete. Write the first STATUS entry.
 
@@ -71,7 +71,7 @@ Entry 024 reports CASE-FIX-03 built (17/17 rules, 3-of-3 round trip, byte-identi
 
 ### Phase C: import and wire the authoring kit (agent 3, in worktree c, on `build/mvp-c`)
 
-* C1. `mkdir incoming`, then `git clone --branch %KIT_BRANCH% %REPO_URL% incoming\authoring_kit_from_github`, then `git -C incoming\authoring_kit_from_github checkout --detach %KIT_COMMIT%` and confirm `git -C incoming\authoring_kit_from_github rev-parse HEAD` equals KIT_COMMIT. If not, STOP. Add `incoming/` to the project `.gitignore`. Report the repository as public unless the clone required sign-in.
+* C1. `mkdir incoming`, then `git clone --branch %KIT_BRANCH% %REPO_URL% incoming\authoring_kit_from_github`, then `git -C incoming\authoring_kit_from_github checkout --detach %KIT_COMMIT%` and confirm `git -C incoming\authoring_kit_from_github rev-parse HEAD` equals KIT_COMMIT. If not, STOP. Add `incoming/` to the project `.gitignore`. The repository is public (approved).
 * C2. **[R3]** Security scan of `incoming\authoring_kit_from_github\authoring_kit` before copying anything. Search for network use, process execution (`subprocess`, `os.system`, `eval`, `exec`, `__import__`), environment reads, deletions (`rmtree`, `unlink`, `remove`), absolute paths, drive letters, `..`, profile paths and vault-like names. List every hit as file:line and classify each as ALLOWED or UNEXPECTED. ALLOWED, and only these:
   - `python\runners.py`: `subprocess.run` for the agent command template (`agent` or `audit_agent` in `kit_config.json`) and for the engine check commands (`engine_checks`).
   - `python\kitlib.py`: `child_env()` copies the environment only to remove names ending in a listed suffix before a child process starts.
@@ -109,7 +109,7 @@ Entry 024 reports CASE-FIX-03 built (17/17 rules, 3-of-3 round trip, byte-identi
 1. Any gate fails twice in a row with the same rule or test.
 2. A change is needed in an off-limits file, or in a file outside your phase's scope.
 3. The security scan finds anything UNEXPECTED (C2).
-4. BACKUP_PATH is blank, D: or H:.
+4. BACKUP_PATH is blank or on D:.
 5. Anything would touch the vault, a path under `cases\` other than fixtures, a push, a deletion not listed in rule 5, or a system setting.
 6. A command is denied, or an approval prompt appears for something this plan does not cover. Do not work around it.
 7. You are about to spend plan credits: any live agent, image or authoring run.

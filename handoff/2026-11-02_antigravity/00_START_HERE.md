@@ -1,6 +1,6 @@
 # Start here (for Aetherius)
 
-This pack hands the MVP build to Google Antigravity, split across four agents. It is story-free. You do six things before any agent starts, then you paste one brief per agent and wait for reports. Nothing here spends authoring credits: no agent writes a case, makes an image or calls a model API.
+This pack hands the MVP build to Google Antigravity, split across four agents. It is story-free. You do four things before any agent starts, then you paste one brief per agent and wait for reports. Nothing here spends authoring credits: no agent writes a case, makes an image or calls a model API.
 
 ## What is in the pack
 
@@ -18,8 +18,8 @@ This pack hands the MVP build to Google Antigravity, split across four agents. I
 
 1. **Seal check: get spoiler folders out of the project folder.** Antigravity agents can search everything inside a workspace folder, and nothing confirms that they respect `.gitignore`. So no sealed folder may sit inside `D:\Project Recess\Project Mystery Machine\`. If `content\_SPOILERS_DO_NOT_OPEN` or any other SEALED or SPOILERS folder is still inside it, move it, as a sealed unit and without opening it, to `D:\_SEALED_DO_NOT_OPEN\`. Entry 004 set that as the target; Entry 022 left it open. If you are unsure, do this step anyway.
 2. **Save the pack.** Put `MVP_BUILD_PLAN.md` in `docs\plans\` and the other files in `docs\handoffs\2026-11-02_antigravity\` inside the project.
-3. **Fill section 0 of the plan.** BACKUP_PATH must be a folder on a physical drive that is neither D: nor H: (H: showed a Warning health flag in Entry 024). The other values are filled in already.
-4. **Decide on the GitHub repository.** It is public. Nothing in it is story or secret, but you may prefer to make it private (GitHub: repository Settings, General, Danger Zone, Change visibility). The plan works either way.
+3. **Section 0 of the plan is already filled in.** BACKUP_PATH is `H:\Recess\bundles` (approved); the Warden creates the folder if needed.
+4. **GitHub repository:** public, approved. Nothing to do.
 5. **Antigravity settings, for every agent:**
    - Terminal execution: **Off, with an allow list** (safest), or Auto with the deny list in `01_ORCHESTRATION.md` section 5.
    - Browser use: off, if your version has the setting. The plan allows no network except one `git clone`.
