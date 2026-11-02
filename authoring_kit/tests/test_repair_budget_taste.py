@@ -97,7 +97,7 @@ r.check("table gives file and line", "| KT-IO-02 | bible_parts/4_facts.json, lin
 
 # ---- usage from the agent's JSON: numbers, one word, list lengths; no text
 import runners as RN  # noqa: E402
-keys = K.data("kit_config")["agent"]["usage_keys"]
+keys = {**RN.DEFAULT_USAGE_KEYS, **K.data("kit_config")["agent"]["usage_keys"]}  # as run_agent merges them
 u = RN.usage_from_json('{"num_turns": 7, "total_cost_usd": 0.5, "subtype": "error_max_turns", '
                        '"permission_denials": [{"tool_name": "Write"}], "result": "story text"}', keys)
 r.eq("usage parsed", u, {"turns": 7, "cost_usd": 0.5, "result": "error_max_turns", "denials": 1})
