@@ -29,8 +29,22 @@ if pause_flag.is_file():
     sys.exit(1)
 src = src_root / unit
 if src.is_dir():
-    for p in src.iterdir():
-        shutil.copyfile(p, here / p.name)
+    for p in src.rglob("*"):
+        if p.is_file():
+            dst = here / p.relative_to(src)
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(p, dst)
+raw = src_root / f"_raw_{unit}"
+if raw.is_dir():  # files written byte for byte (cut-off or BOM cases)
+    for p in raw.rglob("*"):
+        if p.is_file():
+            dst = here / p.relative_to(raw)
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            dst.write_bytes(p.read_bytes())
+result = src_root / f"_result_{unit}"
+subtype = result.read_text(encoding="utf-8").strip() if result.is_file() else "success"
 print(f"stderr story {CANARY}", file=sys.stderr)
-print(json.dumps({"num_turns": 2, "total_cost_usd": 0.01, "result": f"Here is the story: {CANARY}"}))
-sys.exit(0)
+print(json.dumps({"num_turns": 2, "total_cost_usd": 0.01, "subtype": subtype, "duration_ms": 1234,
+                  "permission_denials": [{"tool": CANARY}] if subtype == "denied" else [],
+                  "result": f"Here is the story: {CANARY}"}))
+sys.exit(0 if subtype in ("success", "denied") else 1)

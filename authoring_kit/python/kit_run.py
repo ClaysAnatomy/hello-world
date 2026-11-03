@@ -70,6 +70,8 @@ class Run:
 
     def _trust(self) -> None:
         terms = list(self.compat.get("rule_ids", []))
+        terms += [p["file"] for p in self.plan_cfg.get("bible_parts", [])]
+        terms += [o for s in self.plan_cfg["stages"] for o in s.get("outputs", [])] + ["bible.json"]
         if self.state.get("stage_root"):
             terms.append(self.state["stage_root"])
         self.out.trust(terms=terms,
@@ -240,7 +242,8 @@ class Run:
             return ACTION
         budget = Budget(self.state)
         stage = current["stage"]
-        ok, why = budget.can_start(stage)
+        tstage = self.stage_of(current["target"]) if stage == "S5" else None
+        ok, why = budget.can_start(stage, tstage)
         if not ok:
             self.state["current"] = None
             self.save()
@@ -249,25 +252,51 @@ class Run:
             return STOPPED
         sdir = prompt.parent
         self.out.say("AGENT_STARTED", current["unit"])
-        code, usage, paused = run_agent(self.cfg, sdir, prompt, budget.unit_cap(stage),
-                                        int(self.lim["timeouts"]["stage_minutes"]) * 60, stage=stage)
+        minutes = int(self.lim["timeouts"]["stage_minutes"])
+        code, usage, paused = run_agent(self.cfg, sdir, prompt, budget.unit_cap(stage, tstage),
+                                        minutes * 60, stage=stage)
+        self._log_agent(current["unit"], code, usage)
         outputs = K.load_json(sdir / "unit.json")["outputs"]
         if paused and not all((sdir / o).is_file() for o in outputs):
-            budget.record(stage, usage.get("turns", 1), usage.get("cost_usd"))
+            budget.record(stage, usage.get("turns", 1), usage.get("cost_usd"), tstage)
             self.state["status"] = "paused"
             self.save()
             self.history("paused", current["unit"])
             self.out.say("AGENT_PAUSED", current["unit"])
             budget.report(self.out, stage)
             return PAUSED
-        budget.record(stage, usage.get("turns"), usage.get("cost_usd"))
+        budget.record(stage, usage.get("turns"), usage.get("cost_usd"), tstage)
         self.save()
-        if code == 124:
-            self.out.say("AGENT_TIMEOUT", current["unit"])
-        else:
-            self.out.say("AGENT_EXIT", current["unit"], code)
+        self._say_agent(current["unit"], code, usage, minutes)
         budget.report(self.out, stage)
         return self.check(loaded=True)
+
+    def _log_agent(self, unit: str, code: int, usage: dict) -> None:
+        """Keep a sealed, text-free record of each agent run: numbers and one result word."""
+        lp = self.cp / "agent_log.json"
+        log = K.load_json(lp) if lp.is_file() else []
+        entry = {"unit": unit, "exit": code}
+        for k in ("result", "turns", "seconds", "denials", "cost_usd"):
+            if k in usage:
+                entry[k] = usage[k]
+        log.append(entry)
+        K.dump_json(log, lp)
+
+    def _say_agent(self, unit: str, code: int, usage: dict, minutes: int) -> None:
+        if code == 124:
+            self.out.say("AGENT_TIMEOUT", unit, minutes)
+            self.out.say("AGENT_TIMEOUT_COST", unit)
+            return
+        self.out.say("AGENT_EXIT", unit, code)
+        res = usage.get("result")
+        if res:
+            self.out.trust(terms=[res])  # a lowercase word matched by runners.RESULT_WORD
+            if res != "success" or code != 0:
+                self.out.say("AGENT_RESULT", unit, res)
+        if code != 0 and isinstance(usage.get("seconds"), int):
+            self.out.say("AGENT_RAN", unit, usage["seconds"])
+        if usage.get("denials"):
+            self.out.say("AGENT_DENIALS", unit, int(usage["denials"]))
 
     # ------------------------------------------------------------ check
     def check(self, loaded: bool = False) -> int:
@@ -301,6 +330,12 @@ class Run:
 
     def _print_findings(self, findings: list[dict]) -> None:
         for f in findings:
+            if f.get("file"):
+                if f.get("line"):
+                    self.out.say("CHECK_FINDING_FILE_LINE", f["id"], f["file"], f["line"], f.get("lines", 0))
+                else:
+                    self.out.say("CHECK_FINDING_FILE", f["id"], f["file"])
+                continue
             self.out.say("CHECK_FINDING_FAIL" if f["sev"] == CC.ERROR else "CHECK_FINDING_WARN", f["id"], f["path"])
         n_err = sum(1 for f in findings if f["sev"] == CC.ERROR)
         self.out.say("CHECK_COUNTS", n_err, len(findings) - n_err)
@@ -340,18 +375,17 @@ class Run:
     def _evaluate(self, stage: str, target: str, sdir: Path) -> list[dict]:
         seeds = K.load_json(self.cp / "seeds.json")
         if stage == "S1":
-            p = sdir / "bible.json"
-            bible = self._read(p)
-            if bible is None:
-                return [CC.F("KT-BI-01")]
+            bible, io = self._read_bible(sdir)
+            if io:
+                return io
             f = CC.check_bible(bible, seeds)
             if not CC.has_errors(f):
                 f += VL.lint_bible_names(bible)
             return f
         if stage == "S2":
-            plan, case, skin = (self._read(sdir / n) for n in ("clue_plan.json", "case.json", "skin.json"))
-            if plan is None or case is None or skin is None:
-                return [CC.F("KT-PL-01")]
+            (plan, case, skin), io = self._read_outputs(sdir, ("clue_plan.json", "case.json", "skin.json"))
+            if io:
+                return io
             bible = K.load_json(self.cp / "bible.json")
             f = CC.check_plan(plan, bible, case, seeds, self.plan_cfg["s4_owner"])
             if CC.has_errors(f):
@@ -361,9 +395,9 @@ class Run:
                 return f
             return f + self._engine("S2", sdir / "case.json", sdir / "skin.json")
         if stage in ("S3", "S4"):
-            fill = self._read(sdir / "fill.json")
-            if fill is None:
-                return [CC.F("KT-FL-01")]
+            (fill,), io = self._read_outputs(sdir, ("fill.json",))
+            if io:
+                return io
             owner = self.owner_of(target)
             plan = K.load_json(self.cp / "clue_plan.json")
             bible = K.load_json(self.cp / "bible.json")
@@ -376,8 +410,10 @@ class Run:
                 f += self._engine("S4", case_path, skin_path)
             return f
         if stage == "S6":
-            rv = self._read(sdir / "review.json")
-            if rv is None or K.schema_errors(rv, K.schema("review")):
+            (rv,), io = self._read_outputs(sdir, ("review.json",))
+            if io:
+                return io
+            if K.schema_errors(rv, K.schema("review")):
                 return [CC.F("KT-RV-01")]
             need = {i["id"] for i in K.data("rubric")["items"] if i["tag"] == "SECOND-MODEL"}
             fm = {m["id"] for m in K.data("failure_modes")["modes"]}
@@ -389,6 +425,47 @@ class Run:
     def _registry(self) -> dict | None:
         p = self.cp / "media_registry.json"
         return K.load_json(p) if p.is_file() else None
+
+    @staticmethod
+    def _io_finding(name: str, problem: dict) -> dict:
+        if problem["kind"] == "missing":
+            f = CC.F("KT-IO-01")
+        else:
+            f = CC.F("KT-IO-02")
+            f["line"], f["lines"] = problem["line"], problem["lines"]
+        f["file"] = name
+        return f
+
+    def _read_outputs(self, sdir: Path, names) -> tuple[list, list[dict]]:
+        """Read output files; report each missing or broken one by name and line, never by content."""
+        objs, io = [], []
+        for name in names:
+            obj, problem = K.read_output(sdir / name)
+            if problem is None and not isinstance(obj, dict):
+                problem = {"kind": "invalid", "line": 1, "lines": 1}
+            objs.append(obj)
+            if problem:
+                io.append(self._io_finding(name, problem))
+        return objs, io
+
+    def _read_bible(self, sdir: Path) -> tuple[dict | None, list[dict]]:
+        """Join the bible parts. Falls back to a single bible.json when no part exists."""
+        parts = self.plan_cfg.get("bible_parts", [])
+        if parts and not any((sdir / p["file"]).is_file() for p in parts) and (sdir / "bible.json").is_file():
+            (bible,), io = self._read_outputs(sdir, ("bible.json",))
+            return (None, io) if io else (bible, [])
+        objs, io = self._read_outputs(sdir, [p["file"] for p in parts])
+        if io:
+            return None, io
+        bible: dict = {}
+        for p, obj in zip(parts, objs):
+            for k, v in obj.items():
+                if k in bible:
+                    f = CC.F("KT-IO-03", K.jpath([k]))
+                    f["file"] = p["file"]
+                    io.append(f)
+                bible[k] = v
+        return (None, io) if io else (bible, [])
 
     @staticmethod
     def _read(p: Path):
@@ -440,7 +517,8 @@ class Run:
                 K.copy_file(sdir / name, archive / name)
         self.state["outputs_dir"][target] = str(archive)
         if stage == "S1":
-            K.copy_file(sdir / "bible.json", self.cp / "bible.json")
+            bible, _ = self._read_bible(sdir)
+            K.dump_json(bible, self.cp / "bible.json")
         elif stage == "S2":
             K.copy_file(sdir / "case.json", self.cp / "skeleton.json")
             K.copy_file(sdir / "skin.json", self.cp / "skin.json")
@@ -727,11 +805,12 @@ class Run:
         t = self.lim["turns"]
         u, c = t["unit_caps"], t["stage_caps"]
         inv = 2 + documents + 1 + repairs + (1 if review else 0)
-        turns = u["S1"] + u["S2"] + documents * u["S3"] + u["S4"] + repairs * u["S5"] + (u["S6"] if review else 0)
+        r_cap = max(t.get("repair_unit_caps", {}).values(), default=u["S5"])
+        turns = u["S1"] + u["S2"] + documents * u["S3"] + u["S4"] + repairs * r_cap + (u["S6"] if review else 0)
         s3 = documents * u["S3"]
         self.out.say("ESTIMATE_LINE", documents, inv, turns, t["run_cap"])
         self.out.say("ESTIMATE_S3", s3, c["S3"])
-        fits = turns <= t["run_cap"] and s3 <= c["S3"] and repairs * u["S5"] <= c["S5"]
+        fits = turns <= t["run_cap"] and s3 <= c["S3"] and repairs * r_cap <= c["S5"]
         self.out.say("ESTIMATE_FITS" if fits else "ESTIMATE_OVER")
         return PASS if fits else FAIL
 
@@ -742,9 +821,12 @@ class Run:
         self.out.say("STATUS_LINE", sum(1 for u in units if u in self.state["done"]), len(units))
         self.out.say({"active": "STATUS_ACTIVE", "aborted": "STATUS_ABORTED", "finished": "STATUS_FINISHED",
                       "paused": "STATUS_PAUSED"}[self.state["status"]])
-        if self.state.get("failure"):
+        if self.state.get("failure") and self.state["status"] == "active":
             self.out.say("NEXT_REPAIR_NEEDED", self.state["failure"]["unit"])
-        Budget(self.state).report(self.out)
+        b = Budget(self.state)
+        b.report(self.out)
+        if b.cost_unknown() and self.cfg["agent"].get("usage_from_stdout_json"):
+            self.out.say("BUDGET_COST_UNKNOWN", b.cost_unknown())
         return PASS
 
 

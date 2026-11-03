@@ -93,7 +93,10 @@
     "usage_from_stdout_json": false,
     "usage_keys": {
       "turns": "num_turns",
-      "cost_usd": "total_cost_usd"
+      "cost_usd": "total_cost_usd",
+      "result": "subtype",
+      "duration_ms": "duration_ms",
+      "denials": "permission_denials"
     },
     "examples_note": "Fill argv for your agent. Tokens: {prompt_file} {stage_dir} {max_turns} {model} {effort} {python}. The prompt is also sent on stdin when stdin is 'prompt'. Examples live in docs/INTEGRATION.md.",
     "default_model": "",
@@ -108,7 +111,8 @@
         "limit will reset"
       ],
       "note": "UNVERIFIED signals. When the agent stops because a plan or rate limit was reached, the run pauses instead of failing. Patterns are matched case-insensitively in memory against the agent's output and never stored or printed. Confirm the real signals from the agent's documentation."
-    }
+    },
+    "usage_note": "Read from the agent's final JSON when usage_from_stdout_json is true. Only numbers, a short lowercase result word (for Claude Code: success, error_max_turns, error_during_execution), and the count of a list (permission_denials) are kept. All text is dropped."
   },
   "workspace": {
     "case_file": "case.json",
@@ -129,7 +133,10 @@
     "usage_from_stdout_json": false,
     "usage_keys": {
       "turns": "num_turns",
-      "cost_usd": "total_cost_usd"
+      "cost_usd": "total_cost_usd",
+      "result": "subtype",
+      "duration_ms": "duration_ms",
+      "denials": "permission_denials"
     },
     "note": "Must be a different model family from agent.family (research Track 5: Strict Cross-Family Separation). The kit refuses to run the audit when either family is blank or they match.",
     "env_strip_suffixes": [

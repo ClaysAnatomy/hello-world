@@ -23,7 +23,7 @@ INIT PASS
 --- next --all
 AGENT S1 started
 AGENT S1 exit 0
-BUDGET S1 turns 2 of 6
+BUDGET S1 turns 2 of 12
 BUDGET run turns 2 of 80
 CHECK errors 0 warnings 0
 CHECK S1 PASS

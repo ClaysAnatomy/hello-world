@@ -10,6 +10,13 @@ You are building the front of the box: a story worth reading with the puzzle tak
 ## OUTPUT
 {{OUTPUT_FILES}}
 
+The bible is written as five part files, which the kit joins into one bible. Each part is a JSON object holding the top-level bible fields listed for it, shaped exactly as `bible.schema.json` describes them.
+
+## Turns
+{{TURN_BUDGET}}
+
+Read each input once. Work the whole story out in your head first (the order below), then write the five parts. Write each part complete in a single write: never append to a part or build one in pieces, because a part left half written fails the whole stage. If a later part changes something an earlier part says, rewrite that earlier part whole.
+
 ## What you were given
 {{BRIEF_STATUS}}
 
@@ -83,4 +90,4 @@ Use the authoring contract file {{AUTHORING_README}} to understand what the engi
 ## The kit will check
 {{CHECK_LIST}}
 
-Write `bible.json` matching `bible.schema.json`. Then reply `DONE`.
+Write the five parts listed under OUTPUT, each one complete JSON in a single write. Together they must match `bible.schema.json`. Then reply `DONE`.

@@ -2,7 +2,10 @@
   "version": "1.0.0",
   "purpose": "Fixed sentences describing what each kit check requires. They are given to the repair stage beside the failing IDs and JSON paths, so a repair sees the requirement without ever seeing raw tool output.",
   "checks": {
-    "KT-BI-01": "bible.json must exist and match the bible schema.",
+    "KT-IO-01": "This output file is missing. Write it.",
+    "KT-IO-02": "This output file is not one complete JSON object. It stops or breaks at the line shown, which usually means it was cut off while being written. Write the whole file again in a single write; never append to it.",
+    "KT-IO-03": "Two bible parts set the same top-level field. Each field belongs in exactly one part.",
+    "KT-BI-01": "The joined bible must match the bible schema. The path names the field that is wrong, missing, or not allowed (the bible allows only the fields the schema lists).",
     "KT-BI-02": "Each named person uses a seeded name spelled exactly, or a replacement that passes the name rules: distinct initials, distinct sound keys, plain ASCII, not on a ban list. The cast size must equal the seeded cast size.",
     "KT-BI-03": "Respect the cognitive budget: suspect count within limits, locations, critical strings and total cast at or under the caps.",
     "KT-BI-04": "Every option must be supported by at least two facts, and every cited fact must exist.",

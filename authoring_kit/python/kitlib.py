@@ -36,8 +36,31 @@ class KitError(Exception):
 # ---------------------------------------------------------------- files
 
 def load_json(path: Path | str) -> Any:
-    with open(path, "r", encoding="utf-8") as fh:
+    # utf-8-sig: Windows tools often start a file with a byte-order mark,
+    # which plain utf-8 decoding hands to json as an invalid first character.
+    with open(path, "r", encoding="utf-8-sig") as fh:
         return json.load(fh)
+
+
+def read_output(path: Path) -> tuple[Any, dict | None]:
+    """Read one agent output file. Returns (object, None) or (None, problem).
+
+    problem is {"kind": "missing"} or {"kind": "invalid", "line": n, "lines": total,
+    "cut_off": bool}. It never holds any of the file's text.
+    """
+    try:
+        raw = Path(path).read_bytes()
+    except OSError:
+        return None, {"kind": "missing"}
+    text = raw.decode("utf-8-sig", errors="replace")
+    total = text.count("\n") + (0 if text.endswith("\n") else 1)
+    try:
+        return json.loads(text), None
+    except ValueError as e:
+        line = int(getattr(e, "lineno", 0) or 0)
+        stripped = text.rstrip()
+        cut = (not stripped) or stripped[-1] not in "}]"
+        return None, {"kind": "invalid", "line": line, "lines": total, "cut_off": cut}
 
 
 def dump_json(obj: Any, path: Path | str) -> None:
@@ -101,7 +124,23 @@ def schema_errors(instance: Any, schema_obj: Any) -> list[str]:
     validator = validator_cls(schema_obj)
     paths = []
     for err in sorted(validator.iter_errors(instance), key=lambda e: list(e.absolute_path)):
-        paths.append(jpath(list(err.absolute_path)))
+        base = list(err.absolute_path)
+        # Name the field itself for missing or unexpected keys; otherwise every
+        # top-level problem reads as a bare "$".
+        if err.validator == "required" and isinstance(err.instance, dict):
+            missing = [k for k in err.validator_value if k not in err.instance]
+            paths.extend(jpath(base + [k]) for k in missing)
+            if missing:
+                continue
+        if (err.validator == "additionalProperties" and err.validator_value is False
+                and isinstance(err.instance, dict)):
+            allowed = set(err.schema.get("properties", {}))
+            pats = [re.compile(px) for px in err.schema.get("patternProperties", {})]
+            extra = [k for k in err.instance if k not in allowed and not any(px.search(k) for px in pats)]
+            paths.extend(jpath(base + [k]) for k in extra)
+            if extra:
+                continue
+        paths.append(jpath(base))
     return paths or []
 
 
