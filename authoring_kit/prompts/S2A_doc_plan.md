@@ -2,13 +2,16 @@
 
 # STAGE {{STAGE_ID}}: CUTTING THE STORY INTO PAPER
 
-The story exists in `bible.json`. Now decide which documents this world would naturally have produced, and cut the story into them. The puzzle is the shape of that archive. Write no player-facing prose: every prose field gets a placeholder that later stages fill one document at a time.
+The story exists in `bible.json`. Now decide which documents this world would naturally have produced, and cut the story into them. The puzzle is the shape of that archive. Write no player-facing prose: every prose field gets a placeholder that later stages fill one document at a time. This stage writes only the plan.
 
 ## INPUT
 {{INPUT_FILES}}
 
 ## OUTPUT
 {{OUTPUT_FILES}}
+
+## Turns
+{{TURN_BUDGET}}
 
 ## Method
 
@@ -63,16 +66,16 @@ Media forms:
 
 Media limits: {{MEDIA_LIMITS}}
 
-### 8. Write the engine files with placeholders
-Write `case.json` and `skin.json` exactly as the authoring contract {{AUTHORING_README}} requires. Use the fixture files as the format example; they are nonsense and teach shape only. Reuse the bible's IDs for people, solution-critical facts, questions and options unchanged.
+### 8. List every placeholder
+Every player-facing prose field of every document, and every desk field, will hold a placeholder token in the format `{{PLACEHOLDER_FORMAT}}`. Here `owner` is the document ID for document prose (filled in stage S3), or `{{S4_OWNER}}` for desk fields that belong to no single document, such as option wording, question stems, mail and subjects (filled in stage S4). `n` counts from 1 within each owner. Use the authoring contract {{AUTHORING_README}} to know which prose fields each kind of record has.
 
-In every player-facing prose field, write a placeholder instead of prose: the whole string is a token in the format `{{PLACEHOLDER_FORMAT}}`, where `owner` is the document ID for document prose (filled in stage S3) or `{{S4_OWNER}}` for desk fields such as option wording, question stems, mail and subjects that do not belong to one document (filled in stage S4), and `n` counts from 1 within each owner. List every placeholder in `placeholders`, with:
+List every placeholder in `placeholders`, with:
 - `slot`: which field it is, in the contract's terms; `kind`: one of the enum values.
 - `facts`: the bible fact IDs that text may assert (a subset of its document's facts). Titles and subjects usually assert none.
 - `required_strings`: critical-string IDs that must appear in it verbatim. Every critical string is required somewhere.
 - `max_words`, and for option or stem placeholders the `question` and `option` IDs.
 
-Dates and times that are not prose fields are written directly, exactly as in the bible.
+You do not write the engine files: the next stage builds `case.json` and `skin.json` from this plan exactly.
 
 ## Document forms
 {{FORMS_TABLE}}
@@ -88,6 +91,4 @@ Dates and times that are not prose fields are written directly, exactly as in th
 
 ## The kit will check
 {{CHECK_LIST}}
-It then runs the engine's own checks on `case.json`.
-
-Write the three files. Then reply `DONE`.
+Write `clue_plan.json` in one write. Then reply `DONE`.

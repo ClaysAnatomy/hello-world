@@ -91,6 +91,17 @@
     "PROBE_BASE": "PROBE {0} fails on the original fixture too (not a placeholder effect)",
     "PROBE_COUNT": "PROBE prose fields replaced {0}",
     "PROBE_NONE": "PROBE no rule fails because of placeholders",
-    "PROBE_WRITTEN": "PROBE tolerated lists written to limits.json"
+    "PROBE_WRITTEN": "PROBE tolerated lists written to limits.json",
+    "BUDGET_COST": "BUDGET run cost {0} of {1} dollars",
+    "BUDGET_STOP_TARGET": "BUDGET STOP repairs of {0} reached their turn allowance",
+    "BUDGET_COST_CHARGED": "BUDGET {0} reported no cost: charged {1} dollars against the caps",
+    "RESUME_OK": "RESUME from {0}: kept {1} accepted units; previous spend {2} dollars recorded",
+    "RESUME_NOTHING": "RESUME nothing to resume: this run is finished.",
+    "RESUME_STAGE_ROOT": "STAGES {0}",
+    "CLEANUP_DONE": "CLEANUP removed {0} stage folders, kept {1}",
+    "PREFLIGHT_LINE": "PREFLIGHT {0} {1}",
+    "PREFLIGHT_PASS": "PREFLIGHT PASS",
+    "PREFLIGHT_FAIL": "PREFLIGHT FAIL {0} problems",
+    "ESTIMATE_COST": "ESTIMATE cost about {0} dollars at {1} dollars per turn (cap {2})"
   }
 }

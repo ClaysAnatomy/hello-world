@@ -101,6 +101,12 @@ class Run:
         for d in list(self.stage_root.glob(f"S5-{target}-R*")):
             self._close_dir(d.name)
 
+    def _remove_stage_root(self) -> None:
+        """Delete this run's stage folders (marker-guarded). Paid work is already saved in the workspace."""
+        sr = self.stage_root
+        if (sr / self.MARKER).is_file():
+            shutil.rmtree(sr, ignore_errors=True)
+
     @property
     def root(self) -> Path:
         return Path(self.state["root"])
@@ -113,7 +119,7 @@ class Run:
 
     # ------------------------------------------------------------ units
     def units(self) -> list[str]:
-        u = ["S1", "S2"]
+        u = ["S1", "S2A", "S2B"]
         u += [f"S3-{o}" for o in self.state.get("s3_owners", [])]
         if self.state.get("s2_done"):
             u.append("S3_GATE")
@@ -220,6 +226,9 @@ class Run:
         if cur and self.state["mode"] == "B":
             self.out.say("NEXT_WAITING", cur["unit"])
             return ACTION
+        if cur and self._recover(cur):
+            # the agent finished (or was interrupted) after writing: check what it wrote before paying again
+            return self.check(loaded=True)
         unit = self.next_unit()
         if unit is None:
             self.out.say("NEXT_DONE")
@@ -231,6 +240,18 @@ class Run:
         return self._dispatch(current)
 
     def _dispatch(self, current: dict) -> int:
+        if self.state["mode"] == "A":
+            budget = Budget(self.state)
+            stage = current["stage"]
+            tstage = self.stage_of(current["target"]) if stage == "S5" else None
+            ok, why = budget.can_start(stage, tstage, current["target"] if stage == "S5" else None)
+            if not ok:
+                self.state["current"] = None
+                self.save()
+                msg = {"STAGE": "BUDGET_STOP_STAGE", "RUN": "BUDGET_STOP_RUN", "TARGET": "BUDGET_STOP_TARGET"}[why]
+                self.out.say(msg, current["target"] if why == "TARGET" else stage)
+                budget.report(self.out, stage)
+                return STOPPED
         prompt = BB.prepare(current, self.ws, self.root, self.state)
         self.state["current"] = current
         self.save()
@@ -243,31 +264,31 @@ class Run:
         budget = Budget(self.state)
         stage = current["stage"]
         tstage = self.stage_of(current["target"]) if stage == "S5" else None
-        ok, why = budget.can_start(stage, tstage)
-        if not ok:
-            self.state["current"] = None
-            self.save()
-            self.out.say("BUDGET_STOP_STAGE" if why == "STAGE" else "BUDGET_STOP_RUN", stage)
-            budget.report(self.out, stage)
-            return STOPPED
         sdir = prompt.parent
         self.out.say("AGENT_STARTED", current["unit"])
-        minutes = int(self.lim["timeouts"]["stage_minutes"])
+        to = self.lim["timeouts"]
+        minutes = int(to.get("stage_minutes_by_stage", {}).get(tstage or stage, to["stage_minutes"]))
         code, usage, paused = run_agent(self.cfg, sdir, prompt, budget.unit_cap(stage, tstage),
                                         minutes * 60, stage=stage)
         self._log_agent(current["unit"], code, usage)
         outputs = K.load_json(sdir / "unit.json")["outputs"]
+        self._save_attempt(current["unit"], sdir, outputs)
+        expected = bool(self.cfg["agent"].get("usage_from_stdout_json"))
         if paused and not all((sdir / o).is_file() for o in outputs):
-            budget.record(stage, usage.get("turns", 1), usage.get("cost_usd"), tstage)
+            budget.record(stage, usage.get("turns", 1), usage.get("cost_usd"), tstage,
+                          current["target"] if stage == "S5" else None, expected)
             self.state["status"] = "paused"
             self.save()
             self.history("paused", current["unit"])
             self.out.say("AGENT_PAUSED", current["unit"])
             budget.report(self.out, stage)
             return PAUSED
-        budget.record(stage, usage.get("turns"), usage.get("cost_usd"), tstage)
+        est = budget.record(stage, usage.get("turns"), usage.get("cost_usd"), tstage,
+                            current["target"] if stage == "S5" else None, expected)
         self.save()
         self._say_agent(current["unit"], code, usage, minutes)
+        if est is not None:
+            self.out.say("BUDGET_COST_CHARGED", current["unit"], est)
         budget.report(self.out, stage)
         return self.check(loaded=True)
 
@@ -281,6 +302,37 @@ class Run:
                 entry[k] = usage[k]
         log.append(entry)
         K.dump_json(log, lp)
+
+    def _save_attempt(self, unit: str, sdir: Path, outputs: list[str]) -> None:
+        """Copy whatever the agent wrote into the workspace at once, before any check.
+
+        The stage folder is temporary; the workspace is kept. So a crash, a stop or a
+        failed check never loses paid-for work: a repair or a resume starts from here.
+        """
+        dst = self.cp / "attempts" / unit
+        found = [o for o in outputs if (sdir / o).is_file()]
+        if not found:
+            return
+        if dst.exists():
+            shutil.rmtree(dst)
+        for o in found:
+            K.copy_file(sdir / o, dst / o)
+
+    def _recover(self, cur: dict) -> bool:
+        """True when the current unit's outputs exist (in its folder, or saved), so they can be checked."""
+        sdir = self.stage_root / cur["unit"]
+        uj = sdir / "unit.json"
+        saved = self.cp / "attempts" / cur["unit"]
+        if not uj.is_file():
+            if not saved.is_dir():
+                return False
+            BB.prepare(cur, self.ws, self.root, self.state)  # rebuild the folder, then put the saved work back
+            uj = sdir / "unit.json"
+        outputs = K.load_json(uj)["outputs"]
+        for o in outputs:
+            if not (sdir / o).is_file() and (saved / o).is_file():
+                K.copy_file(saved / o, sdir / o)
+        return any((sdir / o).is_file() for o in outputs)
 
     def _say_agent(self, unit: str, code: int, usage: dict, minutes: int) -> None:
         if code == 124:
@@ -348,14 +400,17 @@ class Run:
             self.state["status"] = "aborted"
             self.state["current"] = None
             self.save()
+            self._remove_stage_root()
             self.out.say("ABORT_REPEAT" if decision == RB.ABORT_REPEAT else "ABORT_CAP", target)
             for i in ids:
                 self.out.say("ABORT_LINE", i)
             self.history("abort", target, ids)
             return STOPPED
         history = (prev.get("history", []) if prev else []) + [ids]
+        saved = self.cp / "attempts" / (self.state.get("current") or {}).get("unit", target)
+        keep = saved if saved.is_dir() else outputs_dir
         self.state["failure"] = {"unit": target, "findings": [f for f in findings if f["sev"] == CC.ERROR],
-                                 "round": attempt_round, "history": history, "outputs_dir": str(outputs_dir)}
+                                 "round": attempt_round, "history": history, "outputs_dir": str(keep)}
         self.state["current"] = None
         self.save()
         return FAIL
@@ -382,15 +437,23 @@ class Run:
             if not CC.has_errors(f):
                 f += VL.lint_bible_names(bible)
             return f
-        if stage == "S2":
-            (plan, case, skin), io = self._read_outputs(sdir, ("clue_plan.json", "case.json", "skin.json"))
+        if stage == "S2A":
+            (plan,), io = self._read_outputs(sdir, ("clue_plan.json",))
             if io:
                 return io
             bible = K.load_json(self.cp / "bible.json")
-            f = CC.check_plan(plan, bible, case, seeds, self.plan_cfg["s4_owner"])
+            f = CC.check_plan(plan, bible, None, seeds, self.plan_cfg["s4_owner"])
             if CC.has_errors(f):
                 return f
-            f += MD.check_plan_media(plan, bible, seeds)
+            return f + MD.check_plan_media(plan, bible, seeds)
+        if stage == "S2B":
+            (case, skin), io = self._read_outputs(sdir, ("case.json", "skin.json"))
+            if io:
+                return io
+            bible = K.load_json(self.cp / "bible.json")
+            plan = K.load_json(self.cp / "clue_plan.json")
+            f = [x for x in CC.check_plan(plan, bible, case, seeds, self.plan_cfg["s4_owner"])
+                 if x["id"] in ("KT-PL-10", "KT-PL-12", "KT-PL-14")]
             if CC.has_errors(f):
                 return f
             return f + self._engine("S2", sdir / "case.json", sdir / "skin.json")
@@ -519,9 +582,7 @@ class Run:
         if stage == "S1":
             bible, _ = self._read_bible(sdir)
             K.dump_json(bible, self.cp / "bible.json")
-        elif stage == "S2":
-            K.copy_file(sdir / "case.json", self.cp / "skeleton.json")
-            K.copy_file(sdir / "skin.json", self.cp / "skin.json")
+        elif stage == "S2A":
             K.copy_file(sdir / "clue_plan.json", self.cp / "clue_plan.json")
             plan = K.load_json(self.cp / "clue_plan.json")
             reg = self.cp / "media_registry.json"
@@ -530,10 +591,13 @@ class Run:
                                               K.load_json(self.cp / "seeds.json")), reg)
             elif reg.is_file():
                 reg.unlink()
-            owners = CC.s3_owners(plan)
-            self.state["s3_owners"] = owners
+            self.state["s3_owners"] = CC.s3_owners(plan)
             self.state["has_s4"] = any(ph["stage"] == "S4" for ph in plan["placeholders"])
-            self.state["s2_done"] = True
+            # a new plan means new engine files
+            self.state["s2_done"] = False
+            for u in ("S2B", "S3_GATE"):
+                if u in self.state["done"]:
+                    self.state["done"].remove(u)
             # keep earlier fills only where the owner's tokens are unchanged
             for owner, fill in self._fills().items():
                 tokens = {ph["token"] for ph in plan["placeholders"] if ph["owner"] == owner}
@@ -542,9 +606,12 @@ class Run:
                     unit = "S4" if owner == self.plan_cfg["s4_owner"] else f"S3-{owner}"
                     if unit in self.state["done"]:
                         self.state["done"].remove(unit)
-            for gate in ("S3_GATE",):
-                if gate in self.state["done"]:
-                    self.state["done"].remove(gate)
+        elif stage == "S2B":
+            K.copy_file(sdir / "case.json", self.cp / "skeleton.json")
+            K.copy_file(sdir / "skin.json", self.cp / "skin.json")
+            self.state["s2_done"] = True
+            if "S3_GATE" in self.state["done"]:
+                self.state["done"].remove("S3_GATE")
             self._write_case(self._fills())
         elif stage in ("S3", "S4"):
             fill = K.load_json(sdir / "fill.json")
@@ -600,7 +667,7 @@ class Run:
             return STOPPED
         # blame the first owner named, else the structure (S2)
         blamed = next((f["path"] for f in errors if f["path"] in owners), None)
-        unit = f"S3-{blamed}" if blamed else "S2"
+        unit = f"S3-{blamed}" if blamed else "S2B"
         if unit in self.state["done"]:
             self.state["done"].remove(unit)
         own = [f for f in errors if (blamed and f["path"] == blamed) or (not blamed)]
@@ -804,15 +871,133 @@ class Run:
     def estimate(self, documents: int, repairs: int, review: bool) -> int:
         t = self.lim["turns"]
         u, c = t["unit_caps"], t["stage_caps"]
-        inv = 2 + documents + 1 + repairs + (1 if review else 0)
+        inv = 3 + documents + 1 + repairs + (1 if review else 0)
         r_cap = max(t.get("repair_unit_caps", {}).values(), default=u["S5"])
-        turns = u["S1"] + u["S2"] + documents * u["S3"] + u["S4"] + repairs * r_cap + (u["S6"] if review else 0)
+        turns = (u["S1"] + u["S2A"] + u["S2B"] + documents * u["S3"] + u["S4"] + repairs * r_cap
+                 + (u["S6"] if review else 0))
         s3 = documents * u["S3"]
         self.out.say("ESTIMATE_LINE", documents, inv, turns, t["run_cap"])
         self.out.say("ESTIMATE_S3", s3, c["S3"])
         fits = turns <= t["run_cap"] and s3 <= c["S3"] and repairs * r_cap <= c["S5"]
+        per_turn = self._cost_per_turn()
+        if per_turn:
+            cap = float(self.lim["cost_usd_unverified"]["run_cap"])
+            self.out.say("ESTIMATE_COST", round(per_turn * turns, 2), round(per_turn, 3), cap)
+            fits = fits and per_turn * turns <= cap
         self.out.say("ESTIMATE_FITS" if fits else "ESTIMATE_OVER")
         return PASS if fits else FAIL
+
+    def _cost_per_turn(self) -> float | None:
+        """Measured cost per turn from this workspace's agent log, when there is one."""
+        lp = self.cp / "agent_log.json"
+        if not lp.is_file():
+            return None
+        log = K.load_json(lp)
+        turns = sum(int(e.get("turns") or 0) for e in log if isinstance(e.get("cost_usd"), (int, float)))
+        cost = sum(float(e["cost_usd"]) for e in log if isinstance(e.get("cost_usd"), (int, float)))
+        mult = float(self.lim["cost_usd_unverified"].get("reported_multiplier", 1.0))
+        return cost * mult / turns if turns else None
+
+    # ------------------------------------------------------------ resume
+    def resume(self, stage_root: Path | None = None) -> int:
+        """Pick a stopped, aborted, paused or interrupted run back up without redoing accepted work.
+
+        Accepted units stay accepted; saved attempts are checked before anything is re-run; repair
+        rounds start fresh; the budget starts a new pass and keeps what earlier passes spent.
+        """
+        self.load()
+        if self.state["status"] == "finished":
+            self.out.say("RESUME_NOTHING")
+            return PASS
+        done = self.state["done"]
+        # runs from before the S2 split (kit v4.1 and earlier)
+        if "S2" in done:
+            done.remove("S2")
+            done += [u for u in ("S2A", "S2B") if u not in done]
+        for key in ("failure", "current"):
+            v = self.state.get(key) or {}
+            if v.get("unit") in ("S2",) or str(v.get("unit", "")).startswith("S5-S2-") or v.get("target") == "S2":
+                self.state[key] = None
+        if self.state.get("failure"):
+            self.state["failure"]["round"] = 0
+            self.state["failure"]["history"] = []
+        if self.state["status"] != "paused":
+            self.state["status"] = "active"
+        self.state["gate_failures"] = 0
+        b = Budget(self.state)
+        b.new_pass()
+        sr = stage_root or Path(tempfile.mkdtemp(prefix="mm_kit_stages_"))
+        if not (Path(self.state.get("stage_root", "")) / self.MARKER).is_file() or stage_root:
+            self.state["stage_root"] = str(Path(sr).resolve())
+        self._ensure_stage_root()
+        self._trust()
+        self.save()
+        nxt = (self.state.get("failure") or {}).get("unit") or self.next_unit() or "FINISH"
+        self.history("resume", nxt)
+        self.out.say("RESUME_OK", nxt, len(done), round(b.previous_cost(), 2))
+        self.out.say("RESUME_STAGE_ROOT", self.state["stage_root"])
+        return PASS
+
+    # ------------------------------------------------------------ cleanup and preflight
+    @classmethod
+    def cleanup(cls, hours: float, keep: Path | None = None, out: K.Out | None = None) -> int:
+        """Delete leftover stage roots in the temp folder, unopened. Only folders carrying the kit's marker."""
+        import time
+        out = out or K.Out()
+        tmp = Path(tempfile.gettempdir())
+        removed = kept = 0
+        for d in tmp.glob("mm_kit_stages_*"):
+            if not d.is_dir() or not (d / cls.MARKER).is_file():
+                continue
+            age_h = (time.time() - d.stat().st_mtime) / 3600
+            if (keep and d.resolve() == keep.resolve()) or age_h < hours:
+                kept += 1
+                continue
+            shutil.rmtree(d, ignore_errors=True)
+            removed += 1
+        out.say("CLEANUP_DONE", removed, kept)
+        return PASS
+
+    def preflight(self, root: Path) -> int:
+        """Check the set-up before any money is spent. Prints IDs and PASS, WARN or FAIL only."""
+        self.out.trust(terms=["PASS", "WARN", "FAIL"])
+        problems = 0
+
+        def line(pid: str, ok: bool | None):
+            nonlocal problems
+            word = "PASS" if ok else ("WARN" if ok is None else "FAIL")
+            problems += 1 if ok is False else 0
+            self.out.say("PREFLIGHT_LINE", pid, word)
+
+        try:
+            import jsonschema  # noqa: F401
+            line("PF-01", True)
+        except ImportError:
+            line("PF-01", False)
+        argv = self.cfg["agent"].get("argv", [])
+        line("PF-02", "--restricted" in argv)
+        if "--settings" in argv and argv.index("--settings") + 1 < len(argv):
+            line("PF-03", Path(argv[argv.index("--settings") + 1]).is_file())
+        else:
+            line("PF-03", None)
+        line("PF-04", True if (self.cfg["agent"].get("usage_from_stdout_json") and "json" in argv) else None)
+        eng = self.cfg["engine"]
+        line("PF-05", all((root / eng[k]).is_file() for k in ("authoring_readme", "fixture_case", "fixture_skin")))
+        ids = [s["id"] for s in self.plan_cfg["stages"]]
+        line("PF-06", all(x in ids for x in ("S1", "S2A", "S2B", "S3", "S4"))
+             and all((K.PROMPTS_DIR / s["prompt"]).is_file() for s in self.plan_cfg["stages"] if s.get("prompt")))
+        t = self.lim["turns"]
+        u = t["unit_caps"]
+        worst = u["S1"] + u["S2A"] + u["S2B"] + self.lim["world"]["max_documents"] * u["S3"] + u["S4"] \
+            + 2 * max(t["repair_unit_caps"].values())
+        line("PF-07", worst <= t["run_cap"])
+        stale = [d for d in Path(tempfile.gettempdir()).glob("mm_kit_stages_*") if (d / self.MARKER).is_file()]
+        line("PF-08", True if not stale else None)
+        if problems:
+            self.out.say("PREFLIGHT_FAIL", problems)
+        else:
+            self.out.say("PREFLIGHT_PASS")
+        return FAIL if problems else PASS
 
     # ------------------------------------------------------------ status
     def status(self) -> int:
@@ -833,7 +1018,7 @@ class Run:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("command", choices=["init", "next", "check", "repair", "finish", "status",
-                                        "audit", "audit-score", "estimate"])
+                                        "audit", "audit-score", "estimate", "resume", "cleanup", "preflight"])
     ap.add_argument("--ws", default=None)
     ap.add_argument("--stage-root", default=None)
     ap.add_argument("--bundle", default=None)
@@ -845,9 +1030,14 @@ def main(argv=None) -> int:
     ap.add_argument("--mode", choices=["A", "B", "a", "b"], default=None)
     ap.add_argument("--review", action="store_true")
     ap.add_argument("--all", action="store_true")
+    ap.add_argument("--hours", type=float, default=12.0)
     args = ap.parse_args(argv)
     if args.command == "estimate":
-        return Run(Path(".")).estimate(args.documents, args.repairs, args.review)
+        return Run(Path(args.ws) if args.ws else Path(".")).estimate(args.documents, args.repairs, args.review)
+    if args.command == "cleanup":
+        return Run.cleanup(args.hours)
+    if args.command == "preflight":
+        return Run(Path(".")).preflight(Path(args.root).resolve())
     if not args.ws:
         ap.error("--ws is required")
     run = Run(Path(args.ws))
@@ -869,6 +1059,8 @@ def main(argv=None) -> int:
             return run.repair()
         if args.command == "finish":
             return run.finish()
+        if args.command == "resume":
+            return run.resume(Path(args.stage_root) if args.stage_root else None)
         return run.status()
     except K.KitError as e:
         run.out.say(e.msg_id, *e.args_out)

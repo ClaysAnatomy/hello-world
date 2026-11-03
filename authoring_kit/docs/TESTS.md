@@ -22,7 +22,7 @@ PASS test_media: 83 of 83 checks passed
 KIT TESTS 10 of 10 scripts passed
 ```
 
-That is 645 checks in total. Before the S1 fix (kit v4) it was 597; on Windows the project's install ran 9 scripts and 502 checks before the media layer.
+That is 700 checks in total (kit v4.2).
 
 ## Fixtures (all nonsense)
 
@@ -49,3 +49,4 @@ That is 645 checks in total. Before the S1 fix (kit v4) it was 597; on Windows t
 ## The first real run, replayed (test_kit_run sections 15 and 16)
 
 The 2026-11-02 run failed with `KT-BI-01 FAIL $`: S1 timed out with no file, and the repair wrote a bible that stopped mid-object at line 261. These sections replay it with nonsense: a facts part cut off after a comma, the agent reporting `error_max_turns`, and a one-part repair that passes. They check that the broken file is named with its line (never a bare `$`), that the result word and run time print while the planted text does not, that the other parts are already in place for the repair, that a bible repair gets 8 turns, and that the agent log keeps only numbers and one word. They also cover a missing part (KT-IO-01), a field set in two parts (KT-IO-03), a byte-order mark (accepted), a missing field (`$.cover`), an invented field (withheld from the screen), the single `bible.json` fallback, a timeout (cost reported as unknown) and a permission denial (counted, never shown).
+| test_resume | Kit v4.2: S2 runs as S2A (plan) and S2B (engine files) with inputs inline and minified; every output is saved to `checkpoints/attempts/` before it is checked; an interrupted unit with saved work is checked, never re-run; resume after an abort or a budget stop keeps accepted units, resets repair rounds and starts a new budget pass; a run from before the split resumes at S2A; cleanup removes only old marked stage roots, unopened; preflight prints IDs and verdicts only. |

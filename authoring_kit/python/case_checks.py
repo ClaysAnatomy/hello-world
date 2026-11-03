@@ -206,7 +206,9 @@ def _check_names(bible: dict, seeds: dict, lim: dict) -> list[dict]:
 
 # ================================================================ plan
 
-def check_plan(plan: dict, bible: dict, case_obj: dict, seeds: dict, s4_owner: str) -> list[dict]:
+def check_plan(plan: dict, bible: dict, case_obj: dict | None, seeds: dict, s4_owner: str) -> list[dict]:
+    """Checks on the document plan. With case_obj None (stage S2A), the checks that need the
+    engine case (KT-PL-10 placement, KT-PL-12, KT-PL-14) are left for stage S2B."""
     lim = K.data("limits")
     forms = {f["id"] for f in K.data("document_forms")["forms"]}
     out: list[dict] = []
@@ -218,14 +220,14 @@ def check_plan(plan: dict, bible: dict, case_obj: dict, seeds: dict, s4_owner: s
     cast = {c["id"]: c for c in bible["cast"]}
     suspects = [c["id"] for c in bible["cast"] if c["role"] == "suspect"]
     clues = {c["id"]: c for c in plan["clues"]}
-    case_strings = set(K.string_leaves(case_obj))
+    case_strings = set(K.string_leaves(case_obj)) if case_obj is not None else None
     dept_ids = {d["id"] for d in plan["departments"]}
 
     # IDs
     if len(clues) != len(plan["clues"]):
         out.append(F("KT-PL-14", "$.clues"))
     for i, c in enumerate(plan["clues"]):
-        if c["id"] not in case_strings:
+        if case_strings is not None and c["id"] not in case_strings:
             out.append(F("KT-PL-14", f"$.clues[{i}].id"))
         for fid in c["facts"]:
             if fid not in facts:
@@ -238,7 +240,7 @@ def check_plan(plan: dict, bible: dict, case_obj: dict, seeds: dict, s4_owner: s
     for q in bible["questions"]:
         reused.append(q["id"])
         reused.extend(o["id"] for o in q["options"])
-    for rid in reused:
+    for rid in (reused if case_strings is not None else []):
         if rid not in case_strings:
             out.append(F("KT-PL-12", "$"))
             break
@@ -384,8 +386,8 @@ def check_plan(plan: dict, bible: dict, case_obj: dict, seeds: dict, s4_owner: s
         if bad:
             out.append(F("KT-PL-10", f"$.placeholders[{i}]"))
         listed[ph["token"]] = ph
-    occurrences = K.token_paths(case_obj, rx)
-    for tok, ph in listed.items():
+    occurrences = K.token_paths(case_obj, rx) if case_obj is not None else None
+    for tok, ph in (listed.items() if occurrences is not None else []):
         # a depiction drives an image and its alt text; it never sits in the engine case
         expected = 0 if ph["kind"] == "depiction" else 1
         if ph["kind"] == "depiction" and ph["stage"] != "S3":
@@ -394,7 +396,7 @@ def check_plan(plan: dict, bible: dict, case_obj: dict, seeds: dict, s4_owner: s
         if len(occurrences.get(tok, [])) != expected:
             out.append(F("KT-PL-10", "$.placeholders"))
             break
-    for parts, value in K.walk_leaves(case_obj):
+    for parts, value in (K.walk_leaves(case_obj) if case_obj is not None else []):
         if isinstance(value, str) and find_rx.search(value) and value not in listed:
             out.append(F("KT-PL-10", K.jpath(parts)))
 

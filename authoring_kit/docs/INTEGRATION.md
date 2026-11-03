@@ -31,3 +31,24 @@ The kit was written without access to the project. Everything below is where it 
 8. Build a real-schema nonsense scenario from CASE-FIX-03 and run the full fake-agent chain through pack and export.
 9. Wire `taste_bridge.apply` into `learn.py` (Entry 024), or keep the kit-local profile.
 10. After the first real run, set `limits.json` → `turns` from measurements and tune the voice rules against the prose. (Done once for S1 and repairs after the 2026-11-02 run; `checkpoints\agent_log.json` now records turns, seconds and the result word per run, so later runs can be measured without opening anything sealed.)
+
+## Kit v4.2: never pay twice
+
+- **S2 is two stages.** S2A writes `clue_plan.json`; S2B writes `case.json` and `skin.json` from the accepted plan. Engine checks still run under the label `S2`, so `kit_config.json` and `tolerated_engine_rules.S2` are unchanged.
+- **Inputs are inline.** Every stage prompt carries its inputs in full (JSON minified), so agents spend no turns reading files.
+- **Saved attempts.** Every agent output is copied to `<ws>\checkpoints\attempts\<unit>\` the moment the agent returns, before any check.
+- **Recovery.** If a run is interrupted after an agent wrote its files, `next` checks those files instead of paying for the unit again.
+- **`kit_run.py resume --ws <ws>`** reopens an aborted, stopped or interrupted run: accepted units stay, repair rounds reset, and the budget starts a new pass (`budget.passes` keeps earlier spend).
+- **`kit_run.py cleanup --hours 12`** deletes old marked stage roots in the temp folder, unopened.
+- **`kit_run.py preflight --root .`** checks the set-up before spending: jsonschema, `--restricted`, the `--settings` file, usage reporting, engine files, stages and prompts, caps, and stale stage roots.
+- **Budget.**
+  - The run cap is $15.00.
+  - Each repaired unit has its own turn pool (`repair_target_caps`).
+  - `reported_multiplier` scales reported cost to what the provider charges.
+  - A run that reports no cost is charged a share of its stage cap.
+- **The runner must:**
+  - keep the workspace on every exit, including Ctrl+C, by copying it to the vault before any purge;
+  - offer `--resume <CASE_ID>` instead of starting a new case;
+  - never restart authoring from scratch as a "pass";
+  - run `preflight` before `init`, and `cleanup` at start;
+  - use the kit's caps rather than its own lower ones.

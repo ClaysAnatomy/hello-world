@@ -61,7 +61,29 @@ r.eq("cost cap hit when costs are reported", Budget(state).can_start("S3"), (Fal
 reset_data()
 buf = io.StringIO()
 Budget(state).report(K.Out(stream=buf), "S3")
-r.eq("budget prints turns only", buf.getvalue(), "BUDGET S3 turns 2 of 36\nBUDGET run turns 14 of 80\n")
+r.eq("budget prints numbers only", buf.getvalue(), "BUDGET S3 turns 2 of 60\nBUDGET run turns 14 of 160\nBUDGET run cost 0.05 of 15.00 dollars\n")
+
+# ---- v4.2: each repaired unit has its own pool; silent failures are charged; resumed runs start a new pass
+st2 = {}
+b3 = Budget(st2)
+b3.record("S5", 8, 0.1, "S1", "S1")
+b3.record("S5", 8, 0.1, "S1", "S1")
+r.eq("a unit's repair pool runs out", b3.can_start("S5", "S1", "S1"), (False, "TARGET"))
+r.eq("another unit still has its own pool", b3.can_start("S5", "S2A", "S2A"), (True, ""))
+est = b3.record("S2A", None, None, usage_expected=True)
+r.check("a silent run is charged a share of its stage cap", est is not None and 0 < est <= 2.0)
+r.eq("silent charge counted", b3.cost_unknown(), 1)
+r.eq("no charge when the agent never reports usage", Budget({}).record("S2A", None, None, usage_expected=False), None)
+lim = copy.deepcopy(K.data("limits"))
+lim["cost_usd_unverified"]["reported_multiplier"] = 1.5
+override_data("limits", lim)
+b4 = Budget({})
+b4.record("S3", 2, 1.0)
+r.eq("reported cost scaled to what the provider charges", round(b4.run_cost(), 2), 1.5)
+reset_data()
+b4.new_pass()
+r.eq("new pass resets counters", (b4.run_turns(), b4.run_cost()), (0, 0))
+r.eq("new pass keeps what was spent", b4.previous_cost(), 1.5)
 
 # ---- taste
 form = K.data("feedback_form")

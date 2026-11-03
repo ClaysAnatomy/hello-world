@@ -7,6 +7,7 @@ answer key cannot leak into document prose. Nothing here prints any brief.
 from __future__ import annotations
 
 import re
+import json
 import shutil
 import sys
 from pathlib import Path
@@ -62,10 +63,11 @@ def header() -> str:
 
 def check_list(stage: str) -> str:
     cat = K.data("check_catalog")["checks"]
-    prefixes = {"S1": ("KT-BI-",), "S2": ("KT-PL-",), "S3": ("KT-FL-", "VL-"), "S4": ("KT-FL-", "VL-"),
+    prefixes = {"S1": ("KT-BI-",), "S2A": ("KT-PL-",), "S3": ("KT-FL-", "VL-"), "S4": ("KT-FL-", "VL-"),
                 "S6": ("KT-RV-",)}.get(stage, ())
     skip = {"S3": {"VL-04", "VL-05"}, "S4": {"VL-07", "VL-08", "VL-09"}}.get(stage, set())
-    extra = {"S2": {"KT-MD-01", "KT-MD-02", "KT-MD-03", "KT-MD-07", "KT-MD-08", "KT-MD-09"},
+    extra = {"S2A": {"KT-MD-01", "KT-MD-02", "KT-MD-03", "KT-MD-07", "KT-MD-08", "KT-MD-09"},
+             "S2B": {"KT-PL-01", "KT-PL-10", "KT-PL-12", "KT-PL-14"},
              "S3": {"KT-MD-04", "KT-MD-05", "KT-MD-06"}, "S4": {"KT-MD-05", "KT-MD-06"}}.get(stage, set())
     return _bullets([f"{cid}: {txt}" for cid, txt in cat.items()
                      if (cid.startswith(prefixes) and cid not in skip) or cid in extra
@@ -80,8 +82,9 @@ def turn_budget(stage: str, target_stage: str | None = None) -> str:
     else:
         n = t["unit_caps"][stage]
     return (f"You have at most {n} turns, and every tool call (each read and each write) uses one. "
-            "When the turns run out you are stopped mid-task and nothing unfinished counts, "
-            "so plan before you write and never spend a turn re-reading what you already have.")
+            "Every input is already written out in full at the end of this brief, so do not read any file: "
+            "plan, then write each output whole in a single write. "
+            "When the turns run out you are stopped mid-task and nothing unfinished counts.")
 
 
 def limits_text() -> str:
@@ -247,6 +250,44 @@ def _engine_path(root: Path, rel: str) -> Path:
     return p
 
 
+def _inline_text(p: Path) -> str:
+    raw = p.read_text(encoding="utf-8-sig")
+    if p.suffix == ".json":
+        try:
+            return json.dumps(json.loads(raw), ensure_ascii=False, separators=(",", ":"))
+        except ValueError:
+            return raw
+    return raw
+
+
+def inline_section(sdir: Path, rels: list[str], title: str = "Inputs, in full") -> str:
+    """Every input written into the prompt, so the agent spends no turns reading files.
+
+    JSON is minified. Files that would push the section past inline_max_chars stay as files to read.
+    """
+    sp = K.data("stage_plan")
+    if not sp.get("inline_inputs", False) or not rels:
+        return ""
+    cap = int(sp.get("inline_max_chars", 600000))
+    blocks, used, skipped = [], 0, []
+    for rel in rels:
+        p = sdir / rel
+        if not p.is_file():
+            continue
+        body = _inline_text(p)
+        if used + len(body) > cap:
+            skipped.append(rel)
+            continue
+        used += len(body)
+        fence = "~~~~" if "```" in body else "```"
+        blocks.append(f"### `{rel}`\n{fence}\n{body}\n{fence}")
+    out = f"\n\n## {title}\nThese are the files listed above, complete. Use them from here; do not read the files.\n\n"
+    out += "\n\n".join(blocks)
+    if skipped:
+        out += "\n\nToo large to include here, read from disk if needed: " + ", ".join(f"`{r}`" for r in skipped)
+    return out + "\n"
+
+
 def prepare(unit: dict, ws: Path, root: Path, state: dict) -> Path:
     """Create the stage folder for a unit and return its prompt path.
 
@@ -301,14 +342,9 @@ def prepare(unit: dict, ws: Path, root: Path, state: dict) -> Path:
             outputs.append((part["file"], part["desc"]))
         ctx["TURN_BUDGET"] = turn_budget("S1")
 
-    elif stage == "S2":
+    elif stage == "S2A":
         put("bible.json", cp / "bible.json", desc="the sealed story and truth bible")
         put("README_AUTHORING.md", _engine_path(root, eng["authoring_readme"]), desc="the authoring contract")
-        put("fixture_case.json", _engine_path(root, eng["fixture_case"]), desc="a passing nonsense case: format example only")
-        put("fixture_skin.json", _engine_path(root, eng["fixture_skin"]), desc="a passing nonsense skin: format example only")
-        for rel in compat.get("engine_files", {}):
-            name = Path(rel).name
-            put(f"engine_schemas/{name}", root / rel, desc="engine schema, vocabulary or contract")
         put("clue_plan.schema.json", K.SCHEMA_DIR / "clue_plan.schema.json", desc="the shape of the plan")
         p = lim["people"]
         w = lim["world"]
@@ -323,9 +359,20 @@ def prepare(unit: dict, ws: Path, root: Path, state: dict) -> Path:
                     "MIN_AUTHORS_PER_SUSPECT": str(p["min_authors_per_suspect"]),
                     "WORLD_MIN": f"{int(w['world_clue_share_min'] * 100)} percent",
                     "WORLD_MAX": f"{int(w['world_clue_share_max'] * 100)} percent",
-                    "AUTHORING_README": "`inputs/README_AUTHORING.md`"})
-        outputs += [("case.json", "the engine case with placeholders"), ("skin.json", "the engine skin"),
-                    ("clue_plan.json", "the document plan")]
+                    "AUTHORING_README": "`inputs/README_AUTHORING.md`",
+                    "TURN_BUDGET": turn_budget("S2A")})
+        outputs.append(("clue_plan.json", "the document plan"))
+
+    elif stage == "S2B":
+        put("bible.json", cp / "bible.json", desc="the sealed story and truth bible")
+        put("clue_plan.json", cp / "clue_plan.json", desc="the accepted document plan")
+        put("README_AUTHORING.md", _engine_path(root, eng["authoring_readme"]), desc="the authoring contract")
+        put("fixture_case.json", _engine_path(root, eng["fixture_case"]), desc="a passing nonsense case: format example only")
+        put("fixture_skin.json", _engine_path(root, eng["fixture_skin"]), desc="a passing nonsense skin: format example only")
+        for rel in compat.get("engine_files", {}):
+            put(f"engine_schemas/{Path(rel).name}", root / rel, desc="engine schema, vocabulary or contract")
+        ctx.update({"AUTHORING_README": "`inputs/README_AUTHORING.md`", "TURN_BUDGET": turn_budget("S2B")})
+        outputs += [("case.json", "the engine case with placeholders"), ("skin.json", "the engine skin")]
 
     elif stage in ("S3", "S4"):
         bible = K.load_json(cp / "bible.json")
@@ -356,8 +403,10 @@ def prepare(unit: dict, ws: Path, root: Path, state: dict) -> Path:
         outputs.append(("review.json", "scores and flags only"))
 
     ctx["INPUT_FILES"], ctx["OUTPUT_FILES"] = _io(inputs, outputs)
+    ctx.setdefault("TURN_BUDGET", turn_budget(stage))
     tmpl = next(s for s in K.data("stage_plan")["stages"] if s["id"] == stage)["prompt"]
     text = render((K.PROMPTS_DIR / tmpl).read_text(encoding="utf-8"), ctx)
+    text += inline_section(sdir, [rel for rel, _ in inputs])
     prompt = sdir / "prompt.md"
     prompt.write_text(text, encoding="utf-8", newline="\n")
     K.dump_json({"unit": unit["unit"], "stage": stage, "owner": unit.get("owner"),
@@ -433,7 +482,7 @@ def _prepare_repair(unit: dict, ws: Path, root: Path, state: dict, sdir: Path) -
     tdir = Path(state["stage_root"]) / target
     if not (tdir / "unit.json").is_file():
         # the target was accepted and its folder closed; rebuild its original brief
-        tstage = "S3" if target.startswith("S3-") else target
+        tstage = "S3" if target.startswith("S3-") else target  # S1, S2A, S2B, S4 or S6
         towner = target[3:] if target.startswith("S3-") else (K.data("stage_plan")["s4_owner"] if target == "S4" else None)
         prepare({"unit": target, "stage": tstage, "owner": towner}, ws, root, state)
     tinfo = K.load_json(tdir / "unit.json")
@@ -466,6 +515,9 @@ def _prepare_repair(unit: dict, ws: Path, root: Path, state: dict, sdir: Path) -
            "TURN_BUDGET": turn_budget("S5", tinfo["stage"])}
     ctx["INPUT_FILES"], ctx["OUTPUT_FILES"] = _io(inputs, outputs)
     text = render((K.PROMPTS_DIR / K.data("stage_plan")["repair"]["prompt"]).read_text(encoding="utf-8"), ctx)
+    # the original brief already carries its inputs in full; the previous outputs follow, so a fix needs no reads
+    text += inline_section(sdir, ["inputs/original_brief.md"], "The original brief, in full")
+    text += inline_section(sdir, [n for n in tinfo["outputs"] if (sdir / n).is_file()], "Your previous outputs, in full")
     prompt = sdir / "prompt.md"
     prompt.write_text(text, encoding="utf-8", newline="\n")
     K.dump_json({"unit": unit["unit"], "stage": "S5", "target": target, "target_stage": tinfo["stage"],

@@ -30,27 +30,46 @@
       "effort": null
     },
     {
-      "id": "S2",
-      "name": "document cut",
-      "prompt": "S2_clue_plan.md",
+      "id": "S2A",
+      "name": "document plan",
+      "prompt": "S2A_doc_plan.md",
       "inputs": [
         "bible",
         "seeds",
         "pattern_briefs",
         "document_forms",
+        "media_forms",
         "voice_profiles",
         "authoring_readme",
-        "fixture_case",
-        "fixture_skin",
-        "engine_schemas",
         "plan_schema"
       ],
       "outputs": [
-        "case.json",
-        "skin.json",
         "clue_plan.json"
       ],
       "check": "plan",
+      "needs_answer_key": true,
+      "iterate": null,
+      "optional": false,
+      "model": null,
+      "effort": null
+    },
+    {
+      "id": "S2B",
+      "name": "engine files with placeholders",
+      "prompt": "S2B_engine_files.md",
+      "inputs": [
+        "bible",
+        "clue_plan",
+        "authoring_readme",
+        "fixture_case",
+        "fixture_skin",
+        "engine_schemas"
+      ],
+      "outputs": [
+        "case.json",
+        "skin.json"
+      ],
+      "check": "engine_skeleton",
       "needs_answer_key": true,
       "iterate": null,
       "optional": false,
@@ -190,5 +209,9 @@
   "audit_prompts": {
     "SOLVE": "S7_blind_solve.md",
     "SHORTCUT": "S7_shortcut_probe.md"
-  }
+  },
+  "inline_inputs": true,
+  "inline_note": "Every input is written into the prompt itself (JSON minified) as well as into the stage folder. Each file an agent reads costs a turn, and every turn re-sends the whole conversation, so reading ten inputs spent most of S2's turns and cost on the first real run. With the inputs inline, a stage is a few writes. inline_max_chars caps the inline section; larger inputs stay as files to read.",
+  "inline_max_chars": 600000,
+  "s2_split_note": "S2 was one stage writing the plan, the engine case and the skin; on the first real run it timed out with no files. S2A writes only the plan (checked by Python on its own); S2B writes the engine files from the accepted plan. Each is smaller, has its own time and turn limits, and can be repaired alone."
 }

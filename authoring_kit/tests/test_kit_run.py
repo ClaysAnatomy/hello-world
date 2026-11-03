@@ -122,12 +122,15 @@ try:
     code, out = sb.kit("check")
     r.eq("nothing to check", (code, out), (3, "No stage is waiting for a check. Run next first.\n"))
     code, out = sb.kit("status")
-    r.eq("status", (code, out), (0, "STATUS units done 1 of 2\nSTATUS active\nBUDGET run turns 0 of 80\n"))
+    r.eq("status", (code, out), (0, "STATUS units done 1 of 3\nSTATUS active\nBUDGET run turns 0 of 160\n"))
     r.eq("finish too early", sb.kit("finish"), (3, "FINISH FAIL\n"))
     sb.kit("next")
-    for n in ("clue_plan.json", "case.json", "skin.json"):
-        (sr / "S2" / n).write_bytes((sb.agent_dir / "S2" / n).read_bytes())
-    r.eq("mode B S2 check", sb.kit("check")[0], 0)
+    (sr / "S2A" / "clue_plan.json").write_bytes((sb.agent_dir / "S2A" / "clue_plan.json").read_bytes())
+    r.eq("mode B S2A check", sb.kit("check")[0], 0)
+    sb.kit("next")
+    for n in ("case.json", "skin.json"):
+        (sr / "S2B" / n).write_bytes((sb.agent_dir / "S2B" / n).read_bytes())
+    r.eq("mode B S2B check", sb.kit("check")[0], 0)
     sb.kit("next")
     live = sorted(p.name for p in sr.iterdir())
     r.eq("only the current unit exists on disk", live, [".mm_kit_stage_root", "S3-CLUE-01"])
@@ -140,7 +143,7 @@ finally:
 BAD = {"CLUE-04": {"PP-CLUE-04-2": "A chill ran down the corridor."}}
 sb, _ = new(overrides=BAD)
 try:
-    plan = json.loads((sb.agent_dir / "S2" / "clue_plan.json").read_text())
+    plan = json.loads((sb.agent_dir / "S2A" / "clue_plan.json").read_text())
     bible = scenario.load_bible(sb.agent_dir)
     scenario.write_outputs(sb.agent_dir, "S5-S3-CLUE-04-R1", {"fill.json": scenario.make_fill("CLUE-04", plan, bible)})
     code, out = sb.kit("next", "--all")
@@ -156,7 +159,7 @@ finally:
 # ------------------------------------------------------------------ 4. same check fails twice: abort
 sb, _ = new(overrides=BAD)
 try:
-    plan = json.loads((sb.agent_dir / "S2" / "clue_plan.json").read_text())
+    plan = json.loads((sb.agent_dir / "S2A" / "clue_plan.json").read_text())
     bible = scenario.load_bible(sb.agent_dir)
     scenario.write_outputs(sb.agent_dir, "S5-S3-CLUE-04-R1", {"fill.json": scenario.make_fill("CLUE-04", plan, bible, BAD["CLUE-04"])})
     code, out = sb.kit("next", "--all")
@@ -169,7 +172,7 @@ finally:
 # ------------------------------------------------------------------ 5. different failures until the cap
 sb, _ = new(overrides=BAD)
 try:
-    plan = json.loads((sb.agent_dir / "S2" / "clue_plan.json").read_text())
+    plan = json.loads((sb.agent_dir / "S2A" / "clue_plan.json").read_text())
     bible = scenario.load_bible(sb.agent_dir)
     scenario.write_outputs(sb.agent_dir, "S5-S3-CLUE-04-R1", {"fill.json": scenario.make_fill("CLUE-04", plan, bible, {"PP-CLUE-04-2": "I did it."})})
     scenario.write_outputs(sb.agent_dir, "S5-S3-CLUE-04-R2", {"fill.json": scenario.make_fill("CLUE-04", plan, bible, {"PP-CLUE-04-2": "word " * 200})})
@@ -191,7 +194,7 @@ try:
     override_data("limits", lim)
     code, out = sb.kit("next", "--all")
     r.eq("budget stop exit", code, 4)
-    r.check("budget stop lines", out.endswith("BUDGET STOP S3 stage turn cap reached\nBUDGET S3 turns 3 of 3\nBUDGET run turns 31 of 80\n"))
+    r.check("budget stop lines", out.endswith("BUDGET STOP S3 stage turn cap reached\nBUDGET S3 turns 0 of 3\nBUDGET run turns 32 of 160\n"))
     st = state(sb)
     r.eq("budget stop leaves run resumable", (st["status"], st["current"]), ("active", None))
 finally:
@@ -203,7 +206,7 @@ try:
     (sb.agent_dir / "_pause_S3-CLUE-02").write_text("x")
     code, out = sb.kit("next", "--all")
     r.eq("pause exit", code, 5)
-    r.check("pause lines", out.endswith("AGENT S3-CLUE-02 paused: usage limit. Run next again later to resume.\nBUDGET S3 turns 3 of 36\nBUDGET run turns 7 of 80\n"))
+    r.check("pause lines", "AGENT S3-CLUE-02 paused: usage limit. Run next again later to resume.\nBUDGET S3 turns 3 of 60\nBUDGET run turns 9 of 160\nBUDGET run cost" in out)
     st = state(sb)
     r.eq("paused state kept", (st["status"], st["current"]["unit"], st["failure"]), ("paused", "S3-CLUE-02", None))
     r.eq("status shows paused", sb.kit("status")[1].splitlines()[1], "STATUS paused")
@@ -221,22 +224,23 @@ try:
     override_data("limits", lim)
     code, out = sb.kit("next")
     code, out = sb.kit("next")
-    r.check("prose rule fails on placeholders without tolerance", "CHECK FP-03 FAIL $.clues[0].raw_observation_text" in out and "CHECK S2 FAIL" in out)
+    code, out = sb.kit("next")
+    r.check("prose rule fails on placeholders without tolerance", "CHECK FP-03 FAIL $.clues[0].raw_observation_text" in out and "CHECK S2B FAIL" in out)
 finally:
     sb.close()
 sb, _ = new()
 try:
-    case = json.loads((sb.agent_dir / "S2" / "case.json").read_text())
+    case = json.loads((sb.agent_dir / "S2B" / "case.json").read_text())
     good = copy.deepcopy(case)
     case["clues"][0]["record_date"] = "FORCE-FAIL-FP02"
-    scenario.write_outputs(sb.agent_dir, "S2", {"case.json": case})
-    plan = json.loads((sb.agent_dir / "S2" / "clue_plan.json").read_text())
-    skin = json.loads((sb.agent_dir / "S2" / "skin.json").read_text())
-    scenario.write_outputs(sb.agent_dir, "S5-S2-R1", {"case.json": good, "clue_plan.json": plan, "skin.json": skin})
+    scenario.write_outputs(sb.agent_dir, "S2B", {"case.json": case})
+    plan = json.loads((sb.agent_dir / "S2A" / "clue_plan.json").read_text())
+    skin = json.loads((sb.agent_dir / "S2B" / "skin.json").read_text())
+    scenario.write_outputs(sb.agent_dir, "S5-S2B-R1", {"case.json": good, "skin.json": skin})
     code, out = sb.kit("next", "--all")
     r.eq("engine repair exit", code, 0)
-    r.check("engine failure reported as ID and path", "CHECK FP-02 FAIL $.clues[0].record_date\n" in out and "REPAIR S2 round 1 READY" in out)
-    rp = (sb.ws / "checkpoints" / "units" / "S2" / "prompt.md").read_text(encoding="utf-8")
+    r.check("engine failure reported as ID and path", "CHECK FP-02 FAIL $.clues[0].record_date\n" in out and "REPAIR S2B round 1 READY" in out)
+    rp = (sb.ws / "checkpoints" / "units" / "S2B" / "prompt.md").read_text(encoding="utf-8")
     r.check("engine rule text from rules file", "| FP-02 | $.clues[0].record_date | Fixture rule FP-02: nonsense requirement. |" in rp)
 finally:
     sb.close()
@@ -244,7 +248,7 @@ finally:
 # ------------------------------------------------------------------ 9. gate failure re-opens a closed unit
 sb, _ = new()
 try:
-    plan = json.loads((sb.agent_dir / "S2" / "clue_plan.json").read_text())
+    plan = json.loads((sb.agent_dir / "S2A" / "clue_plan.json").read_text())
     bible = scenario.load_bible(sb.agent_dir)
     shared = "the boiler in the east store was cold again by the second bell and nobody had signed the book"
     for o in ("CLUE-02", "CLUE-03"):
@@ -371,10 +375,10 @@ finally:
 sb = Sandbox()
 try:
     r.eq("estimate 10 documents", sb.run("estimate", "--documents", "10"),
-         (0, "ESTIMATE documents 10 invocations 14 turns at cap 72 of 80\nESTIMATE S3 turns at cap 30 of 36\nESTIMATE fits the caps\n"))
-    r.eq("estimate 15 documents", sb.run("estimate", "--documents", "15")[1].splitlines()[-1], "ESTIMATE exceeds a cap")
+         (0, "ESTIMATE documents 10 invocations 15 turns at cap 86 of 160\nESTIMATE S3 turns at cap 40 of 60\nESTIMATE fits the caps\n"))
+    r.eq("estimate 16 documents", sb.run("estimate", "--documents", "16")[1].splitlines()[-1], "ESTIMATE exceeds a cap")
     r.eq("12 documents and 1 repair fit", sb.run("estimate", "--documents", "12")[1].splitlines()[-1], "ESTIMATE fits the caps")
-    r.eq("12 documents and 2 repairs do not", sb.run("estimate", "--documents", "12", "--repairs", "2")[1].splitlines()[-1],
+    r.eq("12 documents and 7 repairs do not", sb.run("estimate", "--documents", "12", "--repairs", "7")[1].splitlines()[-1],
          "ESTIMATE exceeds a cap")
 finally:
     sb.close()
@@ -493,6 +497,7 @@ sb, _ = new()
 try:
     lim = copy.deepcopy(K.data("limits"))
     lim["timeouts"]["stage_minutes"] = 0
+    lim["timeouts"]["stage_minutes_by_stage"] = {}
     override_data("limits", lim)
     code, out = sb.kit("next", "--all")
     r.check("timeout says minutes and unknown cost",

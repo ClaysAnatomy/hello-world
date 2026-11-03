@@ -60,50 +60,75 @@
     "abort_on_repeated_id": true
   },
   "turns": {
-    "run_cap": 80,
+    "run_cap": 160,
     "stage_caps": {
-      "S1": 12,
-      "S2": 16,
-      "S3": 36,
-      "S4": 6,
-      "S5": 16,
+      "S1": 16,
+      "S2A": 14,
+      "S2B": 14,
+      "S3": 60,
+      "S4": 8,
+      "S5": 48,
       "S6": 4,
       "S7": 4
     },
     "unit_caps": {
       "S1": 12,
-      "S2": 16,
-      "S3": 3,
+      "S2A": 10,
+      "S2B": 10,
+      "S3": 4,
       "S4": 6,
-      "S5": 6,
+      "S5": 8,
       "S6": 4,
       "S7": 2
     },
     "repair_unit_caps": {
       "S1": 8,
-      "S2": 8,
+      "S2A": 8,
+      "S2B": 8,
       "S3": 4,
       "S4": 4,
       "S6": 3
     },
-    "caps_note": "Measured on the first real run (2026-11-02): S1 at 6 turns could not read its three inputs and write a bible; the repair wrote 261 lines and ran out of turns mid-object. S1 now has 12 turns for 3 reads and 5 part writes with room to fix one. A repair's cap depends on the stage it repairs (repair_unit_caps); S5 unit_caps is the fallback. With these caps, 6 documents and 2 repairs come to 68 turns, and 12 documents with 1 repair to 78.",
-    "audit_note": "S7 (blind audit) runs on a different agent, after finish; its turns count against the audit agent's own plan, not the 80-turn authoring cap."
+    "caps_note": "v4.2, from the second real run (2026-11-02): S1 used 7 turns, its repair 7; S2 timed out at 16 with no files, and S2's repair could not start because every repair shared one 12-turn S5 pool. Now inputs are inline (no read turns), S2 is split into S2A and S2B, and each repaired unit has its own pool (repair_target_caps) inside the S5 stage cap. Cost, not turns, is the binding limit: see cost_usd_unverified.",
+    "audit_note": "S7 (blind audit) runs on a different agent, after finish; its turns count against the audit agent's own plan, not the 80-turn authoring cap.",
+    "repair_target_caps": {
+      "S1": 16,
+      "S2A": 16,
+      "S2B": 16,
+      "S3": 8,
+      "S4": 8,
+      "S6": 6
+    }
   },
   "cost_usd_unverified": {
-    "run_cap": 6.0,
+    "run_cap": 15.0,
     "stage_caps": {
-      "S1": 0.6,
-      "S2": 1.6,
-      "S3": 2.0,
-      "S4": 0.4,
-      "S5": 1.0,
-      "S6": 0.4,
-      "S7": 0.4
-    }
+      "S1": 2.5,
+      "S2A": 2.0,
+      "S2B": 2.0,
+      "S3": 5.0,
+      "S4": 1.0,
+      "S5": 4.0,
+      "S6": 1.0,
+      "S7": 1.0
+    },
+    "reported_multiplier": 1.0,
+    "unknown_cost_charge": "stage_unit_share",
+    "note": "Costs are what the agent reports (Claude Code's total_cost_usd, at list prices). reported_multiplier scales them to what the provider actually charges: set it from the provider's usage page after a run (charged / reported). A run that times out reports nothing; it is charged a conservative share of its stage cap so the caps stay honest."
   },
   "timeouts": {
     "stage_minutes": 30,
-    "engine_check_seconds": 300
+    "engine_check_seconds": 300,
+    "stage_minutes_by_stage": {
+      "S1": 40,
+      "S2A": 30,
+      "S2B": 30,
+      "S3": 15,
+      "S4": 15,
+      "S5": 30,
+      "S6": 15
+    },
+    "note": "A repair uses the time limit of the stage it repairs."
   },
   "tolerated_engine_rules": {
     "S2": [],
@@ -145,6 +170,7 @@
       "OPT",
       "P",
       "PAT",
+      "PF",
       "PP",
       "PROBE",
       "PUB",

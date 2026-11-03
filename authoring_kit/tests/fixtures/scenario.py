@@ -279,7 +279,8 @@ def stage_all(agent_dir: Path, seeds: dict, overrides: dict | None = None) -> tu
     bible = make_bible(seeds)
     plan, case, skin = make_s2(bible, seeds)
     write_outputs(agent_dir, "S1", bible_parts(bible))
-    write_outputs(agent_dir, "S2", {"clue_plan.json": plan, "case.json": case, "skin.json": skin})
+    write_outputs(agent_dir, "S2A", {"clue_plan.json": plan})
+    write_outputs(agent_dir, "S2B", {"case.json": case, "skin.json": skin})
     owners = sorted({ph["owner"] for ph in plan["placeholders"] if ph["stage"] == "S3"})
     for o in owners:
         write_outputs(agent_dir, f"S3-{o}", {"fill.json": make_fill(o, plan, bible, overrides.get(o), seeds)})
