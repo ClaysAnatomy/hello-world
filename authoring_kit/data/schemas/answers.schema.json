@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "authoring_kit/answers.schema.json",
+  "title": "Blind audit answers",
+  "description": "Written by the S7 audit agent. Only 'verdict' is scored. Any reasoning it records stays in the sealed workspace and is never printed.",
+  "type": "object",
+  "required": [
+    "mode",
+    "verdict"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "mode": {
+      "enum": [
+        "SOLVE",
+        "SHORTCUT"
+      ]
+    },
+    "verdict": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "selected_opt",
+          "confidence"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "selected_opt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "cited": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 40
+            }
+          }
+        }
+      }
+    }
+  }
+}

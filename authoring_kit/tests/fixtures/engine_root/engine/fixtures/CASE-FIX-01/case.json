@@ -1,0 +1,1 @@
+{"case_id": "CASE-FIX-01", "characters": [{"char_id": "CHAR-A1", "display_name": "Person A"}], "clues": [{"clue_id": "CLUE-01", "record_title": "FIXTURE text 01", "raw_observation_text": "FIXTURE text 02", "relations": [{"type": "ESTABLISHES", "fact_id": "FACT-01"}]}]}

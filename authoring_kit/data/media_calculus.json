@@ -1,0 +1,65 @@
+{
+  "version": "1.0.0",
+  "purpose": "How the kit calculates every number, date, imprint and surface on a media artifact. One case gives one registry: each value is computed once, from the bible, the plan and the seeds, and every document and every image reuses it. Nothing here is chosen by a model. Change a rule here and every future case follows it. See docs/MEDIA.md.",
+  "months": ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
+  "month_names": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+  "weekdays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+  "printed_date": "{dd} {MON} {yyyy}",
+  "institution_code": {"min_letters": 2, "max_letters": 4, "note": "Initials of the institution's words, capitals only. A plan may set media_environment.institution_code instead."},
+  "series": {
+    "report": {"format": "{inst}-{yy}-{seq:04d}", "start": [120, 880], "per_day": [0.4, 1.6], "note": "Report numbers rise with the filing date across every report in the case. Two reports filed in order have numbers in order."},
+    "badge": {"format": "{inst}-{seq:04d}", "start": [100, 400], "step": [3, 17], "note": "Badge numbers are issued in order of issue date: whoever joined first has the lower number."},
+    "message": {"format": "{inst}/{doy:03d}/{seq:02d}", "note": "Message numbers restart each day and rise through the day."},
+    "specimen": {"format": "{inst}-S{yy}{seq:03d}", "start": [10, 300], "per_day": [0.5, 3.0]},
+    "chart": {"format": "{inst}-CH{seq:03d}", "start": [1, 200], "per_day": [1.0, 1.0], "note": "One chart per instrument per day."},
+    "drawing": {"format": "{inst}-DWG-{seq:03d}", "start": [1, 90], "per_day": [0.01, 0.05]},
+    "tape": {"format": "{inst}-V{seq:02d}", "start": [1, 40], "per_day": [0.05, 0.3]},
+    "terminal": {"format": "TTY{seq:02d}", "start": [1, 9], "per_day": [0, 0]}
+  },
+  "badge": {"age_days": [120, 3650], "validity_days": 1095, "clearance": ["WHITE", "GREEN", "AMBER"]},
+  "report": {"received_lag_days": [0, 2]},
+  "archive": {"lag_days": [2, 14], "note": "The archive date is when the player receives the papers: after the latest document, unless the plan sets media_environment.archive_date."},
+  "cameras": {
+    "film_35mm": {"since": 1934, "until": null, "roll": 36, "imprint": "'{yy} {m} {d}", "frame_label": "Frame {frame}", "aspect": "3:2", "skip": [0, 3]},
+    "instant": {"since": 1948, "until": null, "roll": 10, "imprint": null, "frame_label": null, "aspect": "1:1", "skip": [0, 1]},
+    "digital": {"since": 1995, "until": null, "roll": null, "imprint": "{yyyy}/{mm}/{dd} {HH}:{MM}", "frame_label": "IMG_{frame:04d}", "aspect": "4:3", "skip": [0, 6]},
+    "cctv": {"since": 1970, "until": null, "roll": null, "imprint": "{cam} {yyyy}-{mm}-{dd} {HH}:{MM}:{SS}", "frame_label": null, "aspect": "4:3", "skip": [0, 0]}
+  },
+  "stocks": {
+    "photo_gloss": {"yellow_years": 25, "fade_years": 40, "foxing": 0.2},
+    "photo_instant": {"yellow_years": 12, "fade_years": 15, "foxing": 0.1},
+    "card_laminated": {"yellow_years": 60, "fade_years": 30, "foxing": 0.0},
+    "newsprint": {"yellow_years": 2.5, "fade_years": 60, "foxing": 1.0},
+    "bond": {"yellow_years": 40, "fade_years": 80, "foxing": 0.6},
+    "thermal": {"yellow_years": 30, "fade_years": 3, "foxing": 0.1},
+    "chart_paper": {"yellow_years": 15, "fade_years": 25, "foxing": 0.5},
+    "label_tag": {"yellow_years": 10, "fade_years": 20, "foxing": 0.5},
+    "screen": null,
+    "video": null
+  },
+  "folds": {"none": 0, "half": 1, "tri": 2, "quarter": 2},
+  "climates": {
+    "polar": {"humidity": 0.3, "condensation": 0.35, "light": 0.2, "stains": ["water ring", "condensation bloom", "grease"]},
+    "temperate": {"humidity": 0.55, "condensation": 0.15, "light": 0.5, "stains": ["coffee ring", "water ring", "thumbprint"]},
+    "tropical": {"humidity": 0.85, "condensation": 0.4, "light": 0.8, "stains": ["damp bloom", "mould spot", "water ring"]},
+    "arid": {"humidity": 0.15, "condensation": 0.05, "light": 0.9, "stains": ["dust", "thumbprint", "sun bleach"]}
+  },
+  "storage": {
+    "filed": {"wear": 0.2, "light": 0.1},
+    "boxed": {"wear": 0.1, "light": 0.0},
+    "pinned": {"wear": 0.5, "light": 1.0},
+    "pocket": {"wear": 1.0, "light": 0.2},
+    "framed": {"wear": 0.1, "light": 0.8}
+  },
+  "scan": {"skew_deg": 1.5, "noise": [0.02, 0.06], "dpi": 300},
+  "light_regimes": {
+    "polar_north": {"dark_months": [11, 12, 1], "bright_months": [5, 6, 7], "dark": "polar night: artificial light only, deep blue outside", "bright": "midnight sun: flat, shadowless light at every hour", "shoulder": "low sun, long shadows, short day"},
+    "polar_south": {"dark_months": [5, 6, 7], "bright_months": [11, 12, 1], "dark": "polar night: artificial light only, deep blue outside", "bright": "midnight sun: flat, shadowless light at every hour", "shoulder": "low sun, long shadows, short day"},
+    "default": {"day_hours": [7, 19], "dark": "night: artificial light", "bright": "daylight", "shoulder": "daylight"}
+  },
+  "video": {"words_per_minute": 130, "frame_rate": 25},
+  "fairness": {
+    "legibility_floor": 0.75,
+    "note": "Wear never hides evidence. If ageing, fading, foxing or stains would push an artifact below the floor, the kit scales the wear down until it is legible and records that it did."
+  }
+}

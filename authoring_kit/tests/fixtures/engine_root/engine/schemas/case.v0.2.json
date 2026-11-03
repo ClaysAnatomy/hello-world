@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NONSENSE fixture case schema for kit tests",
+  "type": "object",
+  "properties": {
+    "case_id": {"type": "string"},
+    "characters": {"type": "array", "items": {"type": "object", "properties": {"char_id": {"type": "string"}, "display_name": {"type": "string"}}}},
+    "locations": {"type": "array", "items": {"type": "object", "properties": {"location_id": {"type": "string"}, "name": {"type": "string"}}}},
+    "facts": {"type": "array", "items": {"type": "object", "properties": {"fact_id": {"type": "string"}, "premises": {"type": "array"}, "defeaters": {"type": "array"}}}},
+    "clues": {"type": "array", "items": {"type": "object", "properties": {
+      "clue_id": {"type": "string"}, "record_title": {"type": "string"}, "record_date": {"type": "string"},
+      "raw_observation_text": {"type": "string"}, "dept_commentary_text": {"type": "string"},
+      "is_dept_processed": {"type": "boolean"}, "overlay_text": {"type": "string"},
+      "relations": {"type": "array", "items": {"type": "object", "properties": {"type": {"enum": ["ESTABLISHES", "CONTRADICTS", "MASKS", "REFRAMES"]}, "fact_id": {"type": "string"}}}}
+    }}},
+    "questions": {"type": "array", "items": {"type": "object", "properties": {"question_id": {"type": "string"}, "prompt_stem": {"type": "string"},
+      "options": {"type": "array", "items": {"type": "object", "properties": {"option_id": {"type": "string"}, "text": {"type": "string"}}}}}}}
+  }
+}

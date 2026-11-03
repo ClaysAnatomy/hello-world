@@ -1,0 +1,461 @@
+{
+  "version": "1.0.0",
+  "purpose": "Operational craft doctrine for the sealed author. Each principle is phrased as something a writer can do and a checker can look for. Sources are named so the doctrine can be audited; confidence says how settled the idea is.",
+  "principles": [
+    {
+      "id": "CP-01",
+      "name": "Front of the box",
+      "rule": "Before any clue exists, the story must be worth reading with the puzzle removed: a specific place, people with lives, an event that costs someone something, and a question a stranger would want answered.",
+      "do": [
+        "Write premise.hook as one sentence that makes a stranger ask what happened next. It must be interesting without the solution.",
+        "Name the human question the case is really about and the cost the truth carries."
+      ],
+      "stage": [
+        "S1"
+      ],
+      "check": [
+        "RUB-11",
+        "RUB-19"
+      ],
+      "sources": [
+        "Raymond Chandler, Casual Notes on the Mystery Novel (1949): the story must be an interesting story apart from the mystery.",
+        "P. D. James, Talking About Detective Fiction (2009)."
+      ],
+      "confidence": "well-established craft"
+    },
+    {
+      "id": "CP-02",
+      "name": "World before crime",
+      "rule": "The institution was already a going concern with its own rhythms, money, hierarchy, vocabulary and a problem it had before anything went wrong. The case grows out of that problem.",
+      "do": [
+        "List at least five concrete textures (objects, routines, sounds, smells, forms) and at least three internal terms staff use without explaining them.",
+        "Name two rhythms (a shift change, a quarter end, a delivery day) that documents will be stamped by."
+      ],
+      "stage": [
+        "S1",
+        "S2"
+      ],
+      "check": [
+        "KT-BI-12",
+        "RUB-16",
+        "RUB-24"
+      ],
+      "sources": [
+        "Raymond Chandler, The Simple Art of Murder (1944): murder put back among the people who commit it, in a recognisable world.",
+        "Sam Barlow on Her Story (GDC 2016): the database must read as a real archive, not a puzzle box."
+      ],
+      "confidence": "well-established craft"
+    },
+    {
+      "id": "CP-03",
+      "name": "People before suspects",
+      "rule": "Every named person has a want that predates the case, an obligation that pulls against it, a habit of attention, something they would lie about and why, and a life that continues off the page.",
+      "do": [
+        "Fill the person sheet (see character_method.json) for every named person, including the ones who are not suspects.",
+        "Give every suspect at least one appearance on paper that has nothing to do with the crime."
+      ],
+      "stage": [
+        "S1",
+        "S2"
+      ],
+      "check": [
+        "KT-BI-08",
+        "KT-PL-06",
+        "RUB-12"
+      ],
+      "sources": [
+        "Robert McKee, Story (1997): true character is revealed in choices made under pressure.",
+        "E. M. Forster, Aspects of the Novel (1927): round characters are capable of surprising in a convincing way."
+      ],
+      "confidence": "well-established craft"
+    },
+    {
+      "id": "CP-04",
+      "name": "Everyone has their reasons",
+      "rule": "The culprit acts for a reason an attentive reader can understand, if not excuse. The motive is human-scale: frailty, pride, loyalty, fear of being replaced, love misapplied.",
+      "do": [
+        "Write truth.why_it_matters: what the act protected or obtained for the person who did it, in plain words.",
+        "Prefer motives rooted in the seeded stakes over greed or madness."
+      ],
+      "stage": [
+        "S1"
+      ],
+      "check": [
+        "RUB-19"
+      ],
+      "sources": [
+        "Jean Renoir, The Rules of the Game (1939): everyone has their reasons.",
+        "Patricia Highsmith, Plotting and Writing Suspense Fiction (1966).",
+        "Chandler (1949): credible motivation."
+      ],
+      "confidence": "well-established craft"
+    },
+    {
+      "id": "CP-05",
+      "name": "Fair play",
+      "rule": "Every fact the solution needs is visible on paper before the determination, and is reachable without keyword search by a player who reads carefully.",
+      "do": [
+        "Give every solution fact two independent routes; at least one route works by reading and following references only.",
+        "Never rely on knowledge from outside the archive."
+      ],
+      "stage": [
+        "S2"
+      ],
+      "check": [
+        "KT-PL-02",
+        "RUB-02",
+        "RUB-01"
+      ],
+      "sources": [
+        "Ronald Knox, Decalogue (1929).",
+        "S. S. Van Dine, Twenty Rules for Writing Detective Stories (1928).",
+        "Graham Nelson, The Player's Bill of Rights (1995)."
+      ],
+      "confidence": "well-established craft"
+    },
+    {
+      "id": "CP-06",
+      "name": "Surprising forward, inevitable backward",
+      "rule": "The turn re-reads paper the player already holds. At least one early document reads as ordinary on first pass and means something else after the turn. Nothing new is introduced to make the turn work.",
+      "do": [
+        "Place the masking document at an earlier tier than the reframing document.",
+        "Never write the conclusion of the turn in any single document; the player assembles it."
+      ],
+      "stage": [
+        "S1",
+        "S2"
+      ],
+      "check": [
+        "KT-PL-05",
+        "RUB-14"
+      ],
+      "sources": [
+        "John Curran, Agatha Christie's Secret Notebooks (2009): plotting backward from the solution.",
+        "Stellan Ohlsson, representational change theory of insight (1992): insight comes from re-encoding a problem, not from new data.",
+        "Kounios and Beeman, The Eureka Factor (2015)."
+      ],
+      "confidence": "scholarly support"
+    },
+    {
+      "id": "CP-07",
+      "name": "The herring is a real secret",
+      "rule": "The misleading line is caused by a true secondary secret held by someone who is not the culprit. It earns real early suspicion and is refuted cleanly by paper the player can find.",
+      "do": [
+        "Tie the herring to one suspect's secondary secret fact and to a wrong option.",
+        "Place the inducing document early and the refuting documents later."
+      ],
+      "stage": [
+        "S1",
+        "S2"
+      ],
+      "check": [
+        "KT-BI-06",
+        "KT-PL-04",
+        "RUB-15"
+      ],
+      "sources": [
+        "Curran (2009) on Christie's double bluff.",
+        "Craft report in this project: The Double Bluff Re-imagined, The Lure."
+      ],
+      "confidence": "well-established craft"
+    },
+    {
+      "id": "CP-08",
+      "name": "Paper has a reason to exist",
+      "rule": "Every document was written by someone, for someone, at a time, to get something done in the world. None exists to inform the player.",
+      "do": [
+        "For each document name its author, its intended reader and its in-world reason.",
+        "Ask: would this paper exist if nobody ever investigated? If not, it is a clue wearing a costume; re-cut it."
+      ],
+      "stage": [
+        "S2",
+        "S3"
+      ],
+      "check": [
+        "KT-PL-08",
+        "RUB-16"
+      ],
+      "sources": [
+        "Project craft report, section 3: the epistolary gap between what a document states and what it reveals.",
+        "Lucas Pope, Return of the Obra Dinn (2018) and The Case of the Golden Idol (2022) as practice references."
+      ],
+      "confidence": "informed opinion"
+    },
+    {
+      "id": "CP-09",
+      "name": "Polyphony",
+      "rule": "Different authors see differently and write differently. Departments keep findings and assessment apart, and each assessment shows its author's bias.",
+      "do": [
+        "Assign each department one voice profile from voice_matrix.json and honour its markers.",
+        "Let personal documents carry the author's habit of attention: what they notice is how the reader meets them."
+      ],
+      "stage": [
+        "S2",
+        "S3"
+      ],
+      "check": [
+        "VL-07",
+        "VL-08",
+        "VL-09",
+        "RUB-13"
+      ],
+      "sources": [
+        "Mikhail Bakhtin, Problems of Dostoevsky's Poetics (1929/1963): polyphony.",
+        "Bram Stoker, Dracula (1897) as epistolary practice."
+      ],
+      "confidence": "scholarly support"
+    },
+    {
+      "id": "CP-10",
+      "name": "Specific, then silent",
+      "rule": "Carry meaning in concrete particulars and stop. Do not tell the reader what to feel or what matters.",
+      "do": [
+        "Prefer a measured, dated, named detail to an adjective.",
+        "Cut any sentence that explains the significance of another sentence."
+      ],
+      "stage": [
+        "S3",
+        "S4"
+      ],
+      "check": [
+        "VL-01",
+        "VL-03",
+        "RUB-20"
+      ],
+      "sources": [
+        "Anton Chekhov, letters to Alexander Chekhov (1886): show the glint of light on broken glass.",
+        "Ursula K. Le Guin, Steering the Craft (1998/2015)."
+      ],
+      "confidence": "well-established craft"
+    },
+    {
+      "id": "CP-11",
+      "name": "No quirk without cost",
+      "rule": "A trait earns its place only if it changes what the person does, what they notice, or what they would hide. Colour for its own sake is cut.",
+      "do": [
+        "For each distinguishing trait ask: if deleted, would any document or choice change? If not, delete it.",
+        "Distinguish people by pressure and attention, not by props."
+      ],
+      "stage": [
+        "S1",
+        "S3"
+      ],
+      "check": [
+        "KT-BI-09",
+        "VL-14",
+        "RUB-18"
+      ],
+      "sources": [
+        "McKee (1997): characterisation versus true character.",
+        "Forster (1927): flat characters built round a single idea."
+      ],
+      "confidence": "informed opinion"
+    },
+    {
+      "id": "CP-12",
+      "name": "Semantic honesty",
+      "rule": "Each player-facing text asserts only its assigned facts. Titles, subjects and findings are the leak surface: they describe, they never conclude.",
+      "do": [
+        "List the fact IDs each text asserts in the claims file.",
+        "Write titles the way the institution files things: by form, number, date and subject, not by meaning."
+      ],
+      "stage": [
+        "S3",
+        "S4"
+      ],
+      "check": [
+        "VL-11",
+        "RUB-17"
+      ],
+      "sources": [
+        "Project dev log, Entry 022: titles, subjects and findings are the main leak surface."
+      ],
+      "confidence": "project decision"
+    },
+    {
+      "id": "CP-13",
+      "name": "Cognitive budget",
+      "rule": "At most five suspects, four locations and two critical times or codes. Depth comes from people and paper, not from count.",
+      "do": [
+        "Merge minor roles; cut any location that holds no decisive fact."
+      ],
+      "stage": [
+        "S1"
+      ],
+      "check": [
+        "KT-BI-03",
+        "RUB-03"
+      ],
+      "sources": [
+        "George A. Miller (1956) and Nelson Cowan (2001) on working memory limits.",
+        "Peter Pirolli and Stuart Card, sensemaking loop (2005)."
+      ],
+      "confidence": "scholarly support"
+    },
+    {
+      "id": "CP-14",
+      "name": "Restraint and human scale",
+      "rule": "Calm archival register. Dread and grief come from procedure, omission and ordinary loss, not from spectacle.",
+      "do": [
+        "Let the institution's routine carry the weight: what it records, what it fails to record, what it files late.",
+        "Anchor feeling in a minor, recognisable person."
+      ],
+      "stage": [
+        "S1",
+        "S3"
+      ],
+      "check": [
+        "RUB-20"
+      ],
+      "sources": [
+        "Shirley Jackson, The Haunting of Hill House (1959).",
+        "M. R. James, ghost-story practice of reticence (1904 onward).",
+        "Project craft report, sections 5 and 1.11."
+      ],
+      "confidence": "well-established craft"
+    },
+    {
+      "id": "CP-15",
+      "name": "The truth changes the story",
+      "rule": "Solving the case changes what the human question means. The answer is also the story's last move.",
+      "do": [
+        "Write premise.ending_note: the image or fact the player keeps once the truth is known."
+      ],
+      "stage": [
+        "S1"
+      ],
+      "check": [
+        "RUB-19",
+        "RUB-25"
+      ],
+      "sources": [
+        "P. D. James (2009).",
+        "Dorothy L. Sayers, Aristotle on Detective Fiction (1935): the solution as reversal and recognition."
+      ],
+      "confidence": "well-established craft"
+    },
+    {
+      "id": "CP-16",
+      "name": "The world never announces",
+      "rule": "No document, title or mail tells the player they are close, clever or wrong. The aha happens in the player alone.",
+      "do": [
+        "Never use the vocabulary of puzzles inside the world."
+      ],
+      "stage": [
+        "S3",
+        "S4"
+      ],
+      "check": [
+        "VL-01"
+      ],
+      "sources": [
+        "Project dev log, Entries 015 and 024: no confirmation at an aha; an aha is just a moment that happens."
+      ],
+      "confidence": "project decision"
+    },
+    {
+      "id": "CP-17",
+      "name": "Three micro-acts",
+      "rule": "Even a single sitting has a shape: intake and initial fixation, then impasse and anomaly, then restructuring and citation. Tiers carry it: early documents build the default reading and the world, middle documents expose the anomaly, late documents reframe.",
+      "do": [
+        "Use at least three tiers.",
+        "Put the false lead and the world's texture early, the contradiction in the middle, and the reframing document late."
+      ],
+      "stage": [
+        "S2"
+      ],
+      "check": [
+        "KT-PL-17",
+        "RUB-14"
+      ],
+      "sources": [
+        "Mystery Engine Design Research, Track 6, 'Pacing, Emotional Stakes, Serialized Canon, and Flavor Media'."
+      ],
+      "confidence": "informed opinion"
+    },
+    {
+      "id": "CP-18",
+      "name": "Archival humanity",
+      "rule": "Investment comes from quietly reconstructing human frailty, institutional hubris, uncredited labour or protective loyalty from fragments, not from peril.",
+      "do": [
+        "Choose stakes from that family and let the truth cost someone something recognisable."
+      ],
+      "stage": [
+        "S1"
+      ],
+      "check": [
+        "RUB-19",
+        "RUB-25"
+      ],
+      "sources": [
+        "Mystery Engine Design Research, Track 6."
+      ],
+      "confidence": "informed opinion"
+    },
+    {
+      "id": "CP-19",
+      "name": "Flavor is honest and short",
+      "rule": "World documents are badged as archive context by the Desk, carry no solution fact, and stay short so they never cause padding fatigue or false-clue paranoia.",
+      "do": [
+        "Keep each world document under the flavor word cap.",
+        "Give no world document a solution-critical fact."
+      ],
+      "stage": [
+        "S2"
+      ],
+      "check": [
+        "KT-PL-11"
+      ],
+      "sources": [
+        "Mystery Engine Design Research, Track 6 (150 to 250 words); project dev log section 2.2."
+      ],
+      "confidence": "project decision"
+    },
+    {
+      "id": "CP-20",
+      "name": "A different family checks the work",
+      "rule": "The model that wrote the case never grades it. A model from a different family solves it cold from the player-facing material only, and the kit scores the answers against the sealed key, printing only verdicts and IDs.",
+      "do": [
+        "Run the shortcut probe and the blind solve after finish, on an agent of a different model family."
+      ],
+      "stage": [
+        "S7"
+      ],
+      "check": [
+        "AU-01",
+        "AU-02",
+        "AU-03"
+      ],
+      "sources": [
+        "Mystery Engine Design Research, Track 5, Gates 3 and 4, and Strict Cross-Family Separation."
+      ],
+      "confidence": "scholarly support"
+    },
+    {
+      "id": "CP-21",
+      "name": "Familiar made new",
+      "rule": "A well-worn trope is welcome when it is chosen: recognisable enough to raise the genre's expectation, and renewed by a lens that makes it seen again. The mystery form is ideal for this, because the trope can be the default reading the turn reframes.",
+      "do": [
+        "Declare every trope you use on purpose, with its lens, in premise.tropes_embraced.",
+        "Keep the trope in the structure; never borrow its stock phrasing."
+      ],
+      "stage": [
+        "S1",
+        "S2"
+      ],
+      "check": [
+        "KT-BI-10",
+        "KT-BI-16",
+        "RUB-29",
+        "RUB-30"
+      ],
+      "sources": [
+        "Viktor Shklovsky, 'Art as Technique' (1917).",
+        "Steve Neale, Genre (1980).",
+        "Umberto Eco, 'Casablanca: Cult Movies and Intertextual Collage' (1984).",
+        "Project craft report, principle 6 (the double bluff)."
+      ],
+      "confidence": "well-established craft"
+    }
+  ]
+}

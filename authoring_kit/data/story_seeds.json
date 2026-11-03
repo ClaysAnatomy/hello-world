@@ -1,0 +1,105 @@
+{
+  "version": "1.0.0",
+  "ascii_only": "Names are plain ASCII so the shared tokenizer and search treat them predictably.",
+  "purpose": "What Python picks before any model call so that each run starts somewhere different. Everything here is abstract: shapes, pressures and textures, never plots. A user brief overrides any seed it touches; seeds fill only the gaps.",
+  "mechanisms": [
+    {"id": "MECH-01", "text": "substitution of one routine object for another"},
+    {"id": "MECH-02", "text": "an effect set up earlier that takes hold later"},
+    {"id": "MECH-03", "text": "a legitimate procedure used for an illegitimate end"},
+    {"id": "MECH-04", "text": "a record altered or completed after the fact"},
+    {"id": "MECH-05", "text": "a delivery or message sent to the wrong place, on purpose or not"},
+    {"id": "MECH-06", "text": "borrowed credentials, keys or role"},
+    {"id": "MECH-07", "text": "an ordinary physical condition exploited: heat, cold, damp, weight, noise"},
+    {"id": "MECH-08", "text": "a duty deliberately left undone"},
+    {"id": "MECH-09", "text": "a scene arranged to look routine"},
+    {"id": "MECH-10", "text": "a timed absence that others cover without knowing why"},
+    {"id": "MECH-11", "text": "blame moved onto someone else through paperwork"},
+    {"id": "MECH-12", "text": "an accident followed by concealment"},
+    {"id": "MECH-13", "text": "a favour that went wrong"},
+    {"id": "MECH-14", "text": "an instruction misread, then the misreading protected"}
+  ],
+  "red_herrings": [
+    {"id": "RH-01", "text": "a hidden debt or money trouble"},
+    {"id": "RH-02", "text": "a minor rule broken for a decent reason"},
+    {"id": "RH-03", "text": "protecting a family member from consequences"},
+    {"id": "RH-04", "text": "a health condition kept from the employer"},
+    {"id": "RH-05", "text": "a quiet plan to leave for another post"},
+    {"id": "RH-06", "text": "taking back credit for work that was taken from them"},
+    {"id": "RH-07", "text": "an old mistake of their own, long covered"},
+    {"id": "RH-08", "text": "unofficial side work or an arrangement outside the rules"},
+    {"id": "RH-09", "text": "a grievance they are documenting in secret"},
+    {"id": "RH-10", "text": "caring duties hidden from the institution"}
+  ],
+  "stakes": [
+    {"id": "STK-01", "text": "frailty: a body or mind failing, and the fear of it being seen"},
+    {"id": "STK-02", "text": "institutional hubris: a place that cannot admit it was wrong"},
+    {"id": "STK-03", "text": "uncredited labour: work that held things together and was never acknowledged"},
+    {"id": "STK-04", "text": "protective loyalty: covering for someone at a cost to oneself"},
+    {"id": "STK-05", "text": "the cost of being replaceable"},
+    {"id": "STK-06", "text": "a promise made to someone who is gone"},
+    {"id": "STK-07", "text": "a small place's reputation and the people who carry it"},
+    {"id": "STK-08", "text": "a duty inherited and never chosen"}
+  ],
+  "human_questions": [
+    {"id": "HQ-01", "text": "What do we owe the people whose work we use?"},
+    {"id": "HQ-02", "text": "When does protecting someone become harming them?"},
+    {"id": "HQ-03", "text": "Who is allowed to be tired?"},
+    {"id": "HQ-04", "text": "What does an institution remember, and what does it choose to forget?"},
+    {"id": "HQ-05", "text": "Is a correct record an honest one?"},
+    {"id": "HQ-06", "text": "What is a person worth once they can no longer do the job?"},
+    {"id": "HQ-07", "text": "How long can a kindness be kept secret before it becomes a lie?"},
+    {"id": "HQ-08", "text": "Who gets believed?"},
+    {"id": "HQ-09", "text": "What happens to loyalty when the thing you are loyal to does not deserve it?"},
+    {"id": "HQ-10", "text": "Can you be responsible for something you did not intend?"}
+  ],
+  "ironies": [
+    {"id": "IR-01", "text": "The safeguard caused the harm."},
+    {"id": "IR-02", "text": "The most careful person made the decisive mistake."},
+    {"id": "IR-03", "text": "The official record is accurate and still misleading."},
+    {"id": "IR-04", "text": "The accused is protecting the accuser."},
+    {"id": "IR-05", "text": "Help was offered and refused."},
+    {"id": "IR-06", "text": "The motive was mercy."},
+    {"id": "IR-07", "text": "The culprit filed the decisive evidence themselves, correctly."},
+    {"id": "IR-08", "text": "The person nobody noticed noticed everything."}
+  ],
+  "setting_textures": [
+    {"id": "TX-01", "text": "a small public service that runs on goodwill and overtime"},
+    {"id": "TX-02", "text": "a seasonal workplace at the end of its season"},
+    {"id": "TX-03", "text": "a research or monitoring station with a tiny permanent staff"},
+    {"id": "TX-04", "text": "a family firm in its third generation"},
+    {"id": "TX-05", "text": "an ancillary hospital department nobody visits"},
+    {"id": "TX-06", "text": "a transport depot that works through the night"},
+    {"id": "TX-07", "text": "a records office being modernised"},
+    {"id": "TX-08", "text": "a school after the pupils have gone home"},
+    {"id": "TX-09", "text": "a cooperative where everyone votes and nobody agrees"},
+    {"id": "TX-10", "text": "a heritage site with more history than budget"},
+    {"id": "TX-11", "text": "a port or ferry office ruled by tides and timetables"},
+    {"id": "TX-12", "text": "a utility maintenance crew on call"}
+  ],
+  "critical_string_kinds": [
+    {"id": "CSK-TIME", "format": "HH:MM"},
+    {"id": "CSK-CODE", "format": "L-DDDD"}
+  ],
+  "name_pools": [
+    {
+      "id": "NP-1", "label": "Irish, Scottish and northern English",
+      "given": ["Aoife", "Bernadette", "Colm", "Dervla", "Ewan", "Fergal", "Gemma", "Hamish", "Ita", "Jarlath", "Kenna", "Lorcan", "Maura", "Niall", "Orla", "Padraig", "Rhona", "Senan", "Tadhg", "Una", "Wilf", "Yvonne"],
+      "family": ["Ahern", "Brennan", "Cullinane", "Dunphy", "Egan", "Feeney", "Gilhooly", "Hennessy", "Ingham", "Joyce", "Kinsella", "Lomax", "Mulcahy", "Nolan", "O'Dwyer", "Prentice", "Quigley", "Rourke", "Sheridan", "Tierney", "Urquhart", "Whelan"]
+    },
+    {
+      "id": "NP-2", "label": "Central European",
+      "given": ["Agnieszka", "Bohdan", "Dorota", "Emil", "Franziska", "Grzegorz", "Halina", "Ivo", "Jarmila", "Kazimierz", "Lenka", "Miroslav", "Nadia", "Otylia", "Pavel", "Radka", "Stanislav", "Teodora", "Urszula", "Vilem", "Wanda", "Zdenka"],
+      "family": ["Adamczyk", "Bartos", "Czerny", "Dvorak", "Eckert", "Fiala", "Gorski", "Hruby", "Ilic", "Jelinek", "Kowal", "Lisowski", "Mazur", "Novak", "Ostrowski", "Pokorny", "Rybak", "Szabo", "Tomczak", "Urban", "Vrba", "Wojcik"]
+    },
+    {
+      "id": "NP-3", "label": "Dutch and Nordic",
+      "given": ["Anneke", "Bram", "Dagny", "Eelco", "Fenna", "Gunnar", "Hilde", "Ingrid", "Joost", "Kerstin", "Lotte", "Maarten", "Nils", "Oddny", "Pim", "Ragnhild", "Sjoerd", "Tove", "Ulla", "Wessel", "Ylva", "Henk"],
+      "family": ["Aalders", "Bakker", "Dijkstra", "Eklund", "Fjeld", "Groot", "Haverkamp", "Isaksen", "Jansen", "Kvist", "Lindqvist", "Mulder", "Nyberg", "Olsen", "Pettersen", "Quist", "Rasmussen", "Strand", "Terpstra", "Vos", "Wennberg", "Hoekstra"]
+    },
+    {
+      "id": "NP-4", "label": "Iberian and Italian",
+      "given": ["Amparo", "Benedetto", "Concha", "Dario", "Edelmira", "Fulvio", "Graziella", "Horacio", "Inmaculada", "Jacinto", "Leonor", "Massimo", "Nieves", "Ottavio", "Pilar", "Rodolfo", "Sagrario", "Tancredi", "Umberto", "Valeria", "Zaira", "Eugenio"],
+      "family": ["Arrieta", "Bellini", "Cabrera", "D'Amico", "Echeverria", "Ferraro", "Gallo", "Herrero", "Ibarra", "Lozano", "Mancuso", "Navarro", "Orsini", "Pardo", "Quiroga", "Rinaldi", "Sanz", "Tedesco", "Urrutia", "Vidal", "Zubiri", "Esposito"]
+    }
+  ]
+}

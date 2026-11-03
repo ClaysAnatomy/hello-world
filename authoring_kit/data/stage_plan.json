@@ -1,0 +1,217 @@
+{
+  "version": "1.0.0",
+  "purpose": "The authoring stages in order. Each stage runs in its own folder with only the inputs listed, so context is isolated by construction. The sealed answer key travels only to stages with needs_answer_key true.",
+  "stages": [
+    {
+      "id": "S1",
+      "name": "story and truth bible",
+      "prompt": "S1_truth_bible.md",
+      "inputs": [
+        "brief",
+        "seeds",
+        "pattern_briefs",
+        "craft",
+        "character_method",
+        "authoring_readme",
+        "bible_schema"
+      ],
+      "outputs": [
+        "bible_parts/1_premise.json",
+        "bible_parts/2_people.json",
+        "bible_parts/3_truth.json",
+        "bible_parts/4_facts.json",
+        "bible_parts/5_reveal.json"
+      ],
+      "check": "bible",
+      "needs_answer_key": true,
+      "iterate": null,
+      "optional": false,
+      "model": null,
+      "effort": null
+    },
+    {
+      "id": "S2A",
+      "name": "document plan",
+      "prompt": "S2A_doc_plan.md",
+      "inputs": [
+        "bible",
+        "seeds",
+        "pattern_briefs",
+        "document_forms",
+        "media_forms",
+        "voice_profiles",
+        "authoring_readme",
+        "plan_schema"
+      ],
+      "outputs": [
+        "clue_plan.json"
+      ],
+      "check": "plan",
+      "needs_answer_key": true,
+      "iterate": null,
+      "optional": false,
+      "model": null,
+      "effort": null
+    },
+    {
+      "id": "S2B",
+      "name": "engine files with placeholders",
+      "prompt": "S2B_engine_files.md",
+      "inputs": [
+        "bible",
+        "clue_plan",
+        "authoring_readme",
+        "fixture_case",
+        "fixture_skin",
+        "engine_schemas"
+      ],
+      "outputs": [
+        "case.json",
+        "skin.json"
+      ],
+      "check": "engine_skeleton",
+      "needs_answer_key": true,
+      "iterate": null,
+      "optional": false,
+      "model": null,
+      "effort": null
+    },
+    {
+      "id": "S3",
+      "name": "document prose, one record at a time",
+      "prompt": "S3_clue_prose.md",
+      "inputs": [
+        "unit_brief",
+        "fill_schema"
+      ],
+      "outputs": [
+        "fill.json"
+      ],
+      "check": "fill",
+      "needs_answer_key": false,
+      "iterate": "s3_owners",
+      "optional": false,
+      "model": null,
+      "effort": null
+    },
+    {
+      "id": "S4",
+      "name": "desk fields: options, mail, subjects",
+      "prompt": "S4_desk_fields.md",
+      "inputs": [
+        "unit_brief",
+        "fill_schema"
+      ],
+      "outputs": [
+        "fill.json"
+      ],
+      "check": "fill",
+      "needs_answer_key": false,
+      "iterate": null,
+      "optional": false,
+      "model": null,
+      "effort": null
+    },
+    {
+      "id": "S6",
+      "name": "craft review (scores only)",
+      "prompt": "S6_craft_review.md",
+      "inputs": [
+        "bible",
+        "clue_plan",
+        "case",
+        "rubric",
+        "review_schema"
+      ],
+      "outputs": [
+        "review.json"
+      ],
+      "check": "review",
+      "needs_answer_key": true,
+      "iterate": null,
+      "optional": true,
+      "model": null,
+      "effort": null
+    },
+    {
+      "id": "S7",
+      "name": "cross-family blind audit (after finish)",
+      "prompt": null,
+      "inputs": [
+        "player_bundle"
+      ],
+      "outputs": [
+        "answers.json"
+      ],
+      "check": "audit",
+      "needs_answer_key": false,
+      "iterate": "audit_modes",
+      "optional": true,
+      "model": null,
+      "effort": null,
+      "agent": "audit_agent"
+    }
+  ],
+  "bible_parts": [
+    {
+      "file": "bible_parts/1_premise.json",
+      "keys": [
+        "kit_version",
+        "mechanism_id",
+        "premise",
+        "critical_strings"
+      ],
+      "desc": "part 1 of 5: `kit_version`, `mechanism_id`, `premise` and `critical_strings`"
+    },
+    {
+      "file": "bible_parts/2_people.json",
+      "keys": [
+        "cast",
+        "locations"
+      ],
+      "desc": "part 2 of 5: `cast` and `locations`"
+    },
+    {
+      "file": "bible_parts/3_truth.json",
+      "keys": [
+        "truth",
+        "cover"
+      ],
+      "desc": "part 3 of 5: `truth` and `cover`"
+    },
+    {
+      "file": "bible_parts/4_facts.json",
+      "keys": [
+        "facts"
+      ],
+      "desc": "part 4 of 5: `facts`"
+    },
+    {
+      "file": "bible_parts/5_reveal.json",
+      "keys": [
+        "aha",
+        "red_herring",
+        "questions"
+      ],
+      "desc": "part 5 of 5: `aha`, `red_herring` and `questions`"
+    }
+  ],
+  "bible_parts_note": "S1 writes the bible as five small files, one complete write each, and the kit joins them into checkpoints/bible.json. One long write can hit the model's output limit and fail without a file; appending in pieces can run out of turns mid-object. Five whole parts keep each write small, make a cut-off part easy to spot, and let a repair rewrite one part. A part may carry a field listed for another part; a field set in two parts fails KT-IO-03. When no part exists, a single bible.json is still accepted.",
+  "repair": {
+    "id": "S5",
+    "prompt": "S5_repair.md",
+    "outputs_from_target": true,
+    "model": null,
+    "effort": null
+  },
+  "s4_owner": "DESK-01",
+  "model_note": "model and effort are filled into the agent command's {model} and {effort} tokens per stage. null means the defaults in kit_config.json agent.default_model and agent.default_effort.",
+  "audit_prompts": {
+    "SOLVE": "S7_blind_solve.md",
+    "SHORTCUT": "S7_shortcut_probe.md"
+  },
+  "inline_inputs": true,
+  "inline_note": "Every input is written into the prompt itself (JSON minified) as well as into the stage folder. Each file an agent reads costs a turn, and every turn re-sends the whole conversation, so reading ten inputs spent most of S2's turns and cost on the first real run. With the inputs inline, a stage is a few writes. inline_max_chars caps the inline section; larger inputs stay as files to read.",
+  "inline_max_chars": 600000,
+  "s2_split_note": "S2 was one stage writing the plan, the engine case and the skin; on the first real run it timed out with no files. S2A writes only the plan (checked by Python on its own); S2B writes the engine files from the accepted plan. Each is smaller, has its own time and turn limits, and can be repaired alone."
+}

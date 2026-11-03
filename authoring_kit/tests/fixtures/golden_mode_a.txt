@@ -1,0 +1,131 @@
+COMPAT PAT-01 AVAILABLE NATIVE
+COMPAT PAT-02 AVAILABLE NATIVE
+COMPAT PAT-03 AVAILABLE GENERIC
+COMPAT PAT-04 AVAILABLE GENERIC
+COMPAT PAT-05 AVAILABLE GENERIC
+COMPAT PAT-06 AVAILABLE GENERIC
+COMPAT PAT-07 AVAILABLE GENERIC
+COMPAT PAT-08 AVAILABLE GENERIC
+COMPAT PAT-09 AVAILABLE GENERIC
+COMPAT PAT-10 AVAILABLE GENERIC
+COMPAT PAT-11 AVAILABLE NATIVE
+COMPAT PAT-12 UNAVAILABLE missing accepted_fragment_orders
+COMPAT PAT-13 AVAILABLE GENERIC
+COMPAT PAT-14 AVAILABLE GENERIC
+COMPAT PAT-15 AVAILABLE GENERIC
+COMPAT PAT-16 AVAILABLE GENERIC
+COMPAT 15 of 16 patterns available
+COMPAT engine rules found 4
+COMPAT prose-like schema fields 6
+Seeds chosen and sealed.
+STAGES <STAGE_ROOT>
+INIT PASS
+--- next --all
+AGENT S1 started
+AGENT S1 exit 0
+BUDGET S1 turns 2 of 16
+BUDGET run turns 2 of 160
+BUDGET run cost 0.01 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S1 PASS
+AGENT S2A started
+AGENT S2A exit 0
+BUDGET S2A turns 2 of 14
+BUDGET run turns 4 of 160
+BUDGET run cost 0.02 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S2A PASS
+AGENT S2B started
+AGENT S2B exit 0
+BUDGET S2B turns 2 of 14
+BUDGET run turns 6 of 160
+BUDGET run cost 0.03 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S2B PASS
+AGENT S3-CLUE-01 started
+AGENT S3-CLUE-01 exit 0
+BUDGET S3 turns 2 of 60
+BUDGET run turns 8 of 160
+BUDGET run cost 0.04 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S3-CLUE-01 PASS
+AGENT S3-CLUE-02 started
+AGENT S3-CLUE-02 exit 0
+BUDGET S3 turns 4 of 60
+BUDGET run turns 10 of 160
+BUDGET run cost 0.05 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S3-CLUE-02 PASS
+AGENT S3-CLUE-03 started
+AGENT S3-CLUE-03 exit 0
+BUDGET S3 turns 6 of 60
+BUDGET run turns 12 of 160
+BUDGET run cost 0.06 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S3-CLUE-03 PASS
+AGENT S3-CLUE-04 started
+AGENT S3-CLUE-04 exit 0
+BUDGET S3 turns 8 of 60
+BUDGET run turns 14 of 160
+BUDGET run cost 0.07 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S3-CLUE-04 PASS
+AGENT S3-CLUE-05 started
+AGENT S3-CLUE-05 exit 0
+BUDGET S3 turns 10 of 60
+BUDGET run turns 16 of 160
+BUDGET run cost 0.08 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S3-CLUE-05 PASS
+AGENT S3-CLUE-08 started
+AGENT S3-CLUE-08 exit 0
+BUDGET S3 turns 12 of 60
+BUDGET run turns 18 of 160
+BUDGET run cost 0.09 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S3-CLUE-08 PASS
+AGENT S3-CLUE-10 started
+AGENT S3-CLUE-10 exit 0
+BUDGET S3 turns 14 of 60
+BUDGET run turns 20 of 160
+BUDGET run cost 0.10 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S3-CLUE-10 PASS
+AGENT S3-CLUE-06 started
+AGENT S3-CLUE-06 exit 0
+BUDGET S3 turns 16 of 60
+BUDGET run turns 22 of 160
+BUDGET run cost 0.11 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S3-CLUE-06 PASS
+AGENT S3-CLUE-07 started
+AGENT S3-CLUE-07 exit 0
+BUDGET S3 turns 18 of 60
+BUDGET run turns 24 of 160
+BUDGET run cost 0.12 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S3-CLUE-07 PASS
+AGENT S3-CLUE-09 started
+AGENT S3-CLUE-09 exit 0
+BUDGET S3 turns 20 of 60
+BUDGET run turns 26 of 160
+BUDGET run cost 0.13 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S3-CLUE-09 PASS
+CHECK errors 0 warnings 0
+GATE S3 PASS
+AGENT S4 started
+AGENT S4 exit 0
+BUDGET S4 turns 2 of 8
+BUDGET run turns 28 of 160
+BUDGET run cost 0.14 of 15.00 dollars
+CHECK errors 0 warnings 0
+CHECK S4 PASS
+All stages passed. Run finish.
+--- finish
+CHECK errors 0 warnings 0
+MEDIA artifacts 2 plates 1 video 0
+FINISH documents 10 texts 31 claims 17 warnings 0
+BUDGET run turns 28 of 160
+BUDGET run cost 0.14 of 15.00 dollars
+FINISH PASS

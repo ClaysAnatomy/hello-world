@@ -1,0 +1,227 @@
+{
+  "version": "1.0.0",
+  "purpose": "Every number the kit enforces. Turn and dollar figures are planning caps, not measurements: all credit and cost estimates are UNVERIFIED until a real run is measured. Stage caps stay inside the project's 80 turns and $6.00 per run (Entry 024).",
+  "budget": {
+    "max_suspects": 5,
+    "min_suspects": 3,
+    "max_locations": 4,
+    "max_critical_strings": 2,
+    "max_cast_total": 8,
+    "max_departments": 4,
+    "max_patterns": 1,
+    "max_patterns_note": "MVP setting. The research allows 1 to 2 patterns per case; raise to 2 after the first cases play well.",
+    "documents_note": "Research Track 7 sizes the MVP at about 6 clues; 12 is the most the S3 turn cap covers at 3 turns per document (with one repair inside the 80-turn run cap)."
+  },
+  "routes": {
+    "min_routes_per_solution_fact": 2,
+    "require_disjoint_pair": true,
+    "require_search_free_route": true
+  },
+  "people": {
+    "min_relationships_per_person": 2,
+    "min_documents_per_suspect": 2,
+    "min_authors_per_suspect": 2,
+    "require_non_crime_appearance": true,
+    "names_mode": "seeded_or_rules",
+    "names_note": "seeded_or_rules: S1 uses the seeded names, or replaces any of them with names that pass the same rules (distinct initials and sound keys, plain ASCII, not on a ban list) when the brief's setting needs another naming culture.",
+    "voice_sample_words": [
+      30,
+      120
+    ]
+  },
+  "world": {
+    "min_setting_texture": 5,
+    "min_internal_terms": 3,
+    "min_rhythms": 2,
+    "min_distinct_forms": 5,
+    "max_form_share": 0.35,
+    "world_clue_share_min": 0.1,
+    "world_clue_share_max": 0.35,
+    "flavor_max_words": 250,
+    "min_documents": 6,
+    "max_documents": 12,
+    "min_tiers": 3,
+    "documents_note": "Research Track 7 sizes the MVP at about 6 clues; 12 is the most the S3 turn cap covers at 3 turns per document."
+  },
+  "order": {
+    "herring_induce_max_tier": 1
+  },
+  "prose": {
+    "option_length_tolerance": 0.15,
+    "default_max_words": 220,
+    "ngram_n": 5,
+    "max_shared_ngrams_between_owners": 3,
+    "name_drift_max_distance": 1,
+    "name_drift_min_length": 5,
+    "overlap_severity": "ERROR"
+  },
+  "repair": {
+    "max_repair_rounds": 2,
+    "abort_on_repeated_id": true
+  },
+  "turns": {
+    "run_cap": 160,
+    "stage_caps": {
+      "S1": 16,
+      "S2A": 14,
+      "S2B": 14,
+      "S3": 60,
+      "S4": 8,
+      "S5": 48,
+      "S6": 4,
+      "S7": 4
+    },
+    "unit_caps": {
+      "S1": 12,
+      "S2A": 10,
+      "S2B": 10,
+      "S3": 4,
+      "S4": 6,
+      "S5": 8,
+      "S6": 4,
+      "S7": 2
+    },
+    "repair_unit_caps": {
+      "S1": 8,
+      "S2A": 8,
+      "S2B": 8,
+      "S3": 4,
+      "S4": 4,
+      "S6": 3
+    },
+    "caps_note": "v4.2, from the second real run (2026-11-02): S1 used 7 turns, its repair 7; S2 timed out at 16 with no files, and S2's repair could not start because every repair shared one 12-turn S5 pool. Now inputs are inline (no read turns), S2 is split into S2A and S2B, and each repaired unit has its own pool (repair_target_caps) inside the S5 stage cap. Cost, not turns, is the binding limit: see cost_usd_unverified.",
+    "audit_note": "S7 (blind audit) runs on a different agent, after finish; its turns count against the audit agent's own plan, not the 80-turn authoring cap.",
+    "repair_target_caps": {
+      "S1": 16,
+      "S2A": 16,
+      "S2B": 16,
+      "S3": 8,
+      "S4": 8,
+      "S6": 6
+    }
+  },
+  "cost_usd_unverified": {
+    "run_cap": 15.0,
+    "stage_caps": {
+      "S1": 2.5,
+      "S2A": 2.0,
+      "S2B": 2.0,
+      "S3": 5.0,
+      "S4": 1.0,
+      "S5": 4.0,
+      "S6": 1.0,
+      "S7": 1.0
+    },
+    "reported_multiplier": 1.0,
+    "unknown_cost_charge": "stage_unit_share",
+    "note": "Costs are what the agent reports (Claude Code's total_cost_usd, at list prices). reported_multiplier scales them to what the provider actually charges: set it from the provider's usage page after a run (charged / reported). A run that times out reports nothing; it is charged a conservative share of its stage cap so the caps stay honest."
+  },
+  "timeouts": {
+    "stage_minutes": 30,
+    "engine_check_seconds": 300,
+    "stage_minutes_by_stage": {
+      "S1": 40,
+      "S2A": 30,
+      "S2B": 30,
+      "S3": 15,
+      "S4": 15,
+      "S5": 30,
+      "S6": 15
+    },
+    "note": "A repair uses the time limit of the stage it repairs."
+  },
+  "tolerated_engine_rules": {
+    "S2": [],
+    "S3_GATE": [],
+    "purpose": "Rule IDs that may fail while placeholders are still in the case (for example a search rule that needs real prose). Empty by default; the local builder fills these only after seeing which rules depend on prose."
+  },
+  "ids": {
+    "opaque_id_regex": "^[A-Z][A-Z0-9]{0,5}(-[A-Z0-9]{1,5}){0,3}$",
+    "print_prefixes": [
+      "AU",
+      "BC",
+      "BL",
+      "CAM",
+      "CAP",
+      "CHAR",
+      "CHK",
+      "CLUE",
+      "CP",
+      "CS",
+      "DEPT",
+      "DESK",
+      "DF",
+      "DK",
+      "F",
+      "FACT",
+      "FB",
+      "FM",
+      "FP",
+      "HQ",
+      "IMG",
+      "IR",
+      "KT",
+      "L",
+      "LOC",
+      "MAIL",
+      "MECH",
+      "MF",
+      "NP",
+      "OPT",
+      "P",
+      "PAT",
+      "PF",
+      "PP",
+      "PROBE",
+      "PUB",
+      "Q",
+      "R",
+      "REC",
+      "REQ",
+      "RH",
+      "RUB",
+      "RULE",
+      "S",
+      "SLIP",
+      "STK",
+      "TQ",
+      "TX",
+      "V",
+      "VL"
+    ],
+    "placeholder_format": "PP-{owner}-{n}"
+  },
+  "ledger": {
+    "window": 6,
+    "novelty_penalty": 0.2
+  },
+  "taste": {
+    "learning_rate": 0.15,
+    "min_weight": 0.3,
+    "max_weight": 2.0
+  },
+  "audit": {
+    "options_only_margin": 0.1,
+    "single_clue_max_confidence": 0.6,
+    "require_cite_precision": true,
+    "require_full_solve": true,
+    "source": "Mystery Engine Design Research, Track 5, Quantitative Audit Metrics 1, 2 and 4.",
+    "min_cite_coverage": 1.0,
+    "cite_note": "Deviation from the research's Jaccard >= 0.67: with two routes per fact the valid set is large, so a solver citing one complete route scores about 0.5. The kit instead requires every cited document to be valid (precision 1.0) and the citations together to cover every supporting fact, which matches the engine verifier's citation model (Entry 012). Jaccard is still reported."
+  },
+  "tropes": {
+    "max_embraced": 3,
+    "note": "How many tropes a case may embrace on purpose. Each needs a lens from trope_lenses.json."
+  },
+  "media": {
+    "max_items": 8,
+    "max_plates": 4,
+    "max_handling": 5,
+    "video": {
+      "max": 1,
+      "min": 1,
+      "min_enforced": false
+    },
+    "note": "Video: the design calls for exactly one prestige video log per case. min_enforced stays false until the video pipeline exists; until then a case may have none, and never more than one. Plates are artifacts that need a generated image (photographs, badges, handwritten scans); the cap keeps image cost bounded."
+  }
+}

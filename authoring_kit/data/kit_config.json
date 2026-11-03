@@ -1,0 +1,179 @@
+{
+  "version": "1.0.0",
+  "purpose": "Where the engine lives (relative to the project root passed with --root), how engine checks are called, and how an agent is invoked in Mode A. Model-agnostic: the agent command is a template the local builder fills. The kit never reads, stores or prints a key; it removes environment variables whose names end with a listed suffix before starting any child process.",
+  "python": "",
+  "mode": "B",
+  "engine": {
+    "case_schema_globs": [
+      "engine/schemas/case*.json"
+    ],
+    "skin_schema_globs": [
+      "engine/schemas/skin*.json"
+    ],
+    "vocabulary_globs": [
+      "engine/schemas/vocabulary*.json",
+      "engine/vocabulary*.json"
+    ],
+    "rules_glob": "engine/rules/*.json",
+    "rule_id_keys": [
+      "id",
+      "rule_id"
+    ],
+    "rule_text_keys": [
+      "description",
+      "summary",
+      "title"
+    ],
+    "contract_json": "engine/contract/bundle_contract.json",
+    "authoring_readme": "engine/README_AUTHORING_FOR_OPUS.md",
+    "fixture_case": "engine/fixtures/CASE-FIX-01/case.json",
+    "fixture_skin": "engine/fixtures/skins/SKIN-FIX_A.json"
+  },
+  "engine_checks": [
+    {
+      "id": "CHK-1",
+      "argv": [
+        "{python}",
+        "engine/tools/check_case.py",
+        "{case}",
+        "--skin",
+        "{skin}"
+      ],
+      "at": [
+        "S2",
+        "S3_GATE",
+        "S4",
+        "FINISH"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "CHK-2",
+      "argv": [
+        "{python}",
+        "engine/tools/pack.py",
+        "{case}",
+        "--skin",
+        "{skin}"
+      ],
+      "at": [
+        "FINISH"
+      ],
+      "enabled": false
+    },
+    {
+      "id": "CHK-3",
+      "argv": [
+        "{python}",
+        "engine/tools/export_desk.py",
+        "{case}",
+        "--skin",
+        "{skin}",
+        "--out",
+        "{ws}/desk_export"
+      ],
+      "at": [
+        "FINISH"
+      ],
+      "enabled": false
+    }
+  ],
+  "engine_output": {
+    "fail_word": "FAIL",
+    "pass_word": "PASS",
+    "path_regex": "\\$[A-Za-z0-9_.\\[\\]]*"
+  },
+  "agent": {
+    "argv": [],
+    "stdin": "prompt",
+    "env_strip_suffixes": [
+      "_API_KEY",
+      "_AUTH_TOKEN"
+    ],
+    "usage_from_stdout_json": false,
+    "usage_keys": {
+      "turns": "num_turns",
+      "cost_usd": "total_cost_usd",
+      "result": "subtype",
+      "duration_ms": "duration_ms",
+      "denials": "permission_denials"
+    },
+    "examples_note": "Fill argv for your agent. Tokens: {prompt_file} {stage_dir} {max_turns} {model} {effort} {python}. The prompt is also sent on stdin when stdin is 'prompt'. Examples live in docs/INTEGRATION.md.",
+    "default_model": "",
+    "default_effort": "",
+    "family": "",
+    "pause": {
+      "exit_codes": [],
+      "output_patterns": [
+        "usage limit reached",
+        "rate limit",
+        "quota exceeded",
+        "limit will reset"
+      ],
+      "note": "UNVERIFIED signals. When the agent stops because a plan or rate limit was reached, the run pauses instead of failing. Patterns are matched case-insensitively in memory against the agent's output and never stored or printed. Confirm the real signals from the agent's documentation."
+    },
+    "usage_note": "Read from the agent's final JSON when usage_from_stdout_json is true. Only numbers, a short lowercase result word (for Claude Code: success, error_max_turns, error_during_execution), and the count of a list (permission_denials) are kept. All text is dropped."
+  },
+  "workspace": {
+    "case_file": "case.json",
+    "skin_file": "skin.json"
+  },
+  "state": {
+    "ledger": "authoring_kit/state/ledger.json",
+    "taste_profile": "authoring_kit/state/taste_profile.json"
+  },
+  "run_optional_S6": false,
+  "python_note": "Empty means the interpreter running the kit. Set a full path to force another.",
+  "audit_agent": {
+    "argv": [],
+    "stdin": "prompt",
+    "family": "",
+    "default_model": "",
+    "default_effort": "",
+    "usage_from_stdout_json": false,
+    "usage_keys": {
+      "turns": "num_turns",
+      "cost_usd": "total_cost_usd",
+      "result": "subtype",
+      "duration_ms": "duration_ms",
+      "denials": "permission_denials"
+    },
+    "note": "Must be a different model family from agent.family (research Track 5: Strict Cross-Family Separation). The kit refuses to run the audit when either family is blank or they match.",
+    "env_strip_suffixes": [
+      "_AUTH_TOKEN"
+    ],
+    "env_note": "The audit agent may need its own key from the environment (for example a Gemini key), so by default only *_AUTH_TOKEN is removed. The kit itself never reads any key."
+  },
+  "audit": {
+    "questions_path": "$.questions",
+    "question_id_keys": [
+      "question_id",
+      "id"
+    ],
+    "option_list_keys": [
+      "options"
+    ],
+    "option_id_keys": [
+      "option_id",
+      "id"
+    ],
+    "cite_map": "",
+    "note": "How to find questions and options in the player bundle for the options-only probe. cite_map, if set, is a JSON file (relative to the workspace) mapping cited record references to clue IDs, for bundles that re-key clues."
+  },
+  "stage_root": "",
+  "stage_root_note": "Where stage folders are created. Empty means a new folder under the system temp directory per run. Never inside the workspace: an agent's working folder is never inside the vault (Entry 014).",
+  "probe": {
+    "exact_keys": [
+      "text",
+      "title",
+      "subject",
+      "caption",
+      "body",
+      "stem",
+      "label",
+      "lines",
+      "transcript"
+    ],
+    "note": "Keys treated as player-facing prose by placeholder_probe.py, in addition to capability_map.json prose_field_hints.suffixes. Edit to match the real schema."
+  }
+}

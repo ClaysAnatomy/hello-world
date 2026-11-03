@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "purpose": "Ways to make a well-worn trope feel new. A trope the case uses on purpose is declared in the bible (premise.tropes_embraced) with one of these lenses; declared tropes are exempt from the trope warning. Cliche phrasing stays banned regardless: the familiar thing lives in the structure, never in stock sentences. Abstract only: no story.",
+  "sources": [
+    "Viktor Shklovsky, 'Art as Technique' (1917): defamiliarisation, making the familiar strange enough to be seen again.",
+    "Steve Neale, Genre (1980): genre pleasure as repetition with difference.",
+    "Umberto Eco, 'Casablanca: Cult Movies and Intertextual Collage' (1984): cliches used knowingly gain new force.",
+    "Project craft report, principle 6, 'The Double Bluff Re-imagined'; John Curran, Agatha Christie's Secret Notebooks (2009).",
+    "Mystery Engine Design Research, Track 3 (MASKS and REFRAMES) and Track 6 (archival humanity)."
+  ],
+  "lenses": [
+    {"id": "LN-01", "name": "The trope is the default reading", "move": "Let the genre-savvy player recognise the trope early and believe it. It is the false lead or the cover story; the truth underneath is human-scale and reframes every document that seemed to confirm it.", "pairs_with": ["red_herring", "aha"], "risk": "If the trope is simply false, the player feels cheated. Its trappings must have a true, human cause on paper."},
+    {"id": "LN-02", "name": "Met only through procedure", "move": "The trope never appears directly. It is met through what the institution does about it: the forms, the quarantine checklist, the requisition, the incident numbering, the insurance query.", "pairs_with": ["document_forms"], "risk": "Too dry. One person's paper must carry feeling."},
+    {"id": "LN-03", "name": "Seen by someone looking elsewhere", "move": "Tell it through the person whose attention is on something ordinary: the cook's stock count, the radio operator's signal log, the contractor's invoice. The trope is the background to their own worry.", "pairs_with": ["character_method"], "risk": "The witness becomes a device. Their own want must matter on its own terms."},
+    {"id": "LN-04", "name": "The aftermath the genre skips", "move": "The famous scene has already happened, or never quite does. The archive is the cleanup: the inquiry, the replacement order, the letter to a family, the shift rota with a name crossed out.", "pairs_with": ["stakes"], "risk": "Inertia. A question must still be live in the paperwork."},
+    {"id": "LN-05", "name": "True, but beside the point", "move": "The uncanny thing is real within rules the archive teaches in plain terms, and it is not what the crime is about. The crime is a human act that used it, hid behind it, or was mistaken for it.", "pairs_with": ["fair_play"], "risk": "Breaking fair play. Every rule the uncanny thing follows must be on paper before it matters."},
+    {"id": "LN-06", "name": "The metaphor made literal", "move": "Take the trope's emotional meaning and make it a plain, checkable fact. A face you cannot trust becomes a borrowed credential; isolation becomes a logged communications blackout; the thing in the ice becomes a sample with a chain of custody.", "pairs_with": ["patterns"], "risk": "Too neat. Keep one thing unexplained that the case does not need."},
+    {"id": "LN-07", "name": "The threat is the one being protected", "move": "The figure the trope casts as danger is the one someone is shielding, or the one doing the shielding.", "pairs_with": ["PAT-10", "PAT-01"], "risk": "Sentimentality. Protection must have a cost on paper."},
+    {"id": "LN-08", "name": "Cosmic stakes made personal", "move": "Whatever the trope threatens at scale, the case is about what it cost one ordinary person: a career, a promise, a friendship, a body that is wearing out.", "pairs_with": ["stakes", "human_question"], "risk": "Losing the genre's charge. The large shadow stays in the background, felt but not explained."}
+  ]
+}
