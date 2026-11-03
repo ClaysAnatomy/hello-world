@@ -94,6 +94,7 @@ The kit's `data\*.json` files cite it.
 | v3 | same branch, `015f9ac` | Trope lenses (LN-01 to LN-08) |
 | v4 | same branch, `71d03b9` and `eacd25d` | The media layer (MF-01 to MF-12, KT-MD-01 to 09), the purpose rule KT-PL-18, appearances, engine `AHA_*` names, the high-intensity moments design, lane briefs. 597 checks |
 | v4.1 | `claude/zealous-pasteur-g9zvdz`, `c1bf7ed` and `5a041b8` (another session) | S1 written in five parts, failure explanations by file and line, realistic turn caps, an agent log. 645 checks |
+| v4.2 | `claude/eager-davinci-qgiihc` (v4.1 merged in), `404233a` | Never pay twice: S2 split into S2A (plan) and S2B (engine files); inputs inline; every output saved before its check; `resume`, `cleanup`, `preflight`; $15 cap; repair pools per unit; per-stage time limits. 700 checks. Installer: `handoff/2026-11-03_kit-v4.2/A7_KIT_V42_INSTALLER.md` |
 
 Pull requests: ClaysAnatomy/hello-world#3 (v2 to v4) and ClaysAnatomy/hello-world#4 (v4.1). Both are drafts.
 
